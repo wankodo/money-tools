@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奨学金返済シミュレーター｜わんこ堂</title>
+<meta name="description" content="奨学金を借りる前に、毎月の返還額・返還総額・利息・完済時の年齢が分かる無料シミュレーター。日本学生支援機構（JASSO）のルールに基づく目安計算です。">
+<style>
+:root{
+  --navy:#12283f; --navy2:#0b1a2c; --amber:#f2a007; --amber-d:#c77f02;
+  --bg:#f4f2ec; --card:#ffffff; --ink:#1d2733; --mut:#68707c;
+  --line:#ddd6c8; --red:#b03a2e; --green:#1e7d46; --soft:#fdf6e0;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6}
+header{background:linear-gradient(135deg,var(--navy2),var(--navy));color:#fff;padding:22px 16px 18px;border-bottom:4px solid var(--amber)}
+header .wrap{max-width:980px;margin:0 auto}
+header h1{margin:0;font-size:24px;letter-spacing:.04em}
+header h1 .accent{color:var(--amber)}
+header p{margin:6px 0 0;font-size:13px;color:#cfd9e4}
+.wrap{max-width:980px;margin:0 auto;padding:0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin:14px 0;box-shadow:0 1px 3px rgba(18,40,63,.06)}
+.card h2{margin:0 0 10px;font-size:17px;color:var(--navy);border-left:5px solid var(--amber);padding-left:9px}
+.card h3{margin:14px 0 8px;font-size:15px;color:var(--navy)}
+.note{font-size:12.5px;color:var(--mut)}
+.warn{background:var(--soft);border:1px solid #ecd27a;border-radius:8px;padding:10px 12px;font-size:13px;margin:10px 0}
+label.flabel{display:block;font-size:12.5px;color:var(--mut);margin:10px 0 3px}
+input[type="text"],input[type="number"],select{
+  width:100%;padding:9px 10px;border:1px solid #c9c2b2;border-radius:7px;font-size:15px;background:#fff;color:var(--ink);
+}
+input:focus,select:focus{outline:2px solid var(--amber);outline-offset:0;border-color:var(--amber)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:640px){.frow,.frow3{grid-template-columns:1fr}}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1;min-width:120px;background:#e9e4d8;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14.5px;cursor:pointer;color:var(--ink)}
+.seg button.on{background:var(--navy);color:#fff;font-weight:700;border-color:var(--navy)}
+.seg button:disabled{opacity:.45;cursor:not-allowed}
+.presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.presets button{background:#fff;border:1px solid var(--navy);color:var(--navy);border-radius:6px;padding:4px 10px;font-size:12.5px;cursor:pointer}
+.presets button:hover{background:var(--navy);color:#fff}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:14px 0}
+.sumcard{background:var(--navy);color:#fff;border-radius:10px;padding:14px 16px}
+.sumcard .lab{font-size:12.5px;color:#b9c8d8}
+.sumcard .val{font-size:25px;font-weight:800;color:var(--amber);font-variant-numeric:tabular-nums}
+.sumcard .val.small{font-size:18px;line-height:1.4}
+.sumcard .sub{font-size:11.5px;color:#b9c8d8;margin-top:2px}
+.sumcard.white{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.sumcard.white .lab{color:var(--mut)}
+.sumcard.white .sub{color:var(--mut)}
+.sumcard.alert{background:#fdf0ee;border:3px solid var(--red);color:var(--ink)}
+.sumcard.alert .lab{color:var(--red);font-weight:700}
+.sumcard.alert .val{color:var(--red)}
+.sumcard.alert .sub{color:#8c4a42}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{background:#f0ead9;color:var(--navy);font-size:12.5px;white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.tot td{font-weight:800;background:var(--soft)}
+.tblwrap{overflow-x:auto}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14.5px}
+.kv dt{color:var(--mut);font-size:13px;padding:3px 0}
+.kv dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums;padding:3px 0}
+ul.facts{margin:6px 0;padding-left:20px}
+ul.facts li{margin:5px 0;font-size:14px}
+footer{margin:26px 0 40px}
+footer .card{font-size:12.5px;color:var(--mut)}
+.credit{text-align:center;color:var(--mut);font-size:12px;margin:10px 0 30px}
+.hidden{display:none}
+a{color:var(--navy)}
+
+.sitebar{background:var(--navy2);border-bottom:2px solid var(--amber)}
+.sitebar .sb-in{max-width:980px;margin:0 auto;padding:7px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.sitebar a{color:#fff;text-decoration:none;font-size:13px}
+.sitebar a:hover{color:var(--amber)}
+.sitebar .sb-name{font-weight:700;letter-spacing:.03em}
+</style>
+</head>
+<body>
+<div class="sitebar"><div class="sb-in"><a class="sb-name" href="index.html">お金計算ツール集</a><a href="index.html">トップへ戻る</a></div></div>
+
+<header>
+  <div class="wrap">
+    <h1>奨学金返済 <span class="accent">シミュレーター</span></h1>
+    <p>借りる前に、返す現実を見ておこう。毎月の返還額・返還総額・利息・完済時の年齢を、日本学生支援機構（JASSO）のルールで試算します。</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <h2>どちらの試算をしますか</h2>
+    <div class="seg" id="audienceSeg">
+      <button type="button" data-aud="borrow" class="on">これから借りる人</button>
+      <button type="button" data-aud="repay">返済中の人</button>
+    </div>
+    <p class="note">これから借りる人は「借りる金額」から、返済中の人は「今の残高」から試算します。</p>
+  </div>
+
+  <div class="card" id="borrowCard">
+    <h2>借りる条件</h2>
+
+    <label class="flabel">奨学金の種類</label>
+    <div class="seg" id="typeSeg">
+      <button type="button" data-type="1" class="on">第一種（無利子）</button>
+      <button type="button" data-type="2">第二種（有利子）</button>
+    </div>
+
+    <label class="flabel">貸与額の入力方法</label>
+    <div class="seg" id="inputSeg">
+      <button type="button" data-input="monthly" class="on">月額と年数から</button>
+      <button type="button" data-input="total">貸与総額を直接</button>
+    </div>
+
+    <div id="monthlyBlock">
+    <div class="frow">
+      <div>
+        <label class="flabel" for="amtMonthly">貸与月額（円）</label>
+        <input type="number" id="amtMonthly" value="45000" min="0" step="1000" inputmode="numeric">
+        <div class="presets" id="monthlyPresets"></div>
+        <p class="note" id="monthlyNote"></p>
+      </div>
+      <div>
+        <label class="flabel" for="selYears">借りる年数</label>
+        <select id="selYears">
+          <option value="2">2年</option>
+          <option value="3">3年</option>
+          <option value="4" selected>4年</option>
+          <option value="5">5年</option>
+          <option value="6">6年</option>
+        </select>
+        <p class="note">貸与総額 ＝ 貸与月額 × 12か月 × 年数 で計算します。</p>
+      </div>
+    </div>
+    </div>
+
+    <div id="totalBlock" class="hidden">
+      <label class="flabel" for="amtTotal">貸与総額（円）</label>
+      <input type="number" id="amtTotal" value="" min="0" step="10000" placeholder="例：4800000" inputmode="numeric">
+      <p class="note">借りる金額の合計を円単位で入力します。返還回数・毎月の返還額は、この総額から自動で決まります。</p>
+    </div>
+
+    <div id="rateBlock" class="hidden">
+      <div class="frow">
+        <div>
+          <label class="flabel" for="amtRate">利率（年・％）※第二種のみ</label>
+          <input type="number" id="amtRate" value="2.4" min="0" max="3" step="0.01" inputmode="decimal">
+          <div class="presets">
+            <button type="button" data-rate="1.64">2025年3月終了 1.64%</button>
+            <button type="button" data-rate="2.42">2026年3月終了 2.42%</button>
+            <button type="button" data-rate="3">上限 3.0%</button>
+          </div>
+        </div>
+        <div>
+          <p class="note" style="margin-top:26px">利率は「借り終わる月」に決まります（固定方式の実績値）。2026年夏以降に貸与が終わる分は、固定方式が上限の3.0%に達しています。これから借りる人は上限3.0%で見ておくのが安全です。</p>
+        </div>
+      </div>
+
+      <label class="flabel">利率の方式</label>
+      <div class="seg" id="rateModeSeg">
+        <button type="button" data-ratemode="fixed" class="on">固定のまま</button>
+        <button type="button" data-ratemode="review">見直しシナリオ</button>
+      </div>
+      <div id="reviewBlock" class="hidden">
+        <div class="frow">
+          <div>
+            <label class="flabel" for="amtRate2">見直し後の利率（年・％）</label>
+            <input type="number" id="amtRate2" value="3.0" min="0" max="3" step="0.01" inputmode="decimal">
+            <div class="presets">
+              <button type="button" data-rate2="1.6">2026年3月見直し 1.6%</button>
+              <button type="button" data-rate2="3">上限 3.0%</button>
+            </div>
+          </div>
+          <div>
+            <p class="note" style="margin-top:26px">返還開始から5年（60か月）後に利率が見直され、残高と残りの回数で毎月の返還額が再計算される想定で計算します。その後の見直しでも同じ利率が続くものとします。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <label class="flabel">返還方式</label>
+    <div class="seg" id="modeSeg">
+      <button type="button" data-mode="fixed" class="on">定額返還方式</button>
+      <button type="button" data-mode="income" id="modeIncomeBtn">所得連動返還方式</button>
+    </div>
+    <p class="note" id="modeNote">所得連動返還方式は第一種のみ（機関保証への加入が必要です）。</p>
+
+    <div id="incomeBlock" class="hidden">
+      <div class="frow">
+        <div>
+          <label class="flabel" for="amtIncome">年収の目安（円）</label>
+          <input type="number" id="amtIncome" value="3000000" min="0" step="10000" inputmode="numeric">
+        </div>
+        <div>
+          <label class="flabel" for="amtChildren">子どもの数（人）</label>
+          <input type="number" id="amtChildren" value="0" min="0" max="20" step="1" inputmode="numeric">
+        </div>
+      </div>
+      <p class="note">年収から課税総所得金額を概算します（給与所得控除＋基礎控除48万円＋社会保険料を年収の約14%として計算）。あくまで概算です。所得がずっと一定のまま推移すると仮定して完済までの期間を計算します。</p>
+    </div>
+
+    <div class="frow">
+      <div>
+        <label class="flabel" for="amtAge">卒業時の年齢（歳）</label>
+        <input type="number" id="amtAge" value="22" min="15" max="60" step="1" inputmode="numeric">
+      </div>
+      <div>
+        <label class="flabel" for="amtExtra">繰上返還の上乗せ（任意・毎月 円）</label>
+        <input type="number" id="amtExtra" value="" min="0" step="1000" placeholder="例：5000" inputmode="numeric">
+      </div>
+    </div>
+  </div>
+
+  <div class="card hidden" id="repayCard">
+    <h2>返済の状況</h2>
+
+    <label class="flabel">奨学金の種類</label>
+    <div class="seg" id="rpTypeSeg">
+      <button type="button" data-rptype="1" class="on">第一種（無利子）</button>
+      <button type="button" data-rptype="2">第二種（有利子）</button>
+    </div>
+
+    <div class="frow">
+      <div>
+        <label class="flabel" for="rpBalance">今の残高（円）</label>
+        <input type="number" id="rpBalance" value="" min="0" step="10000" placeholder="例：3000000" inputmode="numeric">
+      </div>
+      <div>
+        <label class="flabel" for="rpMonthly">今の毎月の返還額（円）</label>
+        <input type="number" id="rpMonthly" value="" min="0" step="1000" placeholder="例：20000" inputmode="numeric">
+      </div>
+    </div>
+
+    <div class="frow">
+      <div id="rpRateBlock" class="hidden">
+        <label class="flabel" for="rpRate">利率（年・％）※第二種のみ</label>
+        <input type="number" id="rpRate" value="2.4" min="0" max="3" step="0.01" inputmode="decimal">
+      </div>
+      <div>
+        <label class="flabel" for="rpAge">今の年齢（歳）</label>
+        <input type="number" id="rpAge" value="25" min="15" max="80" step="1" inputmode="numeric">
+      </div>
+    </div>
+    <p class="note">利率は、貸与終了時に決まった利率（見直し方式の人は直近の見直し後の利率）を入れてください。</p>
+
+    <h3>繰上返還（任意）</h3>
+    <div class="frow">
+      <div>
+        <label class="flabel" for="rpExtraMonthly">毎月の上乗せ（円）</label>
+        <input type="number" id="rpExtraMonthly" value="" min="0" step="1000" placeholder="例：5000" inputmode="numeric">
+      </div>
+      <div>
+        <label class="flabel" for="rpLump">一括で今すぐ入れる額（円）</label>
+        <input type="number" id="rpLump" value="" min="0" step="10000" placeholder="例：500000" inputmode="numeric">
+      </div>
+    </div>
+    <p class="note">一括分は残高から差し引いてから、毎月の上乗せ分は毎月の返還額に加算して計算します。</p>
+  </div>
+
+  <div class="summary" id="borrowSummary">
+    <div class="sumcard white"><div class="lab">貸与総額（借りる金額）</div><div class="val" id="sumTotal">—</div></div>
+    <div class="sumcard"><div class="lab">毎月の返還額</div><div class="val" id="sumMonthly">—</div><div class="sub" id="sumMonthlySub"></div></div>
+    <div class="sumcard"><div class="lab">返還総額（返す金額）</div><div class="val" id="sumPaid">—</div></div>
+    <div class="sumcard white" id="interestCard"><div class="lab">利息の総額</div><div class="val" id="sumInterest">—</div><div class="sub" id="sumInterestSub"></div></div>
+    <div class="sumcard"><div class="lab">完済時の年齢</div><div class="val" id="sumAge">—</div><div class="sub" id="sumAgeSub"></div></div>
+  </div>
+
+  <div id="repaySummary" class="hidden">
+    <div class="summary">
+      <div class="sumcard"><div class="lab">完済まであと</div><div class="val" id="rpPeriod">—</div><div class="sub" id="rpPeriodSub"></div></div>
+      <div class="sumcard white"><div class="lab">これから払う総額</div><div class="val" id="rpPaid">—</div></div>
+      <div class="sumcard white" id="rpInterestCard"><div class="lab">これから払う利息の総額</div><div class="val" id="rpInterest">—</div><div class="sub" id="rpInterestSub"></div></div>
+      <div class="sumcard"><div class="lab">完済時の年齢</div><div class="val" id="rpAgeOut">—</div><div class="sub" id="rpAgeSub"></div></div>
+    </div>
+    <div id="rpWarn" class="warn hidden"></div>
+    <div id="rpEffect" class="warn hidden"></div>
+  </div>
+
+  <div class="card" id="borrowDetail">
+    <h2>返還の内訳</h2>
+    <dl class="kv">
+      <dt>返還期間</dt><dd id="detPeriod">—</dd>
+      <dt>返還回数</dt><dd id="detCount">—</dd>
+      <dt>標準の返還回数</dt><dd id="detStdCount">—</dd>
+      <dt>最終回の返還額</dt><dd id="detLast">—</dd>
+      <dt>返還開始</dt><dd id="detStart">—</dd>
+    </dl>
+    <div id="extraEffect" class="warn hidden"></div>
+    <div id="reviewEffect" class="warn hidden"></div>
+    <p class="note" id="modeDetailNote"></p>
+  </div>
+
+  <div class="card" id="borrowTableCard">
+    <h2>年ごとの残高推移</h2>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>返還年数</th><th class="num">年間返還額</th><th class="num">年末残高</th></tr></thead>
+        <tbody id="yearBody"></tbody>
+      </table>
+    </div>
+    <p class="note" id="tableNote"></p>
+  </div>
+
+  <div class="card hidden" id="repayTableCard">
+    <h2>年ごとの残高推移</h2>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>返還年数</th><th class="num">年間返還額</th><th class="num">年末残高</th></tr></thead>
+        <tbody id="rpYearBody"></tbody>
+      </table>
+    </div>
+    <p class="note" id="rpTableNote"></p>
+  </div>
+
+  <div class="card">
+    <h2>知っておくこと</h2>
+    <ul class="facts">
+      <li>返還は、貸与終了（卒業）の翌月から数えて7か月目の月の27日から、口座振替（リレー口座）で始まります。毎月27日の引き落としです。</li>
+      <li>返還回数は貸与総額だけで決まります（最長20年＝240回）。利率が高くても回数は変わらず、毎月の金額と利息が増えます。</li>
+      <li>第二種の利率は、借り始める時ではなく「借り終わる月」に決まります。在学中は無利子で、利子は貸与終了の翌月から発生します。基本月額分の利率の上限は年3.0%です。</li>
+      <li>第二種で利率見直し方式を選んだ場合、利率はおおむね5年ごとに見直され、その都度、残高と残りの回数で毎月の返還額が再計算されます。利率が上がると、毎月の返還額と利息の総額が増えます。</li>
+      <li>所得連動返還方式は第一種のみで、利用には機関保証制度への加入が必要です。毎年の所得に応じて月額が見直され、最低月額は2,000円です。</li>
+      <li>返還が遅れると延滞金がかかります。払えない事情がある時は、減額返還や返還期限猶予の制度があるので、早めに機構へ相談してください。</li>
+      <li>余裕がある月は繰上返還ができます。期間が短くなり、第二種では利息も減ります。</li>
+    </ul>
+  </div>
+
+  <footer>
+    <div class="card">
+      このツールは非公式の個人ツールです。計算結果は目安であり、実際の返還額・返還回数と異なる場合があります。特に第二種は、返還開始までの据置期間の利子を「元本 × 利率 × 6/12」で近似して元本に組み入れています。所得連動返還方式は、経過措置（最初の12か月は定額方式の月額の半額）を簡略化し、13か月目から所得連動の計算式を適用しています。利率見直しシナリオは、返還開始から5年後に1回だけ利率が変わり、その後は同じ利率が続くものとして計算しています。正確な条件は日本学生支援機構（JASSO）の公式情報をご確認ください。<br>
+      出典：<a href="https://www.jasso.go.jp/shogakukin/henkan/houhou/henkan_hoshiki/henkan_kikan/index.html" target="_blank" rel="noopener">返還期間と割賦金｜JASSO</a>／<a href="https://www.jasso.go.jp/shogakukin/henkan/houhou/henkan_hoshiki/kappu/sample/daigaku.html" target="_blank" rel="noopener">大学・返還例｜JASSO</a>／<a href="https://www.jasso.go.jp/shogakukin/about/taiyo/taiyo_2shu/riritsu/2007ikou.html" target="_blank" rel="noopener">貸与利率の推移｜JASSO</a><br>
+      料金・ルール確認日：2026-11-17
+    </div>
+    <p class="credit">制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+var $ = function(id){ return document.getElementById(id); };
+var state = { type: 1, mode: "fixed", inputMode: "monthly", rateMode: "fixed", audience: "borrow" };
+var rpState = { type: 1 };
+
+var BASE_TABLE = [
+  [200000,30000],[400000,40000],[500000,50000],[600000,60000],[700000,70000],
+  [900000,80000],[1100000,90000],[1300000,100000],[1500000,110000],[1700000,120000],
+  [1900000,130000],[2100000,140000],[2300000,150000],[2500000,160000],[3400000,170000]
+];
+var MONTHLY_PRESETS = {
+  1: [45000, 64000],
+  2: [50000, 80000, 100000, 120000]
+};
+var MONTHLY_NOTE = {
+  1: "第一種の最高月額の目安：国公立・自宅 45,000円／私立・自宅外 64,000円（家計基準を満たした人のみ）。",
+  2: "第二種は月額20,000円〜120,000円の範囲で1万円刻みで選べます。"
+};
+
+function fmt(n){
+  if (n === null || n === undefined || isNaN(n)) return "—";
+  return "¥" + Math.round(n).toLocaleString("ja-JP");
+}
+function num(id){
+  var v = parseFloat($(id).value);
+  return isNaN(v) ? 0 : v;
+}
+function baseAmount(total){
+  if (total > 3400000) return total / 20;
+  for (var i = 0; i < BASE_TABLE.length; i++){
+    if (total <= BASE_TABLE[i][0]) return BASE_TABLE[i][1];
+  }
+  return 170000;
+}
+function fixedCount(total){
+  var years = Math.floor(total / baseAmount(total));
+  if (years > 20) years = 20;
+  if (years < 1) years = 1;
+  return years * 12;
+}
+function salaryDeduction(income){
+  if (income <= 550000) return income;
+  if (income <= 1625000) return 550000;
+  if (income <= 1800000) return income * 0.4 - 100000;
+  if (income <= 3600000) return income * 0.3 + 80000;
+  if (income <= 6600000) return income * 0.2 + 440000;
+  if (income <= 8500000) return income * 0.1 + 1100000;
+  return 1950000;
+}
+function estimateTaxable(income){
+  var t = income - salaryDeduction(income) - 480000 - Math.floor(income * 0.14);
+  return t > 0 ? t : 0;
+}
+
+function simFixed1(total, extra){
+  var n = fixedCount(total);
+  var monthly = Math.floor(total / n);
+  var bal = total, months = 0, paid = 0, last = 0, rows = [];
+  while (bal > 0 && months < 3600){
+    months++;
+    var pay = months >= n ? bal : Math.min(bal, monthly + extra);
+    if (pay <= 0) break;
+    bal -= pay; paid += pay; last = pay;
+    rows.push({ pay: pay, bal: bal });
+  }
+  return { months: months, paid: paid, interest: 0, monthly: monthly + extra, last: last, rows: rows, stdCount: n, done: bal <= 0 };
+}
+function simFixed2(total, ratePct, extra){
+  var n = fixedCount(total);
+  var r = ratePct / 100 / 12;
+  var grace = Math.round(total * (ratePct / 100) * 0.5);
+  var principal = total + grace;
+  var pmt = r > 0 ? principal * r / (1 - Math.pow(1 + r, -n)) : principal / n;
+  var monthly = Math.round(pmt);
+  var bal = principal, months = 0, paid = 0, last = 0, rows = [];
+  while (bal > 0.005 && months < 3600){
+    var interest = bal * r;
+    var pay = Math.min(bal + interest, monthly + extra);
+    if (pay <= 0) break;
+    bal = bal + interest - pay;
+    if (bal < 0.005) bal = 0;
+    paid += pay; last = pay; months++;
+    rows.push({ pay: pay, bal: bal });
+  }
+  return { months: months, paid: paid, interest: paid - total, monthly: monthly + extra, last: last, rows: rows, stdCount: n, done: bal <= 0, grace: grace };
+}
+function simReview2(total, ratePct, rate2Pct, extra){
+  var n = fixedCount(total);
+  var r = ratePct / 100 / 12;
+  var grace = Math.round(total * (ratePct / 100) * 0.5);
+  var principal = total + grace;
+  var pmt = r > 0 ? principal * r / (1 - Math.pow(1 + r, -n)) : principal / n;
+  var monthly = Math.round(pmt);
+  var monthlyFirst = monthly;
+  var monthlyAfter = null;
+  var bal = principal, months = 0, paid = 0, last = 0, rows = [];
+  while (bal > 0.005 && months < 3600){
+    if (months === 60 && n > 60){
+      var r2 = rate2Pct / 100 / 12;
+      var rem = n - 60;
+      var pmt2 = r2 > 0 ? bal * r2 / (1 - Math.pow(1 + r2, -rem)) : bal / rem;
+      monthly = Math.round(pmt2);
+      monthlyAfter = monthly;
+      r = r2;
+    }
+    var interest = bal * r;
+    var pay = Math.min(bal + interest, monthly + extra);
+    if (pay <= 0) break;
+    bal = bal + interest - pay;
+    if (bal < 0.005) bal = 0;
+    paid += pay; last = pay; months++;
+    rows.push({ pay: pay, bal: bal });
+  }
+  return { months: months, paid: paid, interest: paid - total, monthly: monthlyFirst + extra, monthlyFirst: monthlyFirst + extra, monthlyAfter: monthlyAfter === null ? null : monthlyAfter + extra, last: last, rows: rows, stdCount: n, done: bal <= 0, grace: grace };
+}
+function simIncome(total, income, children, extra){
+  var n = fixedCount(total);
+  var fixedMonthly = Math.floor(total / n);
+  var half = Math.max(2000, Math.floor(fixedMonthly / 2));
+  var taxable = estimateTaxable(income);
+  var linked = Math.max(2000, Math.floor((taxable - 330000 * children) * 0.09 / 12));
+  var bal = total, months = 0, paid = 0, last = 0, rows = [];
+  while (bal > 0 && months < 1200){
+    var base = months < 12 ? half : linked;
+    var pay = Math.min(bal, base + extra);
+    if (pay <= 0) break;
+    bal -= pay; paid += pay; last = pay; months++;
+    rows.push({ pay: pay, bal: bal });
+  }
+  return { months: months, paid: paid, interest: 0, monthly: linked + extra, half: half, linked: linked, taxable: taxable, last: last, rows: rows, stdCount: n, done: bal <= 0 };
+}
+
+function simRepay1(balance, pay){
+  if (pay <= 0) return { never: true, months: 0, paid: 0, interest: 0, last: 0, rows: [], done: false };
+  var bal = balance, months = 0, paid = 0, last = 0, rows = [];
+  while (bal > 0 && months < 3600){
+    months++;
+    var p = Math.min(bal, pay);
+    bal -= p; paid += p; last = p;
+    rows.push({ pay: p, bal: bal });
+  }
+  return { months: months, paid: paid, interest: 0, last: last, rows: rows, done: bal <= 0 };
+}
+function simRepay2(balance, ratePct, pay){
+  var r = ratePct / 100 / 12;
+  if (pay <= 0) return { never: true, months: 0, paid: 0, interest: 0, last: 0, rows: [], done: false };
+  if (r > 0 && pay <= balance * r) return { never: true, months: 0, paid: 0, interest: 0, last: 0, rows: [], done: false };
+  var bal = balance, months = 0, paid = 0, last = 0, rows = [];
+  while (bal > 0.005 && months < 3600){
+    var interest = bal * r;
+    var p = Math.min(bal + interest, pay);
+    if (p <= interest) return { never: true, months: 0, paid: 0, interest: 0, last: 0, rows: [], done: false };
+    bal = bal + interest - p;
+    if (bal < 0.005) bal = 0;
+    paid += p; last = p; months++;
+    rows.push({ pay: p, bal: bal });
+  }
+  return { months: months, paid: paid, interest: paid - balance, last: last, rows: rows, done: bal <= 0 };
+}
+
+function renderPresets(){
+  var box = $("monthlyPresets");
+  box.innerHTML = "";
+  MONTHLY_PRESETS[state.type].forEach(function(v){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.textContent = v.toLocaleString("ja-JP") + "円";
+    b.addEventListener("click", function(){ $("amtMonthly").value = v; recalc(); });
+    box.appendChild(b);
+  });
+  $("monthlyNote").textContent = MONTHLY_NOTE[state.type];
+}
+function yearlyRows(rows){
+  var out = [];
+  rows.forEach(function(r, i){
+    var y = Math.floor(i / 12);
+    if (!out[y]) out[y] = { pay: 0, bal: 0 };
+    out[y].pay += r.pay;
+    out[y].bal = r.bal;
+  });
+  return out;
+}
+function periodText(months){
+  var y = Math.floor(months / 12), m = months % 12;
+  if (y === 0) return m + "か月";
+  return y + "年" + (m > 0 ? m + "か月" : "");
+}
+
+function recalc(){
+  var total;
+  if (state.inputMode === "total"){
+    total = Math.round(num("amtTotal"));
+  } else {
+    total = num("amtMonthly") * 12 * (parseInt($("selYears").value, 10) || 0);
+  }
+  var extra = Math.max(0, num("amtExtra"));
+  var age = num("amtAge");
+
+  $("monthlyBlock").classList.toggle("hidden", state.inputMode !== "monthly");
+  $("totalBlock").classList.toggle("hidden", state.inputMode !== "total");
+  $("interestCard").classList.toggle("alert", state.type === 2 && total > 0);
+  $("rateBlock").classList.toggle("hidden", state.type !== 2);
+  $("reviewBlock").classList.toggle("hidden", !(state.type === 2 && state.rateMode === "review"));
+  $("incomeBlock").classList.toggle("hidden", state.mode !== "income");
+  $("modeIncomeBtn").disabled = state.type === 2;
+  $("modeNote").textContent = state.type === 2
+    ? "所得連動返還方式は第一種のみのため、第二種では定額返還方式になります。"
+    : "所得連動返還方式は第一種のみ（機関保証への加入が必要です）。";
+
+  if (total <= 0){
+    ["sumTotal","sumMonthly","sumPaid","sumInterest","sumAge"].forEach(function(id){ $(id).textContent = "—"; });
+    $("sumMonthlySub").textContent = "";
+    $("sumInterestSub").textContent = "";
+    $("sumAgeSub").textContent = "";
+    $("detPeriod").textContent = "—";
+    $("detCount").textContent = "—";
+    $("detStdCount").textContent = "—";
+    $("detLast").textContent = "—";
+    $("detStart").textContent = "—";
+    $("yearBody").innerHTML = "";
+    $("extraEffect").classList.add("hidden");
+    $("reviewEffect").classList.add("hidden");
+    $("sumMonthly").classList.remove("small");
+    $("modeDetailNote").textContent = state.inputMode === "total" ? "貸与総額を入力すると計算します。" : "貸与月額を入力すると計算します。";
+    $("tableNote").textContent = "";
+    return;
+  }
+
+  var res, base = null, cmpFixed = null;
+  if (state.mode === "income" && state.type === 1){
+    res = simIncome(total, num("amtIncome"), Math.max(0, Math.floor(num("amtChildren"))), extra);
+    if (extra > 0) base = simIncome(total, num("amtIncome"), Math.max(0, Math.floor(num("amtChildren"))), 0);
+  } else if (state.type === 2){
+    var rate = num("amtRate");
+    if (state.rateMode === "review"){
+      res = simReview2(total, rate, num("amtRate2"), extra);
+      cmpFixed = simFixed2(total, rate, extra);
+      if (extra > 0) base = simReview2(total, rate, num("amtRate2"), 0);
+    } else {
+      res = simFixed2(total, rate, extra);
+      if (extra > 0) base = simFixed2(total, rate, 0);
+    }
+  } else {
+    res = simFixed1(total, extra);
+    if (extra > 0) base = simFixed1(total, 0);
+  }
+
+  $("sumTotal").textContent = fmt(total);
+  $("sumPaid").textContent = fmt(res.paid);
+  $("sumInterest").textContent = state.type === 2 ? fmt(res.interest) : "¥0";
+  $("sumInterestSub").textContent = state.type === 2 ? "据置期間の利子を含む目安" : "利息なし";
+
+  if (state.mode === "income" && state.type === 1){
+    $("sumMonthly").textContent = fmt(res.monthly);
+    $("sumMonthly").classList.remove("small");
+    $("sumMonthlySub").textContent = "13か月目以降。最初の12か月は月" + fmt(res.half + extra) + "（定額の半額）";
+  } else if (state.type === 2 && state.rateMode === "review"){
+    if (res.monthlyAfter !== null && res.monthlyAfter !== undefined){
+      $("sumMonthly").textContent = fmt(res.monthlyFirst) + " → " + fmt(res.monthlyAfter);
+      $("sumMonthly").classList.add("small");
+      $("sumMonthlySub").textContent = "1〜60か月目 → 61か月目以降（見直し後）" + (extra > 0 ? "／上乗せ " + fmt(extra) + " を含む" : "");
+    } else {
+      $("sumMonthly").textContent = fmt(res.monthly);
+      $("sumMonthly").classList.remove("small");
+      $("sumMonthlySub").textContent = "返還期間が5年以内のため、見直しは発生しません" + (extra > 0 ? "／上乗せ " + fmt(extra) + " を含む" : "");
+    }
+  } else {
+    $("sumMonthly").textContent = fmt(res.monthly);
+    $("sumMonthly").classList.remove("small");
+    $("sumMonthlySub").textContent = extra > 0 ? "繰上上乗せ " + fmt(extra) + " を含む" : "";
+  }
+
+  if (res.done && age > 0){
+    var elapsed = 7 + res.months - 1;
+    var ay = age + Math.floor(elapsed / 12);
+    var am = elapsed % 12;
+    $("sumAge").textContent = ay + "歳" + (am > 0 ? am + "か月" : "");
+    $("sumAgeSub").textContent = "卒業の7か月後から返還開始";
+  } else if (!res.done){
+    $("sumAge").textContent = "—";
+    $("sumAgeSub").textContent = "この条件では完済まで100年以上かかる計算です";
+  } else {
+    $("sumAge").textContent = "—";
+    $("sumAgeSub").textContent = "卒業時の年齢を入れると表示します";
+  }
+
+  $("detPeriod").textContent = res.done ? periodText(res.months) : "100年以上";
+  $("detCount").textContent = res.done ? "全" + res.months + "回" : "1,200回以上（未完済）";
+  $("detStdCount").textContent = "全" + res.stdCount + "回（" + periodText(res.stdCount) + "）";
+  $("detLast").textContent = fmt(res.last);
+  $("detStart").textContent = "卒業の7か月目の月から（毎月27日に口座振替）";
+
+  if (extra > 0 && base){
+    var eff = "繰上返還（毎月 " + fmt(extra) + " 上乗せ）の効果：返還期間が " + base.months + "回 → " + res.months + "回（" + (base.months - res.months) + "か月短縮）";
+    if (state.type === 2) eff += "、利息が " + fmt(base.interest - res.interest) + " 減ります";
+    eff += "。";
+    $("extraEffect").textContent = eff;
+    $("extraEffect").classList.remove("hidden");
+  } else {
+    $("extraEffect").classList.add("hidden");
+  }
+
+  if (state.type === 2 && state.rateMode === "review" && cmpFixed){
+    var diff = Math.round(res.interest) - Math.round(cmpFixed.interest);
+    var rt = "利率見直しシナリオ（5年後に年" + num("amtRate2") + "%へ見直し）：返還総額 " + fmt(res.paid) + "／利息 " + fmt(res.interest) + "。固定のまま（年" + num("amtRate") + "%）だった場合：返還総額 " + fmt(cmpFixed.paid) + "／利息 " + fmt(cmpFixed.interest) + "。";
+    if (diff > 0) rt += "差額：利息が " + fmt(diff) + " 増えます。";
+    else if (diff < 0) rt += "差額：利息が " + fmt(-diff) + " 減ります。";
+    else rt += "差額はありません。";
+    $("reviewEffect").textContent = rt;
+    $("reviewEffect").classList.remove("hidden");
+  } else {
+    $("reviewEffect").classList.add("hidden");
+  }
+
+  if (state.mode === "income" && state.type === 1){
+    $("modeDetailNote").textContent = "所得連動の計算：課税総所得金額の概算 " + fmt(res.taxable) + " − 33万円 × 子の数 " + Math.max(0, Math.floor(num("amtChildren"))) + "人、その9% ÷ 12（最低2,000円）で月額を出しています。最初の12か月は経過措置として定額方式の月額の半額です（簡略化した計算です）。";
+  } else if (state.type === 2 && state.rateMode === "review"){
+    $("modeDetailNote").textContent = "第二種は元利均等返還です。据置期間（貸与終了〜返還開始・約6か月）の利子 " + fmt(res.grace) + " を元本に組み入れて計算しています（近似）。見直しシナリオは、返還開始から5年後に1回だけ利率が年" + num("amtRate2") + "%に変わり、その後は同じ利率が続くものとして計算しています（実際の見直し方式ではおおむね5年ごとに利率が改定されます）。実際の割賦金はJASSOの決定によります。";
+  } else if (state.type === 2){
+    $("modeDetailNote").textContent = "第二種は元利均等返還です。据置期間（貸与終了〜返還開始・約6か月）の利子 " + fmt(res.grace) + " を元本に組み入れて計算しています（近似）。実際の割賦金はJASSOの決定によります。";
+  } else {
+    $("modeDetailNote").textContent = "第一種は無利子のため、貸与総額を返還回数で均等に割っています。端数は最終回で調整しています。";
+  }
+
+  var yr = yearlyRows(res.rows);
+  var maxRows = 60;
+  var html = "";
+  yr.slice(0, maxRows).forEach(function(r, i){
+    html += "<tr><td>" + (i + 1) + "年目</td><td class=\"num\">" + fmt(r.pay) + "</td><td class=\"num\">" + fmt(r.bal) + "</td></tr>";
+  });
+  if (yr.length > maxRows) html += "<tr><td colspan=\"3\">（以下省略）</td></tr>";
+  if (res.done) html += "<tr class=\"tot\"><td>合計</td><td class=\"num\">" + fmt(res.paid) + "</td><td class=\"num\">¥0</td></tr>";
+  $("yearBody").innerHTML = html;
+  $("tableNote").textContent = state.type === 2 ? "年末残高には据置期間の利子を含みます。" : "";
+}
+
+function clearRepay(msg){
+  $("rpPeriod").textContent = "—";
+  $("rpPeriodSub").textContent = "";
+  $("rpPaid").textContent = "—";
+  $("rpInterest").textContent = "—";
+  $("rpInterestSub").textContent = "";
+  $("rpAgeOut").textContent = "—";
+  $("rpAgeSub").textContent = "";
+  $("rpYearBody").innerHTML = "";
+  $("rpTableNote").textContent = msg || "";
+  $("rpWarn").classList.add("hidden");
+  $("rpEffect").classList.add("hidden");
+}
+
+function recalcRepay(){
+  var balance = Math.round(num("rpBalance"));
+  var lump = Math.round(num("rpLump"));
+  $("rpRateBlock").classList.toggle("hidden", rpState.type !== 2);
+  $("rpInterestCard").classList.toggle("alert", rpState.type === 2 && balance > 0);
+
+  if (balance <= 0){ clearRepay("今の残高を入力すると計算します。"); return; }
+  var monthlyBase = num("rpMonthly");
+  var extraMonthly = Math.max(0, num("rpExtraMonthly"));
+  var pay = monthlyBase + extraMonthly;
+  if (pay <= 0){ clearRepay("今の毎月の返還額を入力すると計算します。"); return; }
+
+  var rate = num("rpRate");
+  var age = num("rpAge");
+  var lumpPaid = Math.min(lump, balance);
+  var effBalance = balance - lump;
+
+  var res;
+  if (effBalance <= 0){
+    res = { months: 0, paid: 0, interest: 0, last: 0, rows: [], done: true };
+  } else if (rpState.type === 2){
+    res = simRepay2(effBalance, rate, pay);
+  } else {
+    res = simRepay1(effBalance, pay);
+  }
+
+  if (res.never){
+    clearRepay("");
+    $("rpWarn").textContent = "この返還額では、毎月の利息（約" + fmt(effBalance * rate / 100 / 12) + "）をまかなえず元本が減らないため、完済しません。毎月の返還額を増やすか、繰上返還を検討してください。";
+    $("rpWarn").classList.remove("hidden");
+    return;
+  }
+  $("rpWarn").classList.add("hidden");
+
+  var totalPaid = lumpPaid + res.paid;
+  if (!res.done){
+    $("rpPeriod").textContent = "—";
+    $("rpPeriodSub").textContent = "この条件では完済まで非常に長くかかります";
+    $("rpPaid").textContent = "—";
+    $("rpInterest").textContent = rpState.type === 2 ? "—" : "¥0";
+    $("rpInterestSub").textContent = rpState.type === 2 ? "" : "利息なし";
+    $("rpAgeOut").textContent = "—";
+    $("rpAgeSub").textContent = "";
+  } else {
+    $("rpPeriod").textContent = res.months === 0 ? "今すぐ" : periodText(res.months);
+    $("rpPeriodSub").textContent = res.months === 0 ? "一括繰上で完済" : "全" + res.months + "回";
+    $("rpPaid").textContent = fmt(totalPaid);
+    $("rpInterest").textContent = rpState.type === 2 ? fmt(res.interest) : "¥0";
+    $("rpInterestSub").textContent = rpState.type === 2 ? "今の残高に対するこれからの利息" : "利息なし";
+    if (age > 0){
+      var ay = age + Math.floor(res.months / 12);
+      var am = res.months % 12;
+      $("rpAgeOut").textContent = ay + "歳" + (am > 0 ? am + "か月" : "");
+      $("rpAgeSub").textContent = res.months === 0 ? "一括繰上で今すぐ完済" : "ごろに完済します";
+    } else {
+      $("rpAgeOut").textContent = "—";
+      $("rpAgeSub").textContent = "今の年齢を入れると表示します";
+    }
+  }
+
+  if (lump > 0 || extraMonthly > 0){
+    var base2 = rpState.type === 2 ? simRepay2(balance, rate, monthlyBase) : simRepay1(balance, monthlyBase);
+    var eff = null;
+    if (base2.never && res.done){
+      eff = "繰上の効果：上乗せなしでは完済しない条件でしたが、繰上により完済できるようになります。";
+    } else if (base2.done && res.done){
+      eff = "繰上の効果：完済が " + (base2.months - res.months) + "か月早くなります";
+      if (rpState.type === 2) eff += "、利息が " + fmt(base2.interest - res.interest) + " 浮きます";
+      eff += "。";
+    }
+    if (eff){
+      $("rpEffect").textContent = eff;
+      $("rpEffect").classList.remove("hidden");
+    } else {
+      $("rpEffect").classList.add("hidden");
+    }
+  } else {
+    $("rpEffect").classList.add("hidden");
+  }
+
+  var yr = yearlyRows(res.rows);
+  var html = "";
+  yr.slice(0, 60).forEach(function(r, i){
+    html += "<tr><td>" + (i + 1) + "年目</td><td class=\"num\">" + fmt(r.pay) + "</td><td class=\"num\">" + fmt(r.bal) + "</td></tr>";
+  });
+  if (yr.length > 60) html += "<tr><td colspan=\"3\">（以下省略）</td></tr>";
+  if (res.done && res.rows.length > 0) html += "<tr class=\"tot\"><td>合計</td><td class=\"num\">" + fmt(res.paid) + "</td><td class=\"num\">¥0</td></tr>";
+  $("rpYearBody").innerHTML = html;
+  var notes = [];
+  if (lumpPaid > 0) notes.push("一括繰上 " + fmt(lumpPaid) + " を差し引いた残高 " + fmt(Math.max(0, effBalance)) + " からの推移です（合計欄は一括分を含みません）。");
+  if (extraMonthly > 0) notes.push("毎月の上乗せ " + fmt(extraMonthly) + " を含めて計算しています。");
+  $("rpTableNote").textContent = notes.join("");
+}
+
+function applyAudience(){
+  var repay = state.audience === "repay";
+  $("borrowCard").classList.toggle("hidden", repay);
+  $("borrowSummary").classList.toggle("hidden", repay);
+  $("borrowDetail").classList.toggle("hidden", repay);
+  $("borrowTableCard").classList.toggle("hidden", repay);
+  $("repayCard").classList.toggle("hidden", !repay);
+  $("repaySummary").classList.toggle("hidden", !repay);
+  $("repayTableCard").classList.toggle("hidden", !repay);
+  if (repay) recalcRepay(); else recalc();
+}
+
+$("audienceSeg").addEventListener("click", function(e){
+  var b = e.target.closest("button");
+  if (!b) return;
+  state.audience = b.getAttribute("data-aud");
+  $("audienceSeg").querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+  applyAudience();
+});
+$("rpTypeSeg").addEventListener("click", function(e){
+  var b = e.target.closest("button");
+  if (!b) return;
+  rpState.type = parseInt(b.getAttribute("data-rptype"), 10);
+  $("rpTypeSeg").querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+  recalcRepay();
+});
+["rpBalance","rpMonthly","rpRate","rpAge","rpExtraMonthly","rpLump"].forEach(function(id){
+  $(id).addEventListener("input", recalcRepay);
+  $(id).addEventListener("change", recalcRepay);
+});
+
+$("typeSeg").addEventListener("click", function(e){
+  var b = e.target.closest("button");
+  if (!b) return;
+  state.type = parseInt(b.getAttribute("data-type"), 10);
+  if (state.type === 2 && state.mode === "income"){
+    state.mode = "fixed";
+    $("modeSeg").querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x.getAttribute("data-mode") === "fixed"); });
+  }
+  $("typeSeg").querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+  renderPresets();
+  recalc();
+});
+$("inputSeg").addEventListener("click", function(e){
+  var b = e.target.closest("button");
+  if (!b) return;
+  state.inputMode = b.getAttribute("data-input");
+  $("inputSeg").querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+  recalc();
+});
+$("modeSeg").addEventListener("click", function(e){
+  var b = e.target.closest("button");
+  if (!b || b.disabled) return;
+  state.mode = b.getAttribute("data-mode");
+  $("modeSeg").querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+  recalc();
+});
+$("rateModeSeg").addEventListener("click", function(e){
+  var b = e.target.closest("button");
+  if (!b) return;
+  state.rateMode = b.getAttribute("data-ratemode");
+  $("rateModeSeg").querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+  recalc();
+});
+document.querySelectorAll("[data-rate]").forEach(function(b){
+  b.addEventListener("click", function(){ $("amtRate").value = b.getAttribute("data-rate"); recalc(); });
+});
+document.querySelectorAll("[data-rate2]").forEach(function(b){
+  b.addEventListener("click", function(){ $("amtRate2").value = b.getAttribute("data-rate2"); recalc(); });
+});
+["amtMonthly","selYears","amtTotal","amtRate","amtRate2","amtIncome","amtChildren","amtAge","amtExtra"].forEach(function(id){
+  $(id).addEventListener("input", recalc);
+  $(id).addEventListener("change", recalc);
+});
+
+renderPresets();
+recalc();
+})();
+</script>
+</body>
+</html>
