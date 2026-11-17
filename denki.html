@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>電気代 比較・試算ツール｜お金計算ツール集</title>
+<meta name="description" content="契約アンペアと月の使用量を入れるだけ。全国の大手電力会社の従量電灯プランの月額を、各社の公式料金表で確認した単価（税込）で安い順に比較します。">
+<style>
+:root{
+  --navy:#12283f; --navy2:#0b1a2c; --amber:#f2a007; --amber-d:#c77f02;
+  --bg:#f4f2ec; --card:#ffffff; --ink:#1d2733; --mut:#68707c;
+  --line:#ddd6c8; --red:#b03a2e; --green:#1e7d46; --soft:#fdf6e0;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6}
+header{background:linear-gradient(135deg,var(--navy2),var(--navy));color:#fff;padding:22px 16px 18px;border-bottom:4px solid var(--amber)}
+header .wrap{max-width:980px;margin:0 auto}
+header h1{margin:0;font-size:24px;letter-spacing:.04em}
+header h1 .accent{color:var(--amber)}
+header p{margin:6px 0 0;font-size:13px;color:#cfd9e4}
+.wrap{max-width:980px;margin:0 auto;padding:0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin:14px 0;box-shadow:0 1px 3px rgba(18,40,63,.06)}
+.card h2{margin:0 0 10px;font-size:17px;color:var(--navy);border-left:5px solid var(--amber);padding-left:9px}
+.note{font-size:12.5px;color:var(--mut)}
+label.flabel{display:block;font-size:12.5px;color:var(--mut);margin:10px 0 3px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1;min-width:64px;background:#e9e4d8;border:1px solid var(--line);border-radius:8px;padding:10px 8px;font-size:14.5px;cursor:pointer;color:var(--ink)}
+.seg button.on{background:var(--navy);color:#fff;font-weight:700;border-color:var(--navy)}
+input[type="number"]{width:100%;padding:10px 12px;font-size:16px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+input[type="number"]:focus{outline:2px solid var(--amber);border-color:var(--amber)}
+.plan{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:10px 0;background:#fff}
+.plan .phead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.plan .brand{font-size:12px;color:var(--mut);font-weight:700;letter-spacing:.05em}
+.plan .pname{font-size:17px;font-weight:800;color:var(--navy)}
+.plan .price{text-align:right}
+.plan .price .yen{font-size:26px;font-weight:800;color:var(--amber-d);font-variant-numeric:tabular-nums;white-space:nowrap}
+.plan .price .per{font-size:12px;color:var(--mut)}
+.plan .breakdown{font-size:13px;color:var(--ink);background:var(--soft);border-radius:6px;padding:6px 10px;margin:8px 0}
+.plan .tiers{font-size:12.5px;color:var(--ink);margin:4px 0}
+.plan .meta{font-size:13px;color:var(--mut)}
+.badges{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0 2px}
+.badges span{font-size:11.5px;background:#eef3f8;color:var(--navy);border:1px solid #cfdce8;border-radius:20px;padding:2px 9px}
+.badges span.best{background:#e5f3ea;color:var(--green);border-color:#bfe0cc;font-weight:700}
+.plan .pnote{font-size:12.5px;color:var(--mut);margin-top:6px}
+.count{font-size:15px;font-weight:700;color:var(--navy);margin:2px 0 6px}
+footer{margin:26px 0 40px}
+footer .card{font-size:12.5px;color:var(--mut)}
+.credit{text-align:center;color:var(--mut);font-size:12px;margin:10px 0 30px}
+.hidden{display:none}
+a{color:var(--navy)}
+ul.facts{margin:6px 0;padding-left:20px}
+ul.facts li{margin:5px 0;font-size:14px}
+.sitebar{background:var(--navy2);border-bottom:2px solid var(--amber)}
+.sitebar .sb-in{max-width:980px;margin:0 auto;padding:7px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.sitebar a{color:#fff;text-decoration:none;font-size:13px}
+.sitebar a:hover{color:var(--amber)}
+.sitebar .sb-name{font-weight:700;letter-spacing:.03em}
+</style>
+</head>
+<body>
+<div class="sitebar"><div class="sb-in"><a class="sb-name" href="index.html">お金計算ツール集</a><a href="index.html">トップへ戻る</a></div></div>
+
+<header>
+  <div class="wrap">
+    <h1>電気代 <span class="accent">比較・試算ツール</span></h1>
+    <p>契約アンペアと月の使用量から、大手電力会社の従量電灯プランの月額を比べます。料金は各社の公式料金表で確認した単価（税込）だけを使っています。燃料費調整額は毎月変わるため含んでいません（下記の注記参照）。</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <h2>契約アンペア</h2>
+    <div class="seg" id="ampSeg">
+      <button type="button" data-amp="10">10A</button>
+      <button type="button" data-amp="15">15A</button>
+      <button type="button" data-amp="20">20A</button>
+      <button type="button" data-amp="30" class="on">30A</button>
+      <button type="button" data-amp="40">40A</button>
+      <button type="button" data-amp="50">50A</button>
+      <button type="button" data-amp="60">60A</button>
+    </div>
+    <p class="note">関西・中国・四国はアンペアで基本料金が決まらない「最低料金制」のため、アンペアの選択はこの3社の料金に影響しません。</p>
+    <label class="flabel" for="kwhInput">月の使用量（kWh）</label>
+    <input type="number" id="kwhInput" value="300" min="0" max="9999" step="1" inputmode="numeric">
+    <p class="note">一般家庭の平均は月300kWh前後です。検針票（電気ご使用量のお知らせ）の「ご使用量」を入れると、その月の目安が出ます。入力すると自動で計算します。</p>
+  </div>
+
+  <div class="card">
+    <h2>比較結果（安い順）</h2>
+    <p class="count" id="resultHead"></p>
+    <div id="results"></div>
+    <p class="note">月額は「基本料金（または最低料金）＋電力量料金＋再生可能エネルギー発電促進賦課金（2026年度単価 4.18円/kWh）」の合計で、円未満は切り捨てています。<strong>燃料費調整額は含んでいません。実際の請求では、別途、燃料費調整額が加減されます。</strong></p>
+  </div>
+
+  <div class="card">
+    <h2>知っておくこと</h2>
+    <ul class="facts">
+      <li>比べているのは、各エリアの旧一般電気事業者の規制料金プラン（従量電灯）です。新電力や各社の自由料金プラン（ポイント還元・セット割のあるもの等）は対象外です。</li>
+      <li>燃料費調整額は、燃料価格に合わせて毎月変わるため、この試算には含んでいません。実際の請求額は、その月の燃料費調整単価に応じてここから増えたり減ったりします。</li>
+      <li>再生可能エネルギー発電促進賦課金は、2026年度の単価 1kWhあたり4.18円（経済産業省が2026年3月19日に公表、2026年5月検針分〜2027年4月検針分に適用）で計算に含めています。</li>
+      <li>関西電力・中国電力・四国電力の従量電灯Aは最低料金制です。最低料金には最初の一定量（関西・中国は15kWhまで、四国は11kWhまで）の電力量料金が含まれています。</li>
+      <li>アンペア制の会社には最低月額料金があり、基本料金＋電力量料金がそれを下回る場合は最低月額料金が適用されます（内訳に「最低月額料金を適用」と表示します）。</li>
+      <li>北陸電力以外の9社は2026年11月1日に料金単価の見直しがあり、このツールは見直し後の単価を使っています。北陸電力は見直しの対象外で、2024年4月1日以降の単価です。</li>
+      <li>沖縄電力は、2026年11月1日実施の新しい単価を公式料金表で確認できなかったため、この比較には含めていません。確認でき次第追加します（公式の単価表はフッターのリンクから見られます）。</li>
+      <li>エリアをまたいで契約先を選べるわけではありません。在住エリアの会社の行が、自分の電気代の目安です。他エリアの行は「地域でどれくらい違うか」の参考として見てください。</li>
+    </ul>
+  </div>
+
+  <footer>
+    <div class="card">
+      このツールは非公式の個人ツールです。料金は各社の公式料金表で確認した単価（税込）に基づく目安で、実際の請求額は燃料費調整額・契約内容・使用量の端数処理等により異なります。最新の料金は各社の公式ページでご確認ください。<br>
+      出典：<a href="https://www.hepco.co.jp/home/price/ratemenu/pdf/jyuuryou_b_c_dream8.pdf" target="_blank" rel="noopener">北海道電力 従量電灯B単価表</a>／<a href="https://www.tohoku-epco.co.jp/dprivate/plan/home/lightb/" target="_blank" rel="noopener">東北電力 従量電灯B</a>／<a href="https://www4.tepco.co.jp/ep/private/plan/pdf/20261101_teiatsu_minaoshi_kisei.pdf" target="_blank" rel="noopener">東京電力エナジーパートナー 料金単価表</a>／<a href="https://miraiz.chuden.co.jp/common/relocation/resource/catalog_hba.pdf" target="_blank" rel="noopener">中部電力ミライズ 電気料金単価表</a>／<a href="https://www.rikuden.co.jp/202404rate/ryokin.html" target="_blank" rel="noopener">北陸電力 電気料金単価表</a>／<a href="https://www.kepco.co.jp/ir/brief/disclosure/pdf/kaiji20260929_1.pdf" target="_blank" rel="noopener">関西電力 料金見直し資料</a>／<a href="https://www.energia.co.jp/assets/press/2026/p20260928-1b.pdf" target="_blank" rel="noopener">中国電力 電気料金単価表</a>／<a href="https://www.yonden.co.jp/business/price/200v/plan/juryo_a.html" target="_blank" rel="noopener">四国電力 従量電灯A</a>／<a href="https://www.kyuden.co.jp/td/application/general/user/menu/outline/juryo.html" target="_blank" rel="noopener">九州電力 従量電灯B</a>／<a href="https://www.okiden.co.jp/common/price/" target="_blank" rel="noopener">沖縄電力 電気料金単価表（未収録）</a>／<a href="https://www.meti.go.jp/press/2025/03/20260319004/20260319004.html" target="_blank" rel="noopener">経済産業省 2026年度の賦課金単価</a><br>
+      料金確認日：2026-11-18
+    </div>
+    <p class="credit">制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+var $ = function(id){ return document.getElementById(id); };
+var yen = function(n){ return Math.floor(n).toLocaleString("ja-JP") + "円"; };
+var num2 = function(n){ return (Math.round(n*100)/100).toLocaleString("ja-JP",{minimumFractionDigits:0, maximumFractionDigits:2}); };
+
+// 2026年度 再生可能エネルギー発電促進賦課金（円/kWh、経済産業省 2026-03-19公表）
+var REENE = 4.18;
+
+// type "amp": 基本料金 = per10（10Aあたり）× A/10、最低月額料金 min あり
+// type "min": 最低料金制。minCharge に最初の incl kWh 分の電力量料金を含む
+// tiers: [上限kWh, 1kWhあたり単価] の配列（最終要素の上限は Infinity）
+var PLANS = [
+{company:"北海道電力", area:"北海道", plan:"従量電灯B", type:"amp", per10:572.10, min:505.72,
+ tiers:[[120,35.77],[280,42.06],[Infinity,45.78]], since:"2026年11月1日実施単価",
+ src:"https://www.hepco.co.jp/home/price/ratemenu/pdf/jyuuryou_b_c_dream8.pdf"},
+{company:"東北電力", area:"東北", plan:"従量電灯B", type:"amp", per10:410.71, min:389.24,
+ tiers:[[120,31.01],[300,37.76],[Infinity,41.71]], since:"2026年11月1日実施単価",
+ src:"https://www.tohoku-epco.co.jp/dprivate/plan/home/lightb/"},
+{company:"東京電力エナジーパートナー", area:"東京", plan:"従量電灯B", type:"amp", per10:392.06, min:368.64,
+ tiers:[[120,29.85],[300,36.45],[Infinity,40.54]], since:"2026年11月1日実施単価",
+ src:"https://www4.tepco.co.jp/ep/private/plan/pdf/20261101_teiatsu_minaoshi_kisei.pdf"},
+{company:"中部電力ミライズ", area:"中部", plan:"従量電灯B", type:"amp", per10:447.92, min:340.88,
+ tiers:[[120,21.25],[300,25.73],[Infinity,28.68]], since:"2026年11月1日適用単価",
+ src:"https://miraiz.chuden.co.jp/common/relocation/resource/catalog_hba.pdf"},
+{company:"北陸電力", area:"北陸", plan:"従量電灯B", type:"amp", per10:302.50, min:302.50,
+ tiers:[[120,30.86],[300,34.75],[Infinity,36.46]], since:"2024年4月1日以降の単価",
+ src:"https://www.rikuden.co.jp/202404rate/ryokin.html"},
+{company:"関西電力", area:"関西", plan:"従量電灯A", type:"min", minCharge:763.81, incl:15,
+ tiers:[[120,20.89],[300,26.29],[Infinity,29.27]], since:"2026年11月1日実施単価",
+ src:"https://www.kepco.co.jp/ir/brief/disclosure/pdf/kaiji20260929_1.pdf"},
+{company:"中国電力", area:"中国", plan:"従量電灯A", type:"min", minCharge:983.37, incl:15,
+ tiers:[[120,33.32],[300,40.00],[Infinity,42.12]], since:"2026年11月1日実施単価",
+ src:"https://www.energia.co.jp/assets/press/2026/p20260928-1b.pdf"},
+{company:"四国電力", area:"四国", plan:"従量電灯A", type:"min", minCharge:953.13, incl:11,
+ tiers:[[120,31.42],[300,38.04],[Infinity,41.55]], since:"2026年11月1日実施単価",
+ src:"https://www.yonden.co.jp/business/price/200v/plan/juryo_a.html"},
+{company:"九州電力", area:"九州", plan:"従量電灯B", type:"amp", per10:441.69, min:397.58,
+ tiers:[[120,18.33],[300,23.93],[Infinity,26.93]], since:"2026年11月1日実施単価",
+ src:"https://www.kyuden.co.jp/td/application/general/user/menu/outline/juryo.html"}
+];
+
+var state = { amp: 30 };
+
+function tierLabel(prev, up){
+  if(up === Infinity) return prev + "kWh超";
+  if(prev === 0) return "最初の" + up + "kWhまで";
+  return prev + "kWh超〜" + up + "kWh";
+}
+
+function calc(p, amp, kwh){
+  var basic = (p.type === "amp") ? p.per10 * amp / 10 : p.minCharge;
+  var start = (p.type === "min") ? p.incl : 0;
+  var energy = 0, detail = [], prev = start;
+  for(var i = 0; i < p.tiers.length; i++){
+    var up = p.tiers[i][0], rate = p.tiers[i][1];
+    if(kwh <= prev) break;
+    var use = Math.min(kwh, up) - prev;
+    if(use > 0){
+      energy += use * rate;
+      detail.push({ label: "第" + (i+1) + "段階（" + tierLabel(prev, up) + "）", kwh: use, rate: rate, amt: use * rate });
+    }
+    prev = up;
+  }
+  var sub = basic + energy;
+  var minApplied = false;
+  if(p.type === "amp" && sub < p.min){ sub = p.min; minApplied = true; }
+  var reene = kwh * REENE;
+  var total = Math.floor(sub + reene);
+  return { basic: basic, energy: energy, detail: detail, sub: sub, reene: reene, total: total, minApplied: minApplied };
+}
+
+function rateSummary(p){
+  if(p.type === "amp"){
+    return "基本料金 10Aあたり " + num2(p.per10) + "円／最低月額料金 " + num2(p.min) + "円";
+  }
+  return "最低料金 " + num2(p.minCharge) + "円（最初の" + p.incl + "kWhまでを含む）";
+}
+
+function render(){
+  var kwhRaw = $("kwhInput").value;
+  var kwh = parseFloat(kwhRaw);
+  var box = $("results");
+  if(kwhRaw === "" || isNaN(kwh) || kwh < 0){
+    $("resultHead").textContent = "使用量を入力すると、ここに比較結果が出ます。";
+    box.innerHTML = "";
+    return;
+  }
+  $("resultHead").textContent = state.amp + "A・月" + kwh.toLocaleString("ja-JP") + "kWh の場合の月額（燃料費調整額は含みません）";
+  var rows = PLANS.map(function(p){
+    return { p: p, r: calc(p, state.amp, kwh) };
+  });
+  rows.sort(function(a, b){ return a.r.total - b.r.total; });
+  box.innerHTML = rows.map(function(row, idx){
+    var p = row.p, r = row.r;
+    var baseLabel = (p.type === "amp") ? "基本料金（" + state.amp + "A）" : "最低料金（" + p.incl + "kWhまで含む）";
+    var bd = baseLabel + " " + yen(r.basic) + " ＋ 電力量料金 " + yen(r.energy) + " ＋ 再エネ賦課金 " + yen(r.reene);
+    if(r.minApplied) bd += "（最低月額料金 " + yen(p.min) + " を適用）";
+    var tiersHtml = r.detail.map(function(d){
+      return d.label + "：" + d.kwh.toLocaleString("ja-JP") + "kWh × " + num2(d.rate) + "円 ＝ " + yen(d.amt);
+    }).join("／");
+    if(!tiersHtml) tiersHtml = "電力量料金は最低料金に含まれています";
+    var badges = "<span>" + p.area + "エリア</span>" + (idx === 0 ? "<span class=\"best\">最安</span>" : "");
+    return "<div class=\"plan\">" +
+      "<div class=\"phead\"><div><div class=\"brand\">" + p.company + "</div><div class=\"pname\">" + p.plan + "</div></div>" +
+      "<div class=\"price\"><span class=\"yen\">" + yen(r.total) + "</span><div class=\"per\">月額（燃料費調整額を除く）</div></div></div>" +
+      "<div class=\"badges\">" + badges + "</div>" +
+      "<div class=\"breakdown\">" + bd + "</div>" +
+      "<div class=\"tiers\">" + tiersHtml + "</div>" +
+      "<p class=\"pnote\">" + rateSummary(p) + "／" + p.since + "／<a href=\"" + p.src + "\" target=\"_blank\" rel=\"noopener\">公式の料金表</a></p>" +
+      "</div>";
+  }).join("");
+}
+
+$("ampSeg").addEventListener("click", function(e){
+  var b = e.target.closest("button");
+  if(!b) return;
+  state.amp = parseInt(b.getAttribute("data-amp"), 10);
+  var btns = $("ampSeg").querySelectorAll("button");
+  for(var i = 0; i < btns.length; i++) btns[i].classList.toggle("on", btns[i] === b);
+  render();
+});
+$("kwhInput").addEventListener("input", render);
+render();
+})();
+</script>
+</body>
+</html>
