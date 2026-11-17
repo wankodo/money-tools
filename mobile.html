@@ -126,7 +126,6 @@ ul.facts li{margin:5px 0;font-size:14px}
       <li>段階制プラン（楽天モバイル、ドコモ MAX、LINEMOベストプラン等）は、その月に使ったデータ量で料金が自動で変わります。ここでは「選んだ使用量を使った場合」の段階額を表示しています。</li>
       <li>povo2.0は基本料0円＋トッピング方式です。ここでは30日間トッピングで1か月をまかなう前提で月額換算しています。</li>
       <li>日本通信SIMは「1GBごとに220円」の従量制です。ここでは選んだ使用量ちょうどを使った場合の額を表示しています。</li>
-      <li>ソフトバンク（本ブランド）のプランは、公式ページで料金を確認できなかったため収録していません。ワイモバイルとLINEMOは収録しています。</li>
       <li>ドコモ／ahamoは2026年12月1日に料金改定が予定されています（ahamoは段階制化、大盛りオプションは2026年11月30日で提供終了予定）。本ツールの料金は確認日時点のものです。</li>
     </ul>
   </div>
@@ -134,7 +133,7 @@ ul.facts li{margin:5px 0;font-size:14px}
   <footer>
     <div class="card">
       このツールは非公式の個人ツールです。料金は各社の公式ページで確認した2026年11月時点の通常月額（税込）に基づく目安で、実際の請求額は契約内容・オプション・通話料等により異なります。最新の料金と条件は各社の公式ページでご確認ください。<br>
-      出典：<a href="https://www.docomo.ne.jp/charge/" target="_blank" rel="noopener">NTTドコモ 料金・割引</a>／<a href="https://ahamo.com/plan" target="_blank" rel="noopener">ahamo プラン</a>／<a href="https://www.au.com/mobile/charge/" target="_blank" rel="noopener">au 料金・割引</a>／<a href="https://www.uqwimax.jp/mobile/plan/" target="_blank" rel="noopener">UQモバイル プラン</a>／<a href="https://www.ymobile.jp/plan/" target="_blank" rel="noopener">ワイモバイル 料金プラン</a>／<a href="https://network.mobile.rakuten.co.jp/fee/" target="_blank" rel="noopener">楽天モバイル 料金プラン</a>／<a href="https://povo.jp/spec/topping/" target="_blank" rel="noopener">povo2.0 トッピング</a>／<a href="https://www.linemo.jp/plan/" target="_blank" rel="noopener">LINEMO プラン</a>／<a href="https://www.iijmio.jp/gigaplan/" target="_blank" rel="noopener">IIJmio ギガプラン</a>／<a href="https://mineo.jp/price/" target="_blank" rel="noopener">mineo 料金</a>／<a href="https://www.nihontsushin.com/plan/" target="_blank" rel="noopener">日本通信SIM プラン</a><br>
+      出典：<a href="https://www.docomo.ne.jp/charge/" target="_blank" rel="noopener">NTTドコモ 料金・割引</a>／<a href="https://ahamo.com/plan" target="_blank" rel="noopener">ahamo プラン</a>／<a href="https://www.au.com/mobile/charge/" target="_blank" rel="noopener">au 料金・割引</a>／<a href="https://www.softbank.jp/mobile/price_plan/data/paytoku2/" target="_blank" rel="noopener">ソフトバンク 料金プラン</a>／<a href="https://www.uqwimax.jp/mobile/plan/" target="_blank" rel="noopener">UQモバイル プラン</a>／<a href="https://www.ymobile.jp/plan/" target="_blank" rel="noopener">ワイモバイル 料金プラン</a>／<a href="https://network.mobile.rakuten.co.jp/fee/" target="_blank" rel="noopener">楽天モバイル 料金プラン</a>／<a href="https://povo.jp/spec/topping/" target="_blank" rel="noopener">povo2.0 トッピング</a>／<a href="https://www.linemo.jp/plan/" target="_blank" rel="noopener">LINEMO プラン</a>／<a href="https://www.iijmio.jp/gigaplan/" target="_blank" rel="noopener">IIJmio ギガプラン</a>／<a href="https://mineo.jp/price/" target="_blank" rel="noopener">mineo 料金</a>／<a href="https://www.nihontsushin.com/plan/" target="_blank" rel="noopener">日本通信SIM プラン</a><br>
       料金確認日：2026-11-18
     </div>
     <p class="credit">制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
@@ -221,6 +220,25 @@ var PLANS = [
  f:{tether:1,overseas:1,mail:1,shop:1,family:1,g5:1},
  note:"10分以内の国内通話かけ放題が込みのプランです。おうち割 光セット・家族割引サービス・PayPayカード割などの割引は含んでいません。",
  src:"https://www.ymobile.jp/plan/"},
+{brand:"ソフトバンク", name:"ペイトク2", kind:"major", mode:"fixed", cap:Infinity, price:10538,
+ capText:"無制限", callUnit:22,
+ five:{price:880,label:"準定額オプション＋（5分）"}, full:{price:1980,label:"定額オプション＋"},
+ f:{tether:1,overseas:0,mail:0,shop:1,family:1,g5:0},
+ note:"データ無制限プラン。PayPayポイントの還元特典が特徴です。テザリングは無料。新みんな家族割・おうち割 光セット等の割引は含んでいません。",
+ src:"https://www.softbank.jp/mobile/price_plan/data/paytoku2/"},
+{brand:"ソフトバンク", name:"テイガク無制限", kind:"major", mode:"fixed", cap:Infinity, price:8008,
+ capText:"無制限", callUnit:22,
+ five:{price:880,label:"準定額オプション＋（5分）"}, full:{price:1980,label:"定額オプション＋"},
+ f:{tether:1,overseas:0,mail:0,shop:1,family:1,g5:0},
+ note:"データ無制限プラン。テザリングは無料。新みんな家族割・おうち割 光セット等の割引は含んでいません。",
+ src:"https://www.softbank.jp/mobile/price_plan/data/teigaku-museigen/"},
+{brand:"ソフトバンク", name:"ミニフィット2", kind:"major", mode:"tiers",
+ tiers:[{upTo:2,price:5258},{upTo:5,price:6358}],
+ capText:"最大5GB（段階制）", callUnit:22,
+ five:{price:880,label:"準定額オプション＋（5分）"}, full:{price:1980,label:"定額オプション＋"},
+ f:{tether:1,overseas:0,mail:0,shop:1,family:1,g5:0},
+ note:"使ったデータ量で料金が変わる2段階制（最大5GB）。テザリングは無料。新みんな家族割・おうち割 光セット等の割引は含んでいません。",
+ src:"https://www.softbank.jp/mobile/price_plan/data/minifit2/"},
 {brand:"楽天モバイル", name:"Rakuten最強プラン", kind:"major", mode:"tiers",
  tiers:[{upTo:3,price:1078},{upTo:20,price:2178},{upTo:Infinity,price:3278}],
  capText:"無制限（段階制）", callUnit:22,
