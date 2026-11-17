@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ガス代 比較・試算ツール｜お金計算ツール集</title>
+<meta name="description" content="月のガス使用量（m³）を入れるだけで、大手都市ガス会社の一般契約の月額を安い順に比較。LPガス（プロパンガス）の全国平均の目安試算つき。料金は各社の公式料金表の基準単位料金（原料費調整なし）で計算します。">
+<style>
+:root{
+  --navy:#12283f; --navy2:#0b1a2c; --amber:#f2a007; --amber-d:#c77f02;
+  --bg:#f4f2ec; --card:#ffffff; --ink:#1d2733; --mut:#68707c;
+  --line:#ddd6c8; --red:#b03a2e; --green:#1e7d46; --soft:#fdf6e0;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6}
+header{background:linear-gradient(135deg,var(--navy2),var(--navy));color:#fff;padding:22px 16px 18px;border-bottom:4px solid var(--amber)}
+header .wrap{max-width:980px;margin:0 auto}
+header h1{margin:0;font-size:24px;letter-spacing:.04em}
+header h1 .accent{color:var(--amber)}
+header p{margin:6px 0 0;font-size:13px;color:#cfd9e4}
+.wrap{max-width:980px;margin:0 auto;padding:0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin:14px 0;box-shadow:0 1px 3px rgba(18,40,63,.06)}
+.card h2{margin:0 0 10px;font-size:17px;color:var(--navy);border-left:5px solid var(--amber);padding-left:9px}
+.note{font-size:12.5px;color:var(--mut)}
+label.flabel{display:block;font-size:12.5px;color:var(--mut);margin:10px 0 3px}
+.usage-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px}
+.usage-row input[type=number]{width:130px;font-size:20px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-variant-numeric:tabular-nums}
+.usage-row .unit{font-size:15px;color:var(--ink)}
+.seg{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.seg button{background:#e9e4d8;border:1px solid var(--line);border-radius:8px;padding:8px 14px;font-size:14px;cursor:pointer;color:var(--ink)}
+.seg button.on{background:var(--navy);color:#fff;font-weight:700;border-color:var(--navy)}
+.plan{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:10px 0;background:#fff}
+.plan.best{border-color:var(--amber);box-shadow:0 0 0 2px rgba(242,160,7,.25)}
+.plan .phead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.plan .brand{font-size:12px;color:var(--mut);font-weight:700;letter-spacing:.05em}
+.plan .pname{font-size:17px;font-weight:800;color:var(--navy)}
+.plan .price{text-align:right}
+.plan .price .yen{font-size:26px;font-weight:800;color:var(--amber-d);font-variant-numeric:tabular-nums;white-space:nowrap}
+.plan .price .per{font-size:12px;color:var(--mut)}
+.plan .breakdown{font-size:13px;color:var(--ink);background:var(--soft);border-radius:6px;padding:6px 10px;margin:8px 0}
+.plan .meta{font-size:13px;color:var(--mut)}
+.badges{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0 2px}
+.badges span{font-size:11.5px;background:#eef3f8;color:var(--navy);border:1px solid #cfdce8;border-radius:20px;padding:2px 9px}
+.badges span.best-b{background:var(--amber);border-color:var(--amber);color:#fff;font-weight:700}
+.plan .pnote{font-size:12.5px;color:var(--mut);margin-top:6px}
+.count{font-size:15px;font-weight:700;color:var(--navy);margin:2px 0 6px}
+table.anchors{border-collapse:collapse;margin:8px 0;font-size:13.5px}
+table.anchors th,table.anchors td{border:1px solid var(--line);padding:5px 12px;text-align:right;font-variant-numeric:tabular-nums}
+table.anchors th{background:#eef3f8;color:var(--navy)}
+footer{margin:26px 0 40px}
+footer .card{font-size:12.5px;color:var(--mut)}
+.credit{text-align:center;color:var(--mut);font-size:12px;margin:10px 0 30px}
+.hidden{display:none}
+a{color:var(--navy)}
+ul.facts{margin:6px 0;padding-left:20px}
+ul.facts li{margin:5px 0;font-size:14px}
+.sitebar{background:var(--navy2);border-bottom:2px solid var(--amber)}
+.sitebar .sb-in{max-width:980px;margin:0 auto;padding:7px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.sitebar a{color:#fff;text-decoration:none;font-size:13px}
+.sitebar a:hover{color:var(--amber)}
+.sitebar .sb-name{font-weight:700;letter-spacing:.03em}
+</style>
+</head>
+<body>
+<div class="sitebar"><div class="sb-in"><a class="sb-name" href="index.html">お金計算ツール集</a><a href="index.html">トップへ戻る</a></div></div>
+
+<header>
+  <div class="wrap">
+    <h1>ガス代 <span class="accent">比較・試算ツール</span></h1>
+    <p>月のガス使用量（m³）を入れるだけで、大手都市ガス会社の一般契約の月額を安い順に並べて比較します。料金は各社の公式料金表にある「基準単位料金」（原料費調整なし）で計算しています。実際の請求では、毎月変動する原料費調整額が加減されます。</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <h2>月のガス使用量</h2>
+    <div class="usage-row">
+      <input type="number" id="usageInput" min="0" step="1" inputmode="numeric" placeholder="例：25">
+      <span class="unit">m³／月</span>
+    </div>
+    <div class="seg" id="usageChips">
+      <button type="button" data-v="10">10m³</button>
+      <button type="button" data-v="15">15m³</button>
+      <button type="button" data-v="20">20m³</button>
+      <button type="button" data-v="25">25m³</button>
+      <button type="button" data-v="30">30m³</button>
+      <button type="button" data-v="40">40m³</button>
+      <button type="button" data-v="50">50m³</button>
+    </div>
+    <p class="note">使用量の目安：一人暮らしで月10〜15m³、2〜3人世帯で月20〜30m³、冬場や床暖房のある世帯では月40m³以上になることもあります。検針票の「ご使用量」がそのまま使えます。</p>
+  </div>
+
+  <div class="card">
+    <h2>都市ガス（一般契約）の月額比較</h2>
+    <p class="count" id="resultCount"></p>
+    <div id="resultList"></div>
+    <p class="note" id="resultEmpty">使用量を入力すると、各社の月額を安い順に表示します。</p>
+    <p class="note">都市ガスは住んでいる地域で契約できる会社が決まっています。他地域の会社とは契約できませんが、地域ごとの料金水準の違いを見る目安として並べています。会社ごとにガスの熱量（45MJ／46MJなど）が異なるため、m³あたりの単純比較には限界があります。</p>
+  </div>
+
+  <div class="card">
+    <h2>LPガス（プロパンガス）の目安試算</h2>
+    <div id="lpResult"></div>
+    <p class="note">LPガスは販売店ごとに料金を決める自由料金で、会社差・地域差がとても大きいガスです。ここでは公的統計の全国平均から出した「目安」だけを示します。</p>
+    <table class="anchors">
+      <tr><th>使用量</th><th>5m³</th><th>10m³</th><th>20m³</th><th>50m³</th></tr>
+      <tr><th>全国平均の請求額</th><td>6,016円</td><td>9,856円</td><td>17,186円</td><td>37,614円</td></tr>
+    </table>
+    <p class="note">出典：一般財団法人日本エネルギー経済研究所 石油情報センター「一般小売価格 LP（プロパン）ガス 確報」2026年8月分（税込・基本料金込み）。上の表の使用量以外は、公表値と公表値の間を直線でつないで算出しています。実際の料金は契約中の販売店の料金表でご確認ください。</p>
+  </div>
+
+  <div class="card">
+    <h2>知っておくこと</h2>
+    <ul class="facts">
+      <li>表示はすべて税込です。都市ガスは各社の公式料金表の「基準単位料金」で計算しており、原料費調整額は含んでいません。実際の請求では、原料費調整制度により毎月の単位料金が変動し、ここでの試算より高くも低くもなります。</li>
+      <li>計算式は「基本料金＋基準単位料金×使用量」で、1円未満は切り捨てです。使用量に応じて適用される料金表（段階）が切り替わります。</li>
+      <li>大阪ガスの旧「一般料金」は2026年9月30日で新規申込受付を終了したため、2026年10月1日新設の標準メニュー「一般料金S」を収録しています。</li>
+      <li>東京ガスは供給地区ごとに料金が異なります。ここでは東京地区等の料金です。西部ガスは福岡・北九州地区と、熊本・長崎・佐世保の2地区を分けて収録しています。</li>
+      <li>政府の電気・ガス料金負担軽減支援による値引きは、実施月が限られるため含んでいません。</li>
+      <li>LPガスの目安は全国平均です。同じ使用量でも都道府県平均で月3,000円以上の差があり（2026年8月確報、10m³で奈良県8,741円〜北海道12,052円）、販売店ごとの差はさらに大きいことがあります。</li>
+    </ul>
+  </div>
+
+  <footer>
+    <div class="card">
+      このツールは非公式の個人ツールです。料金は各社の公式料金表で確認した基準単位料金（税込）に基づく目安で、実際の請求額は原料費調整額・契約内容により異なります。最新の料金は各社の公式ページでご確認ください。<br>
+      出典：<a href="https://home.tokyo-gas.co.jp/column/gas_power/0129" target="_blank" rel="noopener">東京ガス ガス料金の計算方法</a>／<a href="https://www.osakagas.co.jp/company/press/pr2026/__icsFiles/afieldfile/2026/09/29/260929.pdf" target="_blank" rel="noopener">大阪ガス 原料費調整について（一般料金S料金表）</a>／<a href="https://www.tohogas.co.jp/business/gas/clause/pdf/kyokyu_important.pdf" target="_blank" rel="noopener">東邦ガス 一般ガス供給約款 重要事項</a>／<a href="https://hd.saibugas.co.jp/news_release/detail/2026/pdf/nr028.pdf" target="_blank" rel="noopener">西部ガス 原料費調整について（一般ガス供給約款料金表）</a>／<a href="https://www.hokkaido-gas.co.jp/business/ryo-kin/menu/ryokinhyo.html" target="_blank" rel="noopener">北海道ガス 料金表一覧</a>／<a href="https://www.gas.city.sendai.jp/family/charge/03/index.php" target="_blank" rel="noopener">仙台市ガス局 ガス料金</a>／<a href="https://oil-info.ieej.or.jp/price/price_ippan_lp_gusu.html" target="_blank" rel="noopener">石油情報センター 一般小売価格 LPガス</a><br>
+      料金確認日：2026-11-18
+    </div>
+    <p class="credit">制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+var $ = function(id){ return document.getElementById(id); };
+var yen = function(n){ return n.toLocaleString("ja-JP") + "円"; };
+var num2 = function(n){ return n.toLocaleString("ja-JP",{minimumFractionDigits:2, maximumFractionDigits:2}); };
+
+// tiers: {max: その段階の上限m³（含む）, base: 基本料金, unit: 基準単位料金} 税込
+var COMPANIES = [
+{name:"東京ガス", plan:"一般料金（東京地区等）", area:"東京・神奈川・千葉・埼玉・群馬南部ほか",
+ tiers:[
+  {max:20, base:909.00, unit:170.81},
+  {max:80, base:1206.00, unit:155.96},
+  {max:200, base:1382.00, unit:153.76},
+  {max:500, base:2042.00, unit:150.46},
+  {max:800, base:6442.00, unit:141.66},
+  {max:Infinity, base:12602.00, unit:133.96}],
+ note:"2026年10月1日改定の料金表。供給地区で料金が異なり、これは東京地区等です。",
+ src:"https://home.tokyo-gas.co.jp/column/gas_power/0129"},
+{name:"大阪ガス", plan:"一般料金S", area:"大阪・京都・兵庫・奈良・滋賀・和歌山ほか",
+ tiers:[
+  {max:20, base:1335.00, unit:148.00},
+  {max:50, base:1415.00, unit:144.00},
+  {max:100, base:1680.00, unit:138.70},
+  {max:200, base:2129.00, unit:134.21},
+  {max:350, base:3561.00, unit:127.05},
+  {max:500, base:3886.50, unit:126.12},
+  {max:1000, base:7036.50, unit:119.82},
+  {max:Infinity, base:7356.50, unit:119.50}],
+ note:"2026年10月1日新設の標準メニュー。旧「一般料金」は2026年9月30日で新規受付終了。",
+ src:"https://www.osakagas.co.jp/company/press/pr2026/__icsFiles/afieldfile/2026/09/29/260929.pdf"},
+{name:"東邦ガス", plan:"一般ガス供給約款", area:"愛知・岐阜・三重ほか",
+ tiers:[
+  {max:20, base:759.00, unit:210.52},
+  {max:50, base:1588.88, unit:169.03},
+  {max:100, base:1833.33, unit:164.14},
+  {max:250, base:2077.77, unit:161.70},
+  {max:500, base:2648.14, unit:159.41},
+  {max:Infinity, base:7109.25, unit:150.49}],
+ note:"",
+ src:"https://www.tohogas.co.jp/business/gas/clause/pdf/kyokyu_important.pdf"},
+{name:"西部ガス", plan:"一般ガス供給約款（福岡・北九州地区）", area:"福岡・北九州",
+ tiers:[
+  {max:15, base:913.00, unit:246.76},
+  {max:30, base:1133.00, unit:232.10},
+  {max:100, base:1562.00, unit:217.80},
+  {max:Infinity, base:2167.00, unit:211.75}],
+ note:"福岡・北九州地区（45MJ）の料金表です。",
+ src:"https://hd.saibugas.co.jp/news_release/detail/2026/pdf/nr028.pdf"},
+{name:"西部ガス熊本・長崎・佐世保", plan:"一般ガス供給約款（熊本・長崎・佐世保）", area:"熊本・長崎・佐世保",
+ tiers:[
+  {max:14, base:913.00, unit:252.24},
+  {max:29, base:1133.00, unit:237.25},
+  {max:97, base:1562.00, unit:222.64},
+  {max:Infinity, base:2167.00, unit:216.45}],
+ note:"西部ガス熊本・西部ガス長崎・西部ガス佐世保の料金表（46MJ）です。",
+ src:"https://hd.saibugas.co.jp/news_release/detail/2026/pdf/nr028.pdf"},
+{name:"北海道ガス", plan:"一般料金", area:"札幌・小樽・函館・千歳ほか",
+ tiers:[
+  {max:15, base:946.00, unit:200.69},
+  {max:50, base:1454.20, unit:166.81},
+  {max:200, base:2013.00, unit:155.63},
+  {max:800, base:7700.00, unit:127.20},
+  {max:Infinity, base:9900.00, unit:124.45}],
+ note:"",
+ src:"https://www.hokkaido-gas.co.jp/business/ryo-kin/menu/ryokinhyo.html"},
+{name:"仙台市ガス局", plan:"一般料金（一般供給条件）", area:"仙台市ほか",
+ tiers:[
+  {max:20, base:647.90, unit:192.34},
+  {max:100, base:770.00, unit:186.23},
+  {max:300, base:990.00, unit:184.05},
+  {max:Infinity, base:2530.00, unit:178.92}],
+ note:"公営の都市ガス。料金表は令和元年10月1日実施分が現行です。",
+ src:"https://www.gas.city.sendai.jp/family/charge/03/index.php"}
+];
+
+// LPガス全国平均アンカー（石油情報センター 2026年8月確報、税込・基本料金込み）
+var LP_ANCHORS = [
+ {v:5, price:6016},
+ {v:10, price:9856},
+ {v:20, price:17186},
+ {v:50, price:37614}
+];
+function lpEstimate(v){
+  if(v <= 0) return null;
+  var a = LP_ANCHORS;
+  if(v <= a[0].v){
+    var slope = (a[1].price - a[0].price) / (a[1].v - a[0].v);
+    return Math.round(a[0].price - slope * (a[0].v - v));
+  }
+  for(var i = 0; i < a.length - 1; i++){
+    if(v <= a[i+1].v){
+      var s = (a[i+1].price - a[i].price) / (a[i+1].v - a[i].v);
+      return Math.round(a[i].price + s * (v - a[i].v));
+    }
+  }
+  var last = a[a.length-1], prev = a[a.length-2];
+  var s2 = (last.price - prev.price) / (last.v - prev.v);
+  return Math.round(last.price + s2 * (v - last.v));
+}
+
+function tierFor(c, v){
+  for(var i = 0; i < c.tiers.length; i++){
+    if(v <= c.tiers[i].max) return {tier:c.tiers[i], idx:i};
+  }
+  return {tier:c.tiers[c.tiers.length-1], idx:c.tiers.length-1};
+}
+var TIER_NAMES = ["A","B","C","D","E","F","G","H"];
+
+function render(){
+  var raw = $("usageInput").value;
+  var v = parseFloat(raw);
+  var chips = $("usageChips").querySelectorAll("button");
+  chips.forEach(function(b){ b.classList.toggle("on", raw !== "" && parseFloat(b.getAttribute("data-v")) === v); });
+  if(raw === "" || isNaN(v) || v < 0){
+    $("resultCount").textContent = "";
+    $("resultList").innerHTML = "";
+    $("resultEmpty").style.display = "";
+    $("lpResult").innerHTML = '<p class="note">使用量を入力すると、全国平均での目安を表示します。</p>';
+    return;
+  }
+  $("resultEmpty").style.display = "none";
+  var rows = COMPANIES.map(function(c){
+    var t = tierFor(c, v);
+    var total = Math.floor(t.tier.base + t.tier.unit * v);
+    return {c:c, tier:t.tier, idx:t.idx, total:total};
+  });
+  rows.sort(function(a,b){ return a.total - b.total; });
+  $("resultCount").textContent = "月 " + v + "m³ の場合（基準単位料金・原料費調整なし）";
+  $("resultList").innerHTML = rows.map(function(r, i){
+    var bd = "基本料金 " + yen(r.tier.base) + " ＋ 基準単位料金 " + num2(r.tier.unit) + "円/m³ × " + v + "m³";
+    var html = '<div class="plan' + (i === 0 ? " best" : "") + '">'
+      + '<div class="phead"><div><div class="brand">' + r.c.area + '</div>'
+      + '<div class="pname">' + r.c.name + " " + r.c.plan + '</div></div>'
+      + '<div class="price"><span class="yen">' + yen(r.total) + '</span><br><span class="per">／月（税込）</span></div></div>'
+      + '<div class="badges">' + (i === 0 ? '<span class="best-b">この条件で最安</span>' : "")
+      + '<span>料金表' + TIER_NAMES[r.idx] + '</span><span>原料費調整なし</span></div>'
+      + '<div class="breakdown">' + bd + '</div>';
+    if(r.c.note) html += '<p class="pnote">' + r.c.note + '</p>';
+    html += '<p class="meta">出典：<a href="' + r.c.src + '" target="_blank" rel="noopener">' + r.c.name + ' 公式ページ</a></p></div>';
+    return html;
+  }).join("");
+  var lp = lpEstimate(v);
+  if(lp === null){
+    $("lpResult").innerHTML = '<p class="note">使用量が0m³のため、LPガスの目安は表示しません。</p>';
+  } else {
+    var exact = LP_ANCHORS.some(function(a){ return a.v === v; });
+    $("lpResult").innerHTML = '<div class="plan"><div class="phead"><div>'
+      + '<div class="brand">全国平均（石油情報センター 2026年8月確報）</div>'
+      + '<div class="pname">LPガス（プロパンガス）</div></div>'
+      + '<div class="price"><span class="yen">約 ' + yen(lp) + '</span><br><span class="per">／月（税込・目安）</span></div></div>'
+      + '<div class="breakdown">' + (exact ? "公表値そのまま（" + v + "m³の全国平均）" : "公表値（5／10／20／50m³）の間を直線でつないだ目安") + '</div>'
+      + '<p class="pnote">LPガスは販売店ごとの自由料金です。この金額は全国平均で、実際の料金とは大きく異なる場合があります。</p></div>';
+  }
+}
+
+$("usageInput").addEventListener("input", render);
+$("usageChips").addEventListener("click", function(e){
+  var b = e.target.closest("button");
+  if(!b) return;
+  $("usageInput").value = b.getAttribute("data-v");
+  render();
+});
+render();
+})();
+</script>
+</body>
+</html>
