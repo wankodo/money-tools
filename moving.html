@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<script>try{var _t=localStorage.getItem("ido_theme_v1");if(_t==="andy"||_t==="kuma")document.documentElement.dataset.theme=_t;}catch(e){}</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>引っ越し費用の目安｜お金計算ツール集</title>
+<meta name="description" content="引っ越し費用の目安シミュレーター。世帯人数・荷物量・移動距離・時期（通常期／繁忙期）とオプションを入れるだけで、引っ越し料金の相場の目安と安め〜高めの幅まで無料で試算できます。">
+<style>
+  :root { --navy:#12283f; --navy2:#0b1c2c; --amber:#f2a81d; --fuel:#e11d48; --fuel2:#f43f5e; --ink:#1c2733; --mut:#5b6b7c; --bg:#edf1f5; --card:#fff; --line:#e1e8ef; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; color:var(--ink);
+         background:linear-gradient(180deg,#e8eef4 0%,#f2f5f8 320px,#edf1f5 100%); }
+  nav.top { display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; color:#fff; padding:12px 16px;
+    background:linear-gradient(120deg,var(--navy2),var(--navy) 55%,#1d3d5c); box-shadow:0 2px 14px rgba(11,28,44,.35);
+    font-size:14px; position:relative; z-index:5; }
+  nav.top a { color:#cfe2f3; text-decoration:none; transition:opacity .15s ease; }
+  nav.top a:hover { opacity:.72; }
+  nav.top a.brand { color:#fff; font-weight:800; }
+  nav.top a.here { color:#fff; font-weight:800; border-bottom:2px solid var(--fuel2); padding-bottom:2px; }
+  main { max-width:960px; margin:0 auto; padding:24px 16px 40px; }
+  .title-panel { position:relative; overflow:hidden; color:#fff; border-radius:20px; padding:24px 22px; margin-bottom:18px;
+    background:linear-gradient(120deg,#4c0519,#881337 60%,#be123c); box-shadow:0 10px 26px -12px rgba(136,19,55,.55); }
+  .title-panel::after { content:""; position:absolute; inset:auto 0 0 0; height:6px;
+    background:linear-gradient(90deg,var(--fuel2),var(--amber)); }
+  .title-panel .badge { display:inline-block; background:var(--amber); color:#231a00; font-weight:800; font-size:12px;
+    padding:3px 10px; border-radius:999px; letter-spacing:.08em; margin-bottom:10px; }
+  .title-panel h1 { margin:0; font-size:clamp(24px,5.6vw,34px); font-weight:900; }
+  .title-panel p { margin:10px 0 4px; color:#ffe4e6; line-height:1.8; font-size:14px; max-width:720px; }
+  section.panel { background:var(--card); border-radius:20px; padding:22px; margin-bottom:18px;
+    border:1px solid var(--line); box-shadow:0 3px 14px rgba(18,40,63,.06), 0 14px 30px -20px rgba(18,40,63,.25); }
+  section.panel h2 { margin:0 0 14px; font-size:17px; font-weight:800; display:flex; align-items:center; gap:10px; }
+  section.panel h2::before { content:""; width:9px; height:20px; border-radius:3px; background:linear-gradient(180deg,var(--fuel2),var(--fuel)); flex:none; }
+  .field { margin-bottom:18px; }
+  .field:last-child { margin-bottom:0; }
+  .field label.lab { display:block; font-weight:700; font-size:14px; margin-bottom:8px; }
+  .field .hint { color:var(--mut); font-size:12px; margin-top:6px; line-height:1.7; }
+  .seg { position:relative; display:flex; background:#e7ecf2; border-radius:12px; padding:4px; gap:0; }
+  .seg .plate { position:absolute; top:4px; bottom:4px; border-radius:9px;
+    background:linear-gradient(180deg,var(--fuel2),var(--fuel));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.38), inset 0 -3px 0 rgba(0,0,0,.20), 0 6px 14px -6px rgba(15,30,45,.40);
+    transition:left .28s cubic-bezier(.4,0,.2,1), width .28s cubic-bezier(.4,0,.2,1); }
+  .seg button { position:relative; z-index:1; flex:1; border:0; background:transparent; color:var(--ink);
+    font:inherit; font-weight:700; font-size:14px; padding:10px 6px; border-radius:9px; cursor:pointer; }
+  .seg button.on { color:#fff; }
+  .numrow { display:flex; align-items:center; gap:10px; }
+  .numrow input[type="number"] { flex:1; min-width:0; font:inherit; font-size:18px; font-weight:700; padding:12px 14px;
+    border:1.5px solid var(--line); border-radius:12px; background:#fbfcfe; color:var(--ink); }
+  .numrow input[type="number"]:focus { outline:3px solid rgba(249,115,22,.35); border-color:var(--fuel2); }
+  .numrow .unit { font-weight:700; color:var(--mut); font-size:14px; flex:none; }
+  .result-big { text-align:center; padding:10px 0 4px; }
+  .result-big .cap { color:var(--mut); font-size:13px; font-weight:700; letter-spacing:.06em; }
+  .result-big .amt { font-size:clamp(38px,9vw,54px); font-weight:900; color:var(--fuel); line-height:1.15;
+    text-shadow:0 2px 12px rgba(234,88,12,.18); }
+  .result-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-top:14px; }
+  .result-grid .cell { background:#fdf4ec; border:1px solid #f7ddc8; border-radius:14px; padding:12px 14px; }
+  .result-grid .cell .k { color:var(--mut); font-size:12px; font-weight:700; }
+  .result-grid .cell .v { font-size:19px; font-weight:800; margin-top:3px; }
+  .note { color:var(--mut); font-size:13px; line-height:1.85; }
+  .note li { margin-bottom:4px; }
+  details.pp { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 20px; margin-bottom:18px; }
+  details.pp summary { font-weight:800; cursor:pointer; }
+  details.pp p { color:var(--mut); font-size:13px; line-height:1.85; }
+  footer { max-width:960px; margin:0 auto; padding:0 16px 110px; color:var(--mut); font-size:13px; line-height:1.8; }
+  .stickybar { position:fixed; left:0; right:0; bottom:0; z-index:50; color:#fff;
+    background:linear-gradient(120deg,#3a1503,#7c2d12 60%,#9a3412); border-top:3px solid var(--amber);
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom)); display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    box-shadow:0 -6px 20px rgba(58,21,3,.35); }
+  .stickybar .lab { font-size:12px; font-weight:700; color:#ffd9b0; }
+  .stickybar .amt { font-size:24px; font-weight:900; color:var(--amber); text-shadow:0 0 14px rgba(242,168,29,.45); }
+  .stickybar .sub { font-size:12px; color:#ffe8d6; }
+
+  .optrow { display:flex; gap:10px; align-items:flex-start; padding:11px 12px; border:1.5px solid var(--line); border-radius:12px; margin-top:10px; background:#fbfcfe; cursor:pointer; }
+  .optrow input { width:19px; height:19px; margin-top:2px; accent-color:var(--fuel); flex:none; }
+  .optrow .t { font-weight:800; font-size:14.5px; color:var(--ink); }
+  .optrow .d { color:var(--mut); font-size:12.5px; margin-top:2px; }
+.sitebar{background:var(--navy2);border-bottom:2px solid var(--amber)}
+.sitebar .sb-in{max-width:980px;margin:0 auto;padding:7px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.sitebar a{color:#fff;text-decoration:none;font-size:13px}
+.sitebar a:hover{color:var(--amber)}
+.sitebar .sb-name{font-weight:700;letter-spacing:.03em}
+</style>
+<style id="hud-theme-style">
+/* ===== DEF/HUD テーマ切替（共通） ===== */
+.ido-theme-switch{position:relative;z-index:1;display:flex;gap:4px;padding:4px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(255,255,255,.07);flex:none}
+.ido-theme-switch button{border:0;border-radius:999px;padding:6px 13px;background:transparent;box-shadow:none;color:#cfe2f3;font:inherit;font-size:12.5px;font-weight:800;line-height:1.25;cursor:pointer}
+.ido-theme-switch button[aria-pressed="true"]{background:linear-gradient(180deg,#ffc44d,var(--amber));color:#14273c}
+html[data-theme="andy"] .ido-theme-switch button[aria-pressed="true"]{background:linear-gradient(180deg,#8ff2ff,#46d9ec);color:#03222e;box-shadow:0 0 16px rgba(70,217,236,.55)}
+:root[data-theme="andy"]{color-scheme:dark;--navy:#1d4568;--navy2:#02070d;--amber:#46d9ec;--amber-d:#8ff2ff;--bg:#04090f;--card:#081623;--ink:#d8f1f6;--mut:#a9c9d9;--line:rgba(110,205,230,.32);--red:#ff6b61;--green:#3ddc97;--soft:rgba(70,217,236,.10);--good:#3ddc97;--bad:#ff6b61;--sat:#7cc7ff;--sun:#ff6b61}
+html[data-theme="andy"]{background:#04090f}
+html[data-theme="andy"] body{background:radial-gradient(900px 480px at 85% -120px,rgba(70,217,236,.13),rgba(70,217,236,0) 60%),repeating-linear-gradient(0deg,rgba(140,230,255,.022) 0 1px,transparent 1px 4px),linear-gradient(rgba(110,205,230,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(110,205,230,.045) 1px,transparent 1px),linear-gradient(180deg,#030a12,#04090f);background-size:auto,auto,52px 52px,52px 52px,auto}
+html[data-theme="andy"] a{color:#ffcf4d}
+html[data-theme="andy"] .sitebar a{color:#fff}
+/* 濃色文字（--navy）を担う見出し・数値類は明色に固定 */
+html[data-theme="andy"] :is(.card h2,.card h3,.tool-card h2,.today .word,.today.word,.result .word,.sumcard .val,.sumcard.white.val,.count,.date-line,.plan .pname,.plan.pname,.pname .pn,.prod .pname,.prod h4,.vs h3,.total3 h3,.bar-row .b-lab,.bar-row .bar-head .cat,.penline .amt,.bd-fixed,.stone .sname,.plabel,details summary,.adv-row .a-lab,.cal-title,.compat .ctext,.detail-rk,.detail-word,.dir-cell .d-dir,.dir-cell .d-star,.dnav .dlabel,.fortune-name,.grade,.kv dt,.lp-line .lp b,.person h3,.pos-name,.rank .bt,.read-head .pname,.result-word,.rname,.star-row .s-lab,.star-row .s-name,.sumline b){color:#d8f1f6}
+/* 白・淡色の面は背景と文字色をセットでダークパネル化 */
+html[data-theme="andy"] :is(.suggest,.chip,.plan,.rank li,.dir-cell,.hexbox.sub,.result .action,.checks label,.badges span,.rank-num,.prod .cond,.prod .nodatabox,.chips button,.tabs button,.cal-nav button,.btn-ghost,.btn.ghost,.presets button,.lp-line .lp,button.dbtn,.plan.dim){background:#0a1e30;color:#d8f1f6;border-color:rgba(110,205,230,.32)}
+html[data-theme="andy"] .btn-del{background:#0a1e30;border-color:rgba(110,205,230,.32)}
+html[data-theme="andy"] .sumcard.white{background:#0a1e30;color:#d8f1f6}
+html[data-theme="andy"] .seg button{background:#0a1e30;color:#d8f1f6;border-color:rgba(110,205,230,.32)}
+html[data-theme="andy"] .seg button.active{background:#1d4568;color:#fff}
+html[data-theme="andy"] :is(th,table.anchors th){background:#0d2a42;color:#d8f1f6}
+html[data-theme="andy"] table.cal td{background:#0a1e30;color:#d8f1f6}
+html[data-theme="andy"] table.cal td.empty{background:#060f18;color:#a9c9d9}
+html[data-theme="andy"] tr.total td{background:rgba(70,217,236,.12)}
+html[data-theme="andy"] :is(.bar-track,.bar-row .b-track){background:rgba(110,205,230,.15)}
+html[data-theme="andy"] :is(.warn,.sumcard.alert,.chip.unknown){background:rgba(255,82,82,.13)}
+html[data-theme="andy"] :is(.total3 .plan.win,.vs .side.win){background:rgba(61,220,151,.12)}
+html[data-theme="andy"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),html[data-theme="andy"] select,html[data-theme="andy"] textarea{background-color:#0a1a29;color:#d8f1f6;border-color:rgba(110,205,230,.42)}
+/* アンバー地に白文字だったバッジ類は濃色文字に */
+html[data-theme="andy"] :is(.badge,.best-b,.birthday-banner,.rank-num.top,.chip.active,button.draw,.mini.kyo,.mini.kichi){color:#03222e}
+html[data-theme="andy"] .rank-num.top{background:var(--amber)}
+/* サイコロの目は白いままにする */
+html[data-theme="andy"] .die{background:#eef3f8;color:#1d2733}
+/* 色付きバッジ変種は白文字に戻す／淡色バッジ変種はダーク化する */
+html[data-theme="andy"] :is(.badge.badge-ins,.badge.badge-uranai,.badge.badge-mob,.badge.na,.badge.agency){color:#fff}
+html[data-theme="andy"] .badge.mid{background:#6b6557;color:#fff}
+html[data-theme="andy"] .badge.t1{background:rgba(255,82,82,.16);color:#ff9d94;border-color:rgba(255,82,82,.4)}
+html[data-theme="andy"] .badge.t2{background:#0d2a42;color:#d8f1f6;border-color:rgba(110,205,230,.32)}
+html[data-theme="andy"] .badge.t3{background:rgba(61,220,151,.14);color:#3ddc97;border-color:rgba(61,220,151,.4)}
+html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222e}
+
+/* 引っ越しページ固有の HUD 上書き（固定色の面と --fuel 系） */
+:root[data-theme="andy"]{--fuel:#ff6b61;--fuel2:#ff9d94}
+html[data-theme="andy"] .seg{background:#0a1e30}
+html[data-theme="andy"] .result-grid .cell{background:#0a1e30;border-color:rgba(110,205,230,.32)}
+html[data-theme="andy"] .optrow{background:#0a1e30}
+html[data-theme="andy"] .numrow select{background:#0a1a29 !important}
+</style>
+</head>
+<body>
+<div class="sitebar"><div class="sb-in"><a class="sb-name" href="index.html">お金計算ツール集</a><a href="index.html">トップへ戻る</a><div class="ido-theme-switch" role="group" aria-label="表示モード切替"><button type="button" data-ido-theme="kuma" aria-pressed="true">DEF</button><button type="button" data-ido-theme="andy" aria-pressed="false">HUD</button></div></div></div>
+
+<main>
+  <div class="title-panel">
+    <span class="badge">引っ越し費用</span>
+    <h1>📦 引っ越し費用の目安</h1>
+    <p>引っ越し料金は条件で大きく変わるので、見積もりを取る前の「相場感」をつかむための計算です。世帯と荷物量、移動距離、時期とオプションを入れるだけで、目安の金額と安め〜高めの幅が出ます。計算はブラウザの中だけで完結します。</p>
+  </div>
+
+  <section class="panel">
+    <h2>条件</h2>
+    <div class="field">
+      <label class="lab" for="sizeSel">世帯・荷物量</label>
+      <div class="numrow"><select id="sizeSel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);"><option value="" selected>世帯・荷物量を選択してください</option>
+        <option value="0">単身（荷物少なめ・ワンルーム）</option>
+        <option value="1">単身（荷物多め・1K〜1LDK）</option>
+        <option value="2">2人暮らし（1LDK〜2DK）</option>
+        <option value="3">家族3人（2LDK〜3DK）</option>
+        <option value="4">家族4人以上（3LDK〜）</option>
+      </select></div>
+    </div>
+    <div class="field">
+      <label class="lab" for="distKm">移動距離（片道）</label>
+      <div class="numrow"><input type="number" id="distKm" inputmode="decimal" min="0" step="5" /><span class="unit">km</span></div>
+      <p class="hint">距離の区分（市内・近距離・中距離・長距離）は自動で判定します。</p>
+    </div>
+    <div class="field">
+      <label class="lab">時期</label>
+      <div class="seg" id="segSeason"><span class="plate"></span>
+        <button type="button" data-v="normal" class="on">通常期</button>
+        <button type="button" data-v="busy">繁忙期（3〜4月）</button>
+      </div>
+      <p class="hint">繁忙期は基本料金が通常期の約1.4倍になる想定で計算します。</p>
+    </div>
+    <div class="field">
+      <label class="lab">オプション</label>
+      <label class="optrow"><input type="checkbox" id="opPack" /><span><span class="t">荷造り・荷解きおまかせ</span><span class="d" style="display:block;">梱包から開梱まで業者に任せるプラン。金額は世帯の大きさで変わります。</span></span></label>
+      <label class="optrow"><input type="checkbox" id="opAir" /><span><span class="t">エアコンの取り外し・取り付け</span><span class="d" style="display:block;">1台あたり約20,000円が目安です。</span></span></label>
+      <label class="optrow"><input type="checkbox" id="opPiano" /><span><span class="t">ピアノの輸送</span><span class="d" style="display:block;">アップライトピアノで約30,000円が目安です。</span></span></label>
+      <label class="optrow"><input type="checkbox" id="opCar" /><span><span class="t">車・バイクの陸送</span><span class="d" style="display:block;">長距離の引っ越しで車を運ぶ場合。約50,000円が目安です。</span></span></label>
+      <label class="optrow"><input type="checkbox" id="opDispose" /><span><span class="t">不用品の処分</span><span class="d" style="display:block;">家具・家電数点で約10,000円が目安です。</span></span></label>
+    </div>
+  </section>
+  <section class="panel">
+    <h2>試算結果</h2>
+    <div class="result-big">
+      <div class="cap">引っ越し費用の目安</div>
+      <div class="amt" id="totalAmt">¥—</div>
+    </div>
+    <div class="result-grid">
+      <div class="cell"><div class="k">安めの見積もり</div><div class="v" id="lowAmt">—</div></div>
+      <div class="cell"><div class="k">高めの見積もり</div><div class="v" id="highAmt">—</div></div>
+      <div class="cell"><div class="k">基本料金（時期を反映）</div><div class="v" id="baseAmt">—</div></div>
+      <div class="cell"><div class="k">オプション合計</div><div class="v" id="optAmt">—</div></div>
+      <div class="cell"><div class="k">距離の区分</div><div class="v" id="bracketLab">—</div></div>
+      <div class="cell"><div class="k">トラックの目安</div><div class="v" id="truckLab">—</div></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>計算のしかたと注意</h2>
+    <ul class="note">
+      <li>金額は一般的な相場をもとにした目安です。実際の見積もりは、荷物の量・階数・エレベーターの有無・作業日（週末や月末は高め）で大きく変わります。</li>
+      <li>繁忙期（3〜4月）は通常期の3〜5割増しが目安です。この計算では基本料金を1.4倍にしています。</li>
+      <li>必ず複数社から相見積もりを取りましょう。同じ条件でも数万円単位で差が出ることが珍しくありません。正確な金額は訪問見積もりで出ます。</li>
+      <li>このページの金額は、業者選びと交渉の出発点として使ってください。</li>
+    </ul>
+  </section>
+</main>
+<footer>
+  <p>本ページは非公式の個人ツールです。表示される金額は相場をもとにした目安であり、実際の引っ越し料金は各事業者の見積もりをご確認ください。</p>
+  <p>制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
+</footer>
+
+<div class="stickybar">
+  <span class="lab">引っ越し費用の目安</span>
+  <span class="amt" id="stickyPrice">¥—</span>
+  <span class="sub" id="stickyRoute">—</span>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var BASE = [
+    [25000, 35000, 50000, 70000, 90000],
+    [40000, 50000, 70000, 95000, 120000],
+    [60000, 75000, 100000, 140000, 180000],
+    [90000, 110000, 150000, 200000, 260000],
+    [120000, 150000, 200000, 270000, 350000]
+  ];
+  var PACK = [10000, 15000, 25000, 35000, 50000];
+  var TRUCK = ["軽トラ〜1トントラック", "1.5トントラック", "2トントラック", "3トントラック", "4トントラック"];
+  var BRACKET = ["同一市内・近距離（15kmまで）", "近距離（50kmまで）", "中距離（200kmまで）", "長距離（500kmまで）", "超長距離（500km超）"];
+  var season = "normal";
+
+  function yen(n) { return "¥" + Math.round(n).toLocaleString("ja-JP"); }
+  function yenK(n) { return "¥" + (Math.round(n / 1000) * 1000).toLocaleString("ja-JP"); }
+  function num(id) {
+    var v = parseFloat(document.getElementById(id).value);
+    return isNaN(v) ? 0 : v;
+  }
+  function set(id, text) { document.getElementById(id).textContent = text; }
+  function bracketOf(km) {
+    if (km <= 15) return 0;
+    if (km <= 50) return 1;
+    if (km <= 200) return 2;
+    if (km <= 500) return 3;
+    return 4;
+  }
+
+  function calc() {
+    if (document.getElementById("sizeSel").value === "" || document.getElementById("distKm").value.trim() === "") {
+      set("totalAmt", "¥—");
+      ["lowAmt", "highAmt", "baseAmt", "optAmt", "bracketLab", "truckLab"].forEach(function (id) { set(id, "—"); });
+      set("stickyPrice", "¥—");
+      set("stickyRoute", "未入力");
+      return;
+    }
+    var size = parseInt(document.getElementById("sizeSel").value, 10) || 0;
+    var km = num("distKm");
+    var b = bracketOf(km);
+    var base = BASE[size][b] * (season === "busy" ? 1.4 : 1);
+    var opt = 0;
+    if (document.getElementById("opPack").checked) opt += PACK[size];
+    if (document.getElementById("opAir").checked) opt += 20000;
+    if (document.getElementById("opPiano").checked) opt += 30000;
+    if (document.getElementById("opCar").checked) opt += 50000;
+    if (document.getElementById("opDispose").checked) opt += 10000;
+    var total = base + opt;
+    set("totalAmt", yenK(total));
+    set("lowAmt", yenK(total * 0.85));
+    set("highAmt", yenK(total * 1.25));
+    set("baseAmt", yen(base));
+    set("optAmt", yen(opt));
+    set("bracketLab", BRACKET[b]);
+    set("truckLab", TRUCK[size]);
+    set("stickyPrice", yenK(total));
+    set("stickyRoute", BRACKET[b] + " ／ " + TRUCK[size]);
+  }
+
+  function wireSeg(id, onChange) {
+    var seg = document.getElementById(id);
+    var plate = seg.querySelector(".plate");
+    var btns = Array.prototype.slice.call(seg.querySelectorAll("button"));
+    function move() {
+      var on = seg.querySelector("button.on");
+      if (on) { plate.style.left = on.offsetLeft + "px"; plate.style.width = on.offsetWidth + "px"; }
+    }
+    btns.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        btns.forEach(function (x) { x.classList.remove("on"); });
+        btn.classList.add("on");
+        move();
+        onChange(btn.getAttribute("data-v"));
+      });
+    });
+    window.addEventListener("resize", move);
+    window.addEventListener("load", move);
+    move();
+  }
+  wireSeg("segSeason", function (v) { season = v; calc(); });
+
+  ["sizeSel", "distKm"].forEach(function (id) {
+    document.getElementById(id).addEventListener("input", calc);
+    document.getElementById(id).addEventListener("change", calc);
+  });
+  ["opPack", "opAir", "opPiano", "opCar", "opDispose"].forEach(function (id) {
+    document.getElementById(id).addEventListener("change", calc);
+  });
+  calc();
+})();</script>
+<script>
+(function(){
+  var btns=document.querySelectorAll("[data-ido-theme]");
+  function sync(){var cur=document.documentElement.dataset.theme||"kuma";btns.forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.idoTheme===cur));});}
+  btns.forEach(function(b){b.addEventListener("click",function(){document.documentElement.dataset.theme=b.dataset.idoTheme;try{localStorage.setItem("ido_theme_v1",b.dataset.idoTheme);}catch(e){}sync();});});
+  sync();
+})();
+</script>
+</body>
+</html>
