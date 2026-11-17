@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>水道代 比較・試算ツール｜お金計算ツール集</title>
+<meta name="description" content="口径と月の使用量を入れるだけで、全国20都市の水道代（水道料金＋下水道使用料）を安い順に比較。各自治体の公式料金表で確認した料金だけで試算します。">
+<style>
+:root{
+  --navy:#12283f; --navy2:#0b1a2c; --amber:#f2a007; --amber-d:#c77f02;
+  --bg:#f4f2ec; --card:#ffffff; --ink:#1d2733; --mut:#68707c;
+  --line:#ddd6c8; --red:#b03a2e; --green:#1e7d46; --soft:#fdf6e0;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6}
+header{background:linear-gradient(135deg,var(--navy2),var(--navy));color:#fff;padding:22px 16px 18px;border-bottom:4px solid var(--amber)}
+header .wrap{max-width:980px;margin:0 auto}
+header h1{margin:0;font-size:24px;letter-spacing:.04em}
+header h1 .accent{color:var(--amber)}
+header p{margin:6px 0 0;font-size:13px;color:#cfd9e4}
+.wrap{max-width:980px;margin:0 auto;padding:0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin:14px 0;box-shadow:0 1px 3px rgba(18,40,63,.06)}
+.card h2{margin:0 0 10px;font-size:17px;color:var(--navy);border-left:5px solid var(--amber);padding-left:9px}
+.note{font-size:12.5px;color:var(--mut)}
+label.flabel{display:block;font-size:12.5px;color:var(--mut);margin:10px 0 3px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1;min-width:96px;background:#e9e4d8;border:1px solid var(--line);border-radius:8px;padding:10px 8px;font-size:14.5px;cursor:pointer;color:var(--ink)}
+.seg button.on{background:var(--navy);color:#fff;font-weight:700;border-color:var(--navy)}
+.urow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px}
+.urow input[type=number]{width:110px;font-size:18px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-variant-numeric:tabular-nums}
+.urow input[type=range]{flex:1;min-width:160px;accent-color:var(--navy)}
+.urow .unit{font-size:14px;color:var(--mut)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chips button{background:#e9e4d8;border:1px solid var(--line);border-radius:20px;padding:5px 14px;font-size:13px;cursor:pointer;color:var(--ink)}
+.chips button:hover{border-color:var(--amber)}
+.plan{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:10px 0;background:#fff}
+.plan .phead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.plan .brand{font-size:12px;color:var(--mut);font-weight:700;letter-spacing:.05em}
+.plan .pname{font-size:17px;font-weight:800;color:var(--navy)}
+.plan .price{text-align:right}
+.plan .price .yen{font-size:26px;font-weight:800;color:var(--amber-d);font-variant-numeric:tabular-nums;white-space:nowrap}
+.plan .price .per{font-size:12px;color:var(--mut)}
+.plan .breakdown{font-size:13px;color:var(--ink);background:var(--soft);border-radius:6px;padding:6px 10px;margin:8px 0}
+.plan .meta{font-size:13px;color:var(--mut)}
+.badges{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0 2px}
+.badges span{font-size:11.5px;background:#eef3f8;color:var(--navy);border:1px solid #cfdce8;border-radius:20px;padding:2px 9px}
+.badges span.best{background:var(--green);color:#fff;border-color:var(--green);font-weight:700}
+.plan .pnote{font-size:12.5px;color:var(--mut);margin-top:6px}
+.count{font-size:15px;font-weight:700;color:var(--navy);margin:2px 0 6px}
+footer{margin:26px 0 40px}
+footer .card{font-size:12.5px;color:var(--mut)}
+.credit{text-align:center;color:var(--mut);font-size:12px;margin:10px 0 30px}
+.hidden{display:none}
+a{color:var(--navy)}
+ul.facts{margin:6px 0;padding-left:20px}
+ul.facts li{margin:5px 0;font-size:14px}
+.sitebar{background:var(--navy2);border-bottom:2px solid var(--amber)}
+.sitebar .sb-in{max-width:980px;margin:0 auto;padding:7px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.sitebar a{color:#fff;text-decoration:none;font-size:13px}
+.sitebar a:hover{color:var(--amber)}
+.sitebar .sb-name{font-weight:700;letter-spacing:.03em}
+</style>
+</head>
+<body>
+<div class="sitebar"><div class="sb-in"><a class="sb-name" href="index.html">お金計算ツール集</a><a href="index.html">トップへ戻る</a></div></div>
+
+<header>
+  <div class="wrap">
+    <h1>水道代 <span class="accent">比較・試算ツール</span></h1>
+    <p>メーターの口径と月の使用量を入れるだけで、全国20都市の水道代（水道料金＋下水道使用料）を1か月分に換算して安い順に比較します。料金は各自治体の公式料金表で確認したものだけを使っています。</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <h2>条件を入れる</h2>
+    <label class="flabel">メーターの口径</label>
+    <div class="seg" id="diamSeg">
+      <button type="button" data-diam="13">13mm</button>
+      <button type="button" data-diam="20" class="on">20mm</button>
+    </div>
+    <label class="flabel">月の使用量</label>
+    <div class="urow">
+      <input type="number" id="usageNum" min="0" max="100" step="1" value="20">
+      <span class="unit">m³／月</span>
+      <input type="range" id="usageRange" min="0" max="100" step="1" value="20">
+    </div>
+    <div class="chips" id="usageChips">
+      <button type="button" data-usage="8">8m³</button>
+      <button type="button" data-usage="10">10m³</button>
+      <button type="button" data-usage="20">20m³</button>
+      <button type="button" data-usage="30">30m³</button>
+      <button type="button" data-usage="40">40m³</button>
+      <button type="button" data-usage="50">50m³</button>
+    </div>
+    <p class="note">口径は水道メーターの検針票などに書かれています（一般家庭は13mmか20mmがほとんどです）。使用量は0〜100m³まで入力できます。下水道使用料は、水道の使用量と同じ量を排水する前提で計算します。</p>
+  </div>
+
+  <div class="card">
+    <h2>都市ごとの水道代（安い順）</h2>
+    <p class="count" id="resultCount"></p>
+    <div id="resultList"></div>
+  </div>
+
+  <div class="card">
+    <h2>知っておくこと</h2>
+    <ul class="facts">
+      <li>表示はすべて税込の1か月分です。水道料金と下水道使用料の合計で比べています。</li>
+      <li>2か月検針が標準の自治体は、料金表を1か月分に換算して表示しています。料金表自体が2か月単位の都市（新潟・名古屋・京都・神戸・福岡と、岡山の下水道）は、2か月分の請求額を計算して2で割った1か月換算額です（換算額の端数は四捨五入）。実際の請求は2か月分まとめて行われます。</li>
+      <li>相模原市は、下水道の従量単価表が公式の単価表で確認できなかったため収録していません。確認できない数字は載せない方針です。</li>
+      <li>期間限定の減免・無償化（物価高騰対策など）は反映していません。岡山市は令和8年度の負担軽減で据え置かれている第1段階料金で表示しています。</li>
+      <li>実際の請求額は、検針期間の使用量の分け方や端数処理の関係で、本ツールの試算と数円〜数十円異なる場合があります。正確な金額は各自治体の公式ページや検針票でご確認ください。</li>
+    </ul>
+  </div>
+
+  <footer>
+    <div class="card">
+      このツールは非公式の個人ツールです。料金は各自治体の公式料金表で確認した2026年11月時点の料金に基づく目安で、実際の請求額は使用状況・検針期間・契約内容により異なります。最新の料金は各自治体の公式ページでご確認ください（出典リンクは各都市のカードに付けています）。<br>
+      料金確認日：2026-11-18
+    </div>
+    <p class="credit">制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+var $ = function(id){ return document.getElementById(id); };
+var yen = function(n){ return Math.round(n).toLocaleString("ja-JP") + "円"; };
+var INF = 1000000000;
+
+// basic: 口径共通なら数値、口径別なら {"13":x,"20":y}
+// tiers: [上限m³, 1m³あたり単価] の段階表（その段階までの累計水量に適用）
+// tax: "excl"=税抜（×1.10・1円未満切り捨て） / "incl"=税込（合計を1円未満切り捨て）
+// period: 料金表の単位（1=1か月分 / 2=2か月分。2の場合は periodTotal を2で割って1か月換算）
+// floor10: 税加算前に10円未満を切り捨てる（新潟市の下水道）
+var CITIES = [
+{name:"東京都（23区）", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":860,"20":1170}, tax:"excl", period:1, tiers:[[5,0],[10,22],[20,128],[30,163],[50,202],[100,213],[200,298],[1000,372],[INF,404]]},
+ sewer:{basic:560, tax:"excl", period:1, tiers:[[8,0],[20,110],[30,140],[50,170],[100,200],[200,230],[500,270],[1000,310],[INF,345]]},
+ note:"2か月分の使用水量を各月に分けて、1か月の料金表で計算する方式です。",
+ srcW:"https://www.waterworks.metro.tokyo.lg.jp/tetsuduki/ryokin/keisan_23",
+ srcS:"https://www.gesui.metro.tokyo.lg.jp/living/fee/keisan/ryokinhyo"},
+{name:"横浜市", cycle:"検針・請求は通常2か月ごと",
+ water:{basic:{"13":840,"20":845}, tax:"excl", period:1, tiers:[[8,4],[10,48],[20,177],[30,253],[50,301],[100,327],[300,358],[1000,413],[INF,413]]},
+ sewer:{basic:630, tax:"excl", period:1, tiers:[[8,0],[10,20],[20,118],[30,173],[50,234],[100,264],[200,299],[500,341],[1000,389],[2000,416],[INF,472]]},
+ note:"1か月分の料金表で計算しています（2か月分の料金表も公式に公表されています）。",
+ srcW:"https://www.city.yokohama.lg.jp/kurashi/sumai-kurashi/suido-gesui/suido/ryokin/ryokinsikumi.html",
+ srcS:"https://www.city.yokohama.lg.jp/kurashi/machizukuri-kankyo/kasen-gesuido/gesuido/keiei/gesuidoushiyouryou.html"},
+{name:"川崎市", cycle:"検針・請求は原則2か月ごと",
+ water:{basic:530, tax:"excl", period:1, tiers:[[8,0],[10,95],[20,139],[25,185],[30,194],[50,209],[100,253],[200,278],[500,329],[1000,343],[INF,357]]},
+ sewer:{basic:660, tax:"excl", period:1, tiers:[[8,0],[10,10],[20,128],[30,164],[50,242],[100,303],[200,364],[600,393],[2000,422],[5000,446],[INF,475]]},
+ note:"口径による料金の差はありません。令和9年4月と令和10年4月に料金改定が予定されています（公表済み）。表示は現行料金です。",
+ srcW:"https://www.city.kawasaki.jp/800/page/0000083093.html",
+ srcS:"https://www.city.kawasaki.jp/800/page/0000083093.html"},
+{name:"千葉市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":470,"20":1103}, tax:"excl", period:1, tiers:[[10,67],[20,175],[40,285],[100,380],[500,471],[INF,514]]},
+ sewer:{basic:694, tax:"excl", period:1, tiers:[[5,17],[10,20],[20,133],[30,183],[50,226],[100,275],[500,321],[1000,357],[2000,396],[INF,431]]},
+ note:"水道は千葉県営水道、下水道は千葉市の料金で、いずれも令和8年4月1日改定後の料金です。水道料金の端数処理は県の公式資料で確認できなかったため、1円未満切り捨てで計算しています。",
+ srcW:"https://www.pref.chiba.lg.jp/suidou/souki/documents/dayori255-260115-2-3.pdf",
+ srcS:"https://www.city.chiba.jp/kensetsu/gesuidokikaku/keiri/shiyouryou_hayami.html"},
+{name:"さいたま市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":890,"20":1080}, tax:"excl", period:1, tiers:[[8,0],[20,175],[30,220],[INF,310]]},
+ sewer:{basic:666, tax:"excl", period:1, tiers:[[10,17],[30,140],[50,174],[100,218],[200,272],[500,298],[1000,352],[5000,385],[INF,413]]},
+ note:"2か月分の使用量を各月に均等とみなして、1か月分の料金表で計算する方式です。",
+ srcW:"http://www.city.saitama.jp/001/006/002/045/002/p121649_d/fil/suidouryoukinhyou20231001.pdf",
+ srcS:"https://www.city.saitama.lg.jp/001/006/002/045/002/p066575_d/fil/gesuiryoukinhyou20231001.pdf"},
+{name:"札幌市", cycle:"検針・請求は2か月ごと（一部地域は毎月）",
+ water:{basic:1452, tax:"incl", period:1, tiers:[[10,0],[20,220],[30,253],[100,291.5],[500,363],[1000,385],[INF,412.5]]},
+ sewer:{basic:825, tax:"incl", period:1, tiers:[[10,0],[20,95.7],[30,125.4],[100,160.6],[200,194.7],[1000,223.3],[5000,255.2],[INF,291.5]]},
+ note:"家事用は口径25mm以下で基本料金が一律です。料金は税込表示の公式表を使っています。下水道使用料は2026年10月1日改定後の料金です。",
+ srcW:"https://www.city.sapporo.jp/suido/riyosya/ryokin/ryokin/calc.html",
+ srcS:"https://www.city.sapporo.jp/suido/riyosya/ryokin/ryokin/calc.html"},
+{name:"仙台市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":638,"20":1375}, tax:"incl", period:1, tiers:[[10,88],[20,203.5],[50,225.5],[100,264],[200,302.5],[INF,341]]},
+ sewer:{basic:773.3, tax:"incl", period:1, tiers:[[10,0],[20,114.4],[50,150.7],[100,247.5],[200,301.4],[500,386.1],[1000,415.8],[10000,446.6],[INF,462]]},
+ note:"料金は税込表示の公式表を使っています。",
+ srcW:"https://www.suidou.city.sendai.jp/riyosha/todokede-ryokin/shikumi/665.html",
+ srcS:"https://www.suidou.city.sendai.jp/riyosha/todokede-ryokin/shikumi/665.html"},
+{name:"新潟市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":2360,"20":5580}, tax:"excl", period:2, tiers:[[20,46],[60,130],[100,139],[200,161],[600,187],[INF,218]]},
+ sewer:{basic:2380, tax:"excl", period:2, floor10:true, tiers:[[20,0],[60,158],[200,191],[1000,246],[INF,314]]},
+ note:"料金表が2か月分単位のため、2か月分の請求額を2で割った1か月換算で表示しています。水道は令和7年1月1日改定の料金です。下水道は税を加える前に10円未満を切り捨てる方式です。",
+ srcW:"https://www.city.niigata.lg.jp/kurashi/jyogesuido/suido/suidoryokin/ryokin.html",
+ srcS:"https://www.city.niigata.lg.jp/kurashi/jyogesuido/gesui/jueki/charge.html"},
+{name:"静岡市", cycle:"検針・請求は2か月ごと",
+ water:{basic:889.9, tax:"incl", period:1, tiers:[[10,66],[20,127.6],[50,193.6],[100,226.6],[500,249.7],[1000,267.3],[INF,270.6]]},
+ sewer:{basic:1129.7, tax:"incl", period:1, tiers:[[10,38.5],[20,148.5],[30,204.6],[50,224.4],[100,244.2],[200,264],[500,278.3],[1000,300.3],[INF,314.6]]},
+ note:"2026年6月使用分からの料金です。口径13mmと20mmで基本料金は同額です。請求は2か月分をまとめて、使用量を半分ずつに分けて計算します。",
+ srcW:"http://www.city.shizuoka.jp/334_000002.html",
+ srcS:"http://www.city.shizuoka.jp/334_000002.html"},
+{name:"浜松市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":777.7,"20":979}, tax:"incl", period:1, tiers:[[10,50.6],[20,122.1],[30,161.7],[40,198],[50,229.9],[100,239.8],[500,248.6],[INF,255.2]]},
+ sewer:{basic:1221, tax:"incl", period:1, tiers:[[10,44],[20,128.7],[30,151.8],[50,167.2],[100,180.4],[200,193.6],[500,206.8],[1000,214.5],[2000,223.3],[5000,228.8],[INF,233.2]]},
+ note:"公式の料金表に税込・税抜の明記が確認できなかったため、公式計算例が表の金額をそのまま最終額として計算しているのに合わせて、その金額で計算しています。水道料金は2025年10月改定の料金です。",
+ srcW:"https://www.city.hamamatsu.shizuoka.jp/service/suidou/service/hamayu.html",
+ srcS:"https://www.city.hamamatsu.shizuoka.jp/service/suidou/service/hamayu.html"},
+{name:"名古屋市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":1694,"20":2838}, tax:"incl", period:2, tiers:[[20,11],[40,159.5],[60,225.5],[100,275],[200,319],[600,352],[INF,363]]},
+ sewer:{basic:1518, tax:"incl", period:2, tiers:[[20,11],[40,104.5],[60,192.5],[100,214.5],[200,242],[600,275],[INF,286]]},
+ note:"令和7年10月分からの新料金です（基本水量制は廃止）。料金表が2か月分単位のため、2か月分の請求額を2で割った1か月換算で表示しています。",
+ srcW:"https://www.water.city.nagoya.jp/ryoukinkaitei2025/index.html",
+ srcS:"https://www.water.city.nagoya.jp/ryoukinkaitei2025/index.html"},
+{name:"京都市", cycle:"検針・請求は2か月ごと",
+ water:{basic:1840, tax:"excl", period:2, tiers:[[10,0],[20,10],[40,177],[60,180],[200,208],[400,226],[1000,243],[10000,284],[INF,326]]},
+ sewer:{basic:1300, tax:"excl", period:2, tiers:[[10,0],[20,10],[40,113],[60,116],[200,162],[400,183],[1000,201],[10000,213],[INF,218]]},
+ note:"口径13mmと20mmは同一区分です。料金表が2か月分単位のため、2か月分の請求額（税抜額に消費税10%を加算）を2で割った1か月換算で表示しています。",
+ srcW:"https://www.city.kyoto.lg.jp/suido/page/0000157039.html",
+ srcS:"https://www.city.kyoto.lg.jp/suido/page/0000157039.html"},
+{name:"大阪市", cycle:"毎月検針・毎月請求",
+ water:{basic:850, tax:"excl", period:1, tiers:[[10,10],[20,97],[30,124],[50,168],[100,230],[200,293],[1000,342],[INF,358]]},
+ sewer:{basic:550, tax:"excl", period:1, tiers:[[10,0],[20,61],[30,83],[50,103],[100,119],[200,136],[500,159],[1000,180],[5000,215],[INF,234]]},
+ note:"口径による料金の区分はありません。",
+ srcW:"https://www.city.osaka.lg.jp/suido/page/0000321794.html",
+ srcS:"https://www.city.osaka.lg.jp/suido/page/0000321794.html"},
+{name:"堺市", cycle:"検針・請求は2か月ごと",
+ water:{basic:650, tax:"excl", period:1, tiers:[[10,37],[20,122],[30,182],[50,227],[100,272],[500,307],[1000,322],[INF,332]]},
+ sewer:{basic:665, tax:"excl", period:1, tiers:[[10,50],[20,140],[30,200],[50,210],[100,270],[500,335],[1000,360],[INF,395]]},
+ note:"口径20mm以下は同一区分です。端数処理は公式資料で明記を確認できなかったため、1円未満切り捨てで計算しています。",
+ srcW:"https://water.city.sakai.lg.jp/material/files/group/5/R01keisansiki.pdf",
+ srcS:"https://water.city.sakai.lg.jp/material/files/group/5/R01keisansiki.pdf"},
+{name:"神戸市", cycle:"検針・請求は2か月ごと",
+ water:{basic:2112, tax:"incl", period:2, tiers:[[10,0],[20,11],[40,181.5],[60,198],[120,247.5],[200,269.5],[INF,313.5]]},
+ sewer:{basic:1000, tax:"excl", period:2, tiers:[[10,0],[20,20],[60,100],[100,130],[200,155],[400,186],[1000,219],[2000,234],[4000,249],[INF,265]]},
+ note:"口径20mm以下は同一区分です。料金表が2か月分単位のため、2か月分の請求額を2で割った1か月換算で表示しています。下水道の段階表は神戸市公式FAQで確認しました。",
+ srcW:"https://kobe-wb.jp/ryoukin/keisan2",
+ srcS:"https://faq.city.kobe.lg.jp/print/faq/847?category_id=88&site_domain=default"},
+{name:"岡山市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":840,"20":1280}, tax:"excl", period:1, tiers:[[10,30],[20,148],[30,172],[50,201],[300,231],[INF,255]]},
+ sewer:{basic:1076, tax:"excl", period:2, tiers:[[20,62],[40,158],[100,200],[400,255],[1000,341],[2000,392],[INF,424]]},
+ note:"水道は令和8年度の負担軽減措置で据え置かれている第1段階料金で表示しています（条例上の第2段階料金とは異なります）。下水道は2か月分単位の料金表のため1か月換算で表示し、端数処理は公式表で確認できなかったため切り捨てで計算しています。",
+ srcW:"https://www.water.okayama.jp/material/files/group/6/suidoujourei.pdf",
+ srcS:"https://www.city.okayama.jp/kurashi/0000003300.html"},
+{name:"広島市", cycle:"検針は2か月ごと",
+ water:{basic:{"13":760,"20":810}, tax:"excl", period:1, tiers:[[10,5],[15,106],[20,168],[40,203],[100,229],[200,241],[INF,241]]},
+ sewer:{basic:695, tax:"excl", period:1, tiers:[[6,0],[10,5],[15,106],[20,162],[40,233],[100,311],[200,344],[INF,344]]},
+ note:"",
+ srcW:"https://www.water.city.hiroshima.lg.jp/soshiki/5/261.html",
+ srcS:"https://www.water.city.hiroshima.lg.jp/soshiki/5/261.html"},
+{name:"北九州市", cycle:"検針は2か月ごと",
+ water:{basic:{"13":680,"20":900}, tax:"excl", period:1, tiers:[[10,10],[25,122],[50,156],[200,208],[1000,288],[INF,310]]},
+ sewer:{basic:634, tax:"excl", period:1, tiers:[[10,0],[25,141],[50,208],[200,257],[1000,307],[10000,407],[INF,412]]},
+ note:"",
+ srcW:"https://www.city.kitakyushu.lg.jp/suidou/s00300003.html",
+ srcS:"https://www.city.kitakyushu.lg.jp/suidou/s00300003.html"},
+{name:"福岡市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":1700,"20":2660}, tax:"excl", period:2, tiers:[[20,17],[40,155],[60,243],[100,284],[200,335],[INF,387]]},
+ sewer:{basic:1520, tax:"excl", period:2, tiers:[[20,13],[40,152],[60,188],[100,246],[200,278],[600,311],[2000,366],[10000,417],[INF,515]]},
+ note:"料金表が1戸2か月分単位のため、2か月分の請求額を2で割った1か月換算で表示しています。",
+ srcW:"https://www.city.fukuoka.lg.jp/mizu/eigyo/0018_3_2.html",
+ srcS:"https://www.city.fukuoka.lg.jp/doro-gesuido/eigyo/hp/water.html"},
+{name:"熊本市", cycle:"検針は2か月に1回・使用量を2等分して毎月請求",
+ water:{basic:{"13":990,"20":1364}, tax:"incl", period:1, tiers:[[10,16.5],[20,148.5],[30,176],[40,203.5],[INF,242]]},
+ sewer:{basic:890.47, tax:"incl", period:1, tiers:[[10,14.65],[20,130.95],[50,172.85],[200,209.51],[500,251.42],[2000,293.32],[INF,340.47]]},
+ note:"料金は税込表示の公式表を使っています。",
+ srcW:"https://www.kumamoto-waterworks.jp/wp-content/uploads/2019/09/keisanhou201910.pdf",
+ srcS:"https://www.kumamoto-waterworks.jp/wp-content/uploads/2019/09/keisanhou201910.pdf"}
+];
+
+var state = { diam: "20", usage: 20 };
+
+function calcUtility(u, diam, monthlyUsage){
+  var pu = monthlyUsage * u.period;
+  var base = (typeof u.basic === "object") ? u.basic[diam] : u.basic;
+  var vol = 0, prev = 0;
+  for (var i = 0; i < u.tiers.length; i++){
+    var w = Math.min(pu, u.tiers[i][0]) - prev;
+    if (w > 0) vol += w * u.tiers[i][1];
+    prev = u.tiers[i][0];
+    if (pu <= u.tiers[i][0]) break;
+  }
+  var pre = base + vol;
+  if (u.floor10) pre = Math.floor(pre / 10) * 10;
+  var total = (u.tax === "excl") ? Math.floor(pre * 1.1) : Math.floor(pre);
+  return { periodTotal: total, monthly: total / u.period };
+}
+
+function calcCity(c){
+  var w = calcUtility(c.water, state.diam, state.usage);
+  var s = calcUtility(c.sewer, state.diam, state.usage);
+  return { w: w, s: s, total: w.monthly + s.monthly };
+}
+
+function partText(label, r, period){
+  var t = label + " " + yen(r.monthly);
+  if (period === 2) t += "（2か月分 " + yen(r.periodTotal) + " を換算）";
+  return t;
+}
+
+function cityCard(c, r, rank){
+  var div = document.createElement("div");
+  div.className = "plan";
+  var html = '<div class="phead"><div><div class="brand">' + (rank + 1) + '位</div>' +
+    '<div class="pname">' + c.name + '</div></div>' +
+    '<div class="price"><span class="yen">' + yen(r.total) + '</span> <span class="per">/月（税込・1か月換算）</span></div></div>' +
+    '<div class="breakdown">' + partText("水道料金", r.w, c.water.period) + " ＋ " + partText("下水道使用料", r.s, c.sewer.period) + '</div>' +
+    '<div class="meta">口径' + state.diam + 'mm・月' + state.usage + 'm³使用の場合 ｜ ' + c.cycle + '</div>' +
+    '<div class="badges">' + (rank === 0 ? '<span class="best">最安</span>' : '') + '<span>水道＋下水道</span><span>' + c.cycle + '</span></div>';
+  if (c.note) html += '<p class="pnote">' + c.note + '</p>';
+  html += '<p class="pnote">出典：<a href="' + c.srcW + '" target="_blank" rel="noopener">公式ページ（水道）</a>／<a href="' + c.srcS + '" target="_blank" rel="noopener">公式ページ（下水道）</a></p>';
+  div.innerHTML = html;
+  return div;
+}
+
+function render(){
+  var rows = CITIES.map(function(c){ return { c: c, r: calcCity(c) }; });
+  rows.sort(function(a, b){ return a.r.total - b.r.total; });
+  $("resultCount").textContent = "口径" + state.diam + "mm・月" + state.usage + "m³ の水道代：" + rows.length + "都市（安い順）";
+  var list = $("resultList");
+  list.innerHTML = "";
+  rows.forEach(function(row, i){ list.appendChild(cityCard(row.c, row.r, i)); });
+}
+
+function setUsage(v){
+  v = parseInt(v, 10);
+  if (isNaN(v)) v = 0;
+  if (v < 0) v = 0;
+  if (v > 100) v = 100;
+  state.usage = v;
+  $("usageNum").value = v;
+  $("usageRange").value = v;
+  render();
+}
+
+$("diamSeg").addEventListener("click", function(e){
+  var b = e.target.closest("button"); if (!b) return;
+  state.diam = b.getAttribute("data-diam");
+  $("diamSeg").querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+  render();
+});
+$("usageNum").addEventListener("input", function(){ setUsage($("usageNum").value); });
+$("usageNum").addEventListener("change", function(){ setUsage($("usageNum").value); });
+$("usageRange").addEventListener("input", function(){ setUsage($("usageRange").value); });
+$("usageChips").addEventListener("click", function(e){
+  var b = e.target.closest("button"); if (!b) return;
+  setUsage(b.getAttribute("data-usage"));
+});
+
+render();
+})();
+</script>
+</body>
+</html>
