@@ -81,7 +81,7 @@ ul.facts li{margin:5px 0;font-size:14px}
       <button type="button" data-amp="50">50A</button>
       <button type="button" data-amp="60">60A</button>
     </div>
-    <p class="note">関西・中国・四国はアンペアで基本料金が決まらない「最低料金制」のため、アンペアの選択はこの3社の料金に影響しません。</p>
+    <p class="note">関西・中国・四国・沖縄はアンペアで基本料金が決まらない「最低料金制」のため、アンペアの選択はこの4社の料金に影響しません。</p>
     <label class="flabel" for="kwhInput">月の使用量（kWh）</label>
     <input type="number" id="kwhInput" value="300" min="0" max="9999" step="1" inputmode="numeric">
     <p class="note">一般家庭の平均は月300kWh前後です。検針票（電気ご使用量のお知らせ）の「ご使用量」を入れると、その月の目安が出ます。入力すると自動で計算します。</p>
@@ -100,10 +100,9 @@ ul.facts li{margin:5px 0;font-size:14px}
       <li>比べているのは、各エリアの旧一般電気事業者の規制料金プラン（従量電灯）です。新電力や各社の自由料金プラン（ポイント還元・セット割のあるもの等）は対象外です。</li>
       <li>燃料費調整額は、燃料価格に合わせて毎月変わるため、この試算には含んでいません。実際の請求額は、その月の燃料費調整単価に応じてここから増えたり減ったりします。</li>
       <li>再生可能エネルギー発電促進賦課金は、2026年度の単価 1kWhあたり4.18円（経済産業省が2026年3月19日に公表、2026年5月検針分〜2027年4月検針分に適用）で計算に含めています。</li>
-      <li>関西電力・中国電力・四国電力の従量電灯Aは最低料金制です。最低料金には最初の一定量（関西・中国は15kWhまで、四国は11kWhまで）の電力量料金が含まれています。</li>
+      <li>関西電力・中国電力・四国電力の従量電灯Aと沖縄電力の従量電灯は最低料金制です。最低料金には最初の一定量（関西・中国は15kWhまで、四国は11kWhまで、沖縄は10kWhまで）の電力量料金が含まれています。</li>
       <li>アンペア制の会社には最低月額料金があり、基本料金＋電力量料金がそれを下回る場合は最低月額料金が適用されます（内訳に「最低月額料金を適用」と表示します）。</li>
       <li>北陸電力以外の9社は2026年11月1日に料金単価の見直しがあり、このツールは見直し後の単価を使っています。北陸電力は見直しの対象外で、2024年4月1日以降の単価です。</li>
-      <li>沖縄電力は、2026年11月1日実施の新しい単価を公式料金表で確認できなかったため、この比較には含めていません。確認でき次第追加します（公式の単価表はフッターのリンクから見られます）。</li>
       <li>エリアをまたいで契約先を選べるわけではありません。在住エリアの会社の行が、自分の電気代の目安です。他エリアの行は「地域でどれくらい違うか」の参考として見てください。</li>
     </ul>
   </div>
@@ -111,7 +110,7 @@ ul.facts li{margin:5px 0;font-size:14px}
   <footer>
     <div class="card">
       このツールは非公式の個人ツールです。料金は各社の公式料金表で確認した単価（税込）に基づく目安で、実際の請求額は燃料費調整額・契約内容・使用量の端数処理等により異なります。最新の料金は各社の公式ページでご確認ください。<br>
-      出典：<a href="https://www.hepco.co.jp/home/price/ratemenu/pdf/jyuuryou_b_c_dream8.pdf" target="_blank" rel="noopener">北海道電力 従量電灯B単価表</a>／<a href="https://www.tohoku-epco.co.jp/dprivate/plan/home/lightb/" target="_blank" rel="noopener">東北電力 従量電灯B</a>／<a href="https://www4.tepco.co.jp/ep/private/plan/pdf/20261101_teiatsu_minaoshi_kisei.pdf" target="_blank" rel="noopener">東京電力エナジーパートナー 料金単価表</a>／<a href="https://miraiz.chuden.co.jp/common/relocation/resource/catalog_hba.pdf" target="_blank" rel="noopener">中部電力ミライズ 電気料金単価表</a>／<a href="https://www.rikuden.co.jp/202404rate/ryokin.html" target="_blank" rel="noopener">北陸電力 電気料金単価表</a>／<a href="https://www.kepco.co.jp/ir/brief/disclosure/pdf/kaiji20260929_1.pdf" target="_blank" rel="noopener">関西電力 料金見直し資料</a>／<a href="https://www.energia.co.jp/assets/press/2026/p20260928-1b.pdf" target="_blank" rel="noopener">中国電力 電気料金単価表</a>／<a href="https://www.yonden.co.jp/business/price/200v/plan/juryo_a.html" target="_blank" rel="noopener">四国電力 従量電灯A</a>／<a href="https://www.kyuden.co.jp/td/application/general/user/menu/outline/juryo.html" target="_blank" rel="noopener">九州電力 従量電灯B</a>／<a href="https://www.okiden.co.jp/common/price/" target="_blank" rel="noopener">沖縄電力 電気料金単価表（未収録）</a>／<a href="https://www.meti.go.jp/press/2025/03/20260319004/20260319004.html" target="_blank" rel="noopener">経済産業省 2026年度の賦課金単価</a><br>
+      出典：<a href="https://www.hepco.co.jp/home/price/ratemenu/pdf/jyuuryou_b_c_dream8.pdf" target="_blank" rel="noopener">北海道電力 従量電灯B単価表</a>／<a href="https://www.tohoku-epco.co.jp/dprivate/plan/home/lightb/" target="_blank" rel="noopener">東北電力 従量電灯B</a>／<a href="https://www4.tepco.co.jp/ep/private/plan/pdf/20261101_teiatsu_minaoshi_kisei.pdf" target="_blank" rel="noopener">東京電力エナジーパートナー 料金単価表</a>／<a href="https://miraiz.chuden.co.jp/common/relocation/resource/catalog_hba.pdf" target="_blank" rel="noopener">中部電力ミライズ 電気料金単価表</a>／<a href="https://www.rikuden.co.jp/202404rate/ryokin.html" target="_blank" rel="noopener">北陸電力 電気料金単価表</a>／<a href="https://www.kepco.co.jp/ir/brief/disclosure/pdf/kaiji20260929_1.pdf" target="_blank" rel="noopener">関西電力 料金見直し資料</a>／<a href="https://www.energia.co.jp/assets/press/2026/p20260928-1b.pdf" target="_blank" rel="noopener">中国電力 電気料金単価表</a>／<a href="https://www.yonden.co.jp/business/price/200v/plan/juryo_a.html" target="_blank" rel="noopener">四国電力 従量電灯A</a>／<a href="https://www.kyuden.co.jp/td/application/general/user/menu/outline/juryo.html" target="_blank" rel="noopener">九州電力 従量電灯B</a>／<a href="https://www.okiden.co.jp/common/price/" target="_blank" rel="noopener">沖縄電力 電気料金単価表</a>／<a href="https://www.meti.go.jp/press/2025/03/20260319004/20260319004.html" target="_blank" rel="noopener">経済産業省 2026年度の賦課金単価</a><br>
       料金確認日：2026-11-18
     </div>
     <p class="credit">制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
@@ -159,7 +158,10 @@ var PLANS = [
  src:"https://www.yonden.co.jp/business/price/200v/plan/juryo_a.html"},
 {company:"九州電力", area:"九州", plan:"従量電灯B", type:"amp", per10:441.69, min:397.58,
  tiers:[[120,18.33],[300,23.93],[Infinity,26.93]], since:"2026年11月1日実施単価",
- src:"https://www.kyuden.co.jp/td/application/general/user/menu/outline/juryo.html"}
+ src:"https://www.kyuden.co.jp/td/application/general/user/menu/outline/juryo.html"},
+{company:"沖縄電力", area:"沖縄", plan:"従量電灯", type:"min", minCharge:767.82, incl:10,
+ tiers:[[120,42.06],[300,47.60],[Infinity,49.58]], since:"2026年11月1日実施単価",
+ src:"https://www.okiden.co.jp/common/price/"}
 ];
 
 var state = { amp: 30 };
