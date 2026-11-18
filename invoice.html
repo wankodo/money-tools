@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>見積書・請求書・領収書 作成ツール｜お金計算ツール集</title>
-<meta name="description" content="見積書と請求書と領収書を作ってそのままPDFで保存できるツール。源泉徴収（10.21%）は行ごとに、消費税（行ごと切り捨て）を自動計算し、目標の請求総額や税込の欲しい金額から逆算して単価を決めることもできます。入力内容はブラウザ内に保存され、外部に送られるのは住所検索の時の郵便番号だけです。">
+<meta name="description" content="見積書と請求書と領収書を作ってそのままPDFで保存できるツール。源泉徴収（10.21%）は行ごとに、消費税（行ごと切り捨て）を自動計算し、目標の請求総額や税込単価から逆算して単価を決めることもできます。入力内容はブラウザ内に保存され、外部に送られるのは住所検索の時の郵便番号だけです。">
 <style>
 :root{
   --navy:#12283f; --navy2:#0b1a2c; --amber:#f2a007; --amber-d:#c77f02;
@@ -263,7 +263,7 @@ html[data-theme="andy"] .doc table.d-tbl td{background:transparent;color:#26221c
       <button type="button" class="btn sub" id="addFeeBtn">＋ 報酬の行を追加</button>
       <button type="button" class="btn sub" id="addActualBtn">＋ 実費の行を追加</button>
     </div>
-    <p class="note">報酬の行は「税抜単価 × 数量」で計算します。税込で金額を決めたい行は、入力方式を「税込の欲しい金額を入力」に切り替えると税抜単価を自動で計算します。源泉徴収は行ごとに「対象／対象外」を選べます（物品の販売など源泉の対象にならない行は「対象外」にしてください）。実費の行（交通費など）は単価・数量なしで金額だけを入れ、税金と源泉徴収の対象外として最後に加算します。消費税は行ごとに切り捨てて合計します。</p>
+    <p class="note">報酬の行は「税抜単価 × 数量」で計算します。税込で単価を決めたい行は、入力方式を「税込単価を入力」に切り替えると、1個あたりの税込単価から税抜単価を自動で計算します（数量もそのまま指定できます）。源泉徴収は行ごとに「対象／対象外」を選べます（物品の販売など源泉の対象にならない行は「対象外」にしてください）。実費の行（交通費など）は単価・数量なしで金額だけを入れ、税金と源泉徴収の対象外として最後に加算します。消費税は行ごとに切り捨てて合計します。</p>
   </div>
 
   <div class="card">
@@ -312,7 +312,7 @@ html[data-theme="andy"] .doc table.d-tbl td{background:transparent;color:#26221c
     <h2>計算のしかた</h2>
     <ul class="facts">
       <li>源泉所得税等は「源泉対象の報酬行の合計 × 10.21%」を切り捨てた額です（報酬・料金等に対する源泉徴収税率、復興特別所得税を含みます）。対象かどうかは行ごとに選べます。源泉対象の行が1行もない場合は、源泉所得税等の行は表示されません。実費は源泉徴収の対象外です。</li>
-      <li>明細の入力方式を「税込の欲しい金額を入力」にすると、その行の税込合計（行金額＋消費税）が入力額になるよう、税抜単価を自動で計算します。</li>
+      <li>明細の入力方式を「税込単価を入力」にすると、1個あたりの税込単価から税抜単価を自動で計算します。価格は「税抜単価 × 数量」で、消費税は価格に対して行ごとに切り捨てて計算します。</li>
       <li>消費税相当額は、明細の行ごとに「行金額 × 税率」を切り捨てて合計した額です。小計にまとめて税率をかけた額とは、端数の関係で数円ずれることがあります。</li>
       <li>合計は「小計（報酬）− 源泉所得税等 ＋ 消費税相当額 ＋ 実費」の順で計算します。</li>
       <li>税率の判断や申告で迷う場合は、税理士などの専門家にご確認ください。</li>
@@ -406,7 +406,7 @@ function calcWith(rows){
 }
 function calc(){ return calcWith(state.rows); }
 
-/* ===== 税込（欲しい金額）→ 税抜単価の逆算 ===== */
+/* ===== 税込単価 → 税抜単価の逆算 ===== */
 function incOf(p, rate){ return p + Math.floor(p * rate / 100); }
 function solveIncPrice(want, rate){
   if (!(want > 0)) return { price: 0, inc: 0, diff: -want };
@@ -427,13 +427,12 @@ function solveIncPrice(want, rate){
 }
 function applyIncSolve(r){
   if (r.kind !== "fee" || r.mode !== "inc") return;
-  r.qty = "1";
   if (r.want === "") return;
   r.price = String(solveIncPrice(num(r.want), num(r.rate)).price);
 }
 function incInfo(r){
   if (r.kind !== "fee" || r.mode !== "inc") return "";
-  if (r.want === "") return "欲しい金額（税込）を入れると、税抜単価を自動で計算します（数量は1として扱います）。";
+  if (r.want === "") return "税込単価を入れると、税抜単価を自動で計算します。";
   var res = solveIncPrice(num(r.want), num(r.rate));
   var s = "税抜単価 <b>" + fmt(res.price) + "</b> ＋ 消費税 " + fmt(res.inc - res.price) + " ＝ 税込 <b>" + fmt(res.inc) + "</b>";
   if (res.diff !== 0){
@@ -540,9 +539,11 @@ function renderEditor(){
     if (r.kind === "fee"){
       h += '<label class="g-mode">入力方式<select data-f="mode">'
          + '<option value="ex"' + (r.mode !== "inc" ? " selected" : "") + ">税抜単価を入力</option>"
-         + '<option value="inc"' + (r.mode === "inc" ? " selected" : "") + ">税込の欲しい金額を入力</option></select></label>";
+         + '<option value="inc"' + (r.mode === "inc" ? " selected" : "") + ">税込単価を入力</option></select></label>";
       if (r.mode === "inc"){
-        h += '<label class="g-want">欲しい金額（税込）<input type="number" data-f="want" min="0" value="' + esc(r.want) + '"></label>';
+        h += '<label class="g-want">税込単価<input type="number" data-f="want" min="0" value="' + esc(r.want) + '"></label>';
+        h += '<label class="g-qty">数量<input type="number" data-f="qty" min="0" step="any" value="' + esc(r.qty) + '"></label>';
+        h += '<label class="g-unit">単位<input type="text" data-f="unit" value="' + esc(r.unit) + '" placeholder="日・組・式"></label>';
       } else {
         h += '<label class="g-price">税抜単価<input type="number" data-f="price" min="0" value="' + esc(r.price) + '"></label>';
         h += '<label class="g-qty">数量<input type="number" data-f="qty" min="0" step="any" value="' + esc(r.qty) + '"></label>';
@@ -700,6 +701,7 @@ $("rowsWrap").addEventListener("change", function(e){
   state.rows[i][f] = t.value;
   var r = state.rows[i];
   if (f === "mode"){
+    if (r.mode === "inc" && r.qty === "") r.qty = "1";
     applyIncSolve(r);
     renderEditor();
     renderDoc();
