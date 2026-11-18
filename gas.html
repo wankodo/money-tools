@@ -28,6 +28,16 @@ label.flabel{display:block;font-size:12.5px;color:var(--mut);margin:10px 0 3px}
 .usage-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px}
 .usage-row input[type=number]{width:130px;font-size:20px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-variant-numeric:tabular-nums}
 .usage-row .unit{font-size:15px;color:var(--ink)}
+.zip-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px}
+.zip-row input[type=text]{width:150px;font-size:18px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-variant-numeric:tabular-nums}
+.loc-row{display:flex;gap:12px;flex-wrap:wrap}
+.loc-row>div{flex:1 1 180px}
+.loc-row select{width:100%;font-size:16px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+.loc-clear{margin-top:10px;background:#e9e4d8;border:1px solid var(--line);border-radius:8px;padding:7px 13px;font-size:13px;cursor:pointer;color:var(--ink)}
+html[data-theme="andy"] .loc-clear{background:#0a1e30;color:#d8f1f6;border-color:rgba(110,205,230,.32)}
+.loc-status{font-size:13.5px;color:var(--navy);font-weight:700;margin:10px 0 0}
+html[data-theme="andy"] .loc-status{color:#d8f1f6}
+.area-out{border:1px dashed var(--line);border-radius:10px;padding:14px 16px;margin:10px 0;font-size:14px}
 .seg{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .seg button{background:#e9e4d8;border:1px solid var(--line);border-radius:8px;padding:8px 14px;font-size:14px;cursor:pointer;color:var(--ink)}
 .seg button.on{background:var(--navy);color:#fff;font-weight:700;border-color:var(--navy)}
@@ -109,7 +119,7 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
 <header>
   <div class="wrap">
     <h1>ガス代 <span class="accent">比較・試算ツール</span></h1>
-    <p>月のガス使用量（m³）を入れるだけで、大手都市ガス会社の一般契約の月額を安い順に並べて比較します。料金は各社の公式料金表にある「基準単位料金」（原料費調整なし）で計算しています。実際の請求では、毎月変動する原料費調整額が加減されます。</p>
+    <p>月のガス使用量（m³）を入れるだけで、大手都市ガス会社の一般契約の月額を安い順に並べて比較します。料金は各社の公式料金表にある「基準単位料金」（原料費調整なし）で計算しています。実際の請求では、毎月変動する原料費調整額が加減されます。お住まいの地域を入れると、その地域で契約できる会社だけに絞り込めます。</p>
   </div>
 </header>
 
@@ -134,11 +144,34 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
   </div>
 
   <div class="card">
+    <h2>お住まいの地域（任意）</h2>
+    <p class="note">郵便番号か都道府県・市区町村を指定すると、その地域で契約できる都市ガス会社だけを表示します。指定しない場合は全社を表示します。判定は市区町村単位で、番地までは扱いません。</p>
+    <label class="flabel" for="zipInput">郵便番号（ハイフンなし7桁）</label>
+    <div class="zip-row">
+      <input type="text" id="zipInput" inputmode="numeric" autocomplete="postal-code" placeholder="例：1540000" maxlength="8">
+      <span class="note" id="zipMsg"></span>
+    </div>
+    <div class="loc-row">
+      <div>
+        <label class="flabel" for="prefSel">都道府県</label>
+        <select id="prefSel"><option value="">選択しない</option></select>
+      </div>
+      <div>
+        <label class="flabel" for="citySel">市区町村</label>
+        <select id="citySel"><option value="">先に都道府県を選んでください</option></select>
+      </div>
+    </div>
+    <p class="loc-status" id="locStatus"></p>
+    <button type="button" class="loc-clear" id="locClear">地域の指定をクリア</button>
+    <p class="note">郵便番号を入力した場合、その番号だけが住所検索サービス（zipcloud）に送信され、都道府県・市区町村の特定に使われます。供給エリアの判定データは各社の公式資料（供給約款の別表・供給計画など）に基づきます。市区町村の一部地域のみ供給している会社も多いため、最終的な供給可否は各社の公式サイトでご確認ください。</p>
+  </div>
+
+  <div class="card">
     <h2>都市ガス（一般契約）の月額比較</h2>
     <p class="count" id="resultCount"></p>
     <div id="resultList"></div>
     <p class="note" id="resultEmpty">使用量を入力すると、各社の月額を安い順に表示します。</p>
-    <p class="note">都市ガスは住んでいる地域で契約できる会社が決まっています。他地域の会社とは契約できませんが、地域ごとの料金水準の違いを見る目安として並べています。会社ごとにガスの熱量（45MJ／46MJなど）が異なるため、m³あたりの単純比較には限界があります。</p>
+    <p class="note" id="compareNote">都市ガスは住んでいる地域で契約できる会社が決まっています。他地域の会社とは契約できませんが、地域ごとの料金水準の違いを見る目安として並べています。会社ごとにガスの熱量（45MJ／46MJなど）が異なるため、m³あたりの単純比較には限界があります。</p>
   </div>
 
   <div class="card">
@@ -160,6 +193,7 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
       <li>大阪ガスの旧「一般料金」は2026年9月30日で新規申込受付を終了したため、2026年10月1日新設の標準メニュー「一般料金S」を収録しています。</li>
       <li>東京ガスは供給地区ごとに料金が異なります。ここでは東京地区等の料金です。西部ガスは福岡・北九州地区と、熊本・長崎・佐世保の2地区を分けて収録しています。</li>
       <li>政府の電気・ガス料金負担軽減支援による値引きは、実施月が限られるため含んでいません。</li>
+      <li>地域の絞り込みは、各社の公式資料（供給約款の別表・供給計画など）に載っている供給区域をもとに、市区町村単位で判定しています。同じ市区町村でも番地によって供給の有無が分かれることが多く、「一部地域のみ供給」の会社はその旨を表示します。東京ガスは公式資料に市区町村単位の全域／一部の別が公表されていないため、供給区域に含まれる市区町村でも番地により対象外の場合がある旨を表示します。</li>
       <li>LPガスの目安は全国平均です。同じ使用量でも都道府県平均で月3,000円以上の差があり（2026年8月確報、10m³で奈良県8,741円〜北海道12,052円）、販売店ごとの差はさらに大きいことがあります。</li>
     </ul>
   </div>
@@ -168,7 +202,8 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
     <div class="card">
       このツールは非公式の個人ツールです。料金は各社の公式料金表で確認した基準単位料金（税込）に基づく目安で、実際の請求額は原料費調整額・契約内容により異なります。最新の料金は各社の公式ページでご確認ください。<br>
       出典：<a href="https://home.tokyo-gas.co.jp/column/gas_power/0129" target="_blank" rel="noopener">東京ガス ガス料金の計算方法</a>／<a href="https://www.osakagas.co.jp/company/press/pr2026/__icsFiles/afieldfile/2026/09/29/260929.pdf" target="_blank" rel="noopener">大阪ガス 原料費調整について（一般料金S料金表）</a>／<a href="https://www.tohogas.co.jp/business/gas/clause/pdf/kyokyu_important.pdf" target="_blank" rel="noopener">東邦ガス 一般ガス供給約款 重要事項</a>／<a href="https://hd.saibugas.co.jp/news_release/detail/2026/pdf/nr028.pdf" target="_blank" rel="noopener">西部ガス 原料費調整について（一般ガス供給約款料金表）</a>／<a href="https://www.hokkaido-gas.co.jp/business/ryo-kin/menu/ryokinhyo.html" target="_blank" rel="noopener">北海道ガス 料金表一覧</a>／<a href="https://www.gas.city.sendai.jp/family/charge/03/index.php" target="_blank" rel="noopener">仙台市ガス局 ガス料金</a>／<a href="https://oil-info.ieej.or.jp/price/price_ippan_lp_gusu.html" target="_blank" rel="noopener">石油情報センター 一般小売価格 LPガス</a><br>
-      料金確認日：2026-11-18
+      供給エリア出典：<a href="https://www.tokyo-gas.co.jp/network/takusou/plan/pdf/2026_table2.pdf" target="_blank" rel="noopener">東京ガスネットワーク 供給計画 第2表</a>／<a href="https://network.osakagas.co.jp/procedures/pdf/beppyo1_260619.pdf" target="_blank" rel="noopener">大阪ガスネットワーク 託送供給約款 別表第1</a>／<a href="https://www.tohogas.co.jp/business/gas/clause/pdf/betuhyou.pdf" target="_blank" rel="noopener">東邦ガス 一般ガス供給約款 別表第1</a>／<a href="https://hd.saibugas.co.jp/global/company/serviceareas.html" target="_blank" rel="noopener">西部ガス 都市ガスサービスエリア</a>・<a href="https://www.saibugas.co.jp/profile/menu/pdf/itaku_20240126.pdf" target="_blank" rel="noopener">西部ガス 託送供給約款 別表</a>／<a href="https://www.hokkaido-gas.co.jp/home/ryo-kin/menu/pdf/ippan_2017.pdf" target="_blank" rel="noopener">北海道ガス 一般ガス供給約款 別表第1</a>／<a href="https://www.gas.city.sendai.jp/top/about_us/area/index.php" target="_blank" rel="noopener">仙台市ガス局 供給区域</a><br>
+      料金確認日：2026-11-18／供給エリア確認日：2026-11-19
     </div>
     <p class="credit">制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
   </footer>
@@ -251,6 +286,124 @@ var COMPANIES = [
  src:"https://www.gas.city.sendai.jp/family/charge/03/index.php"}
 ];
 
+// ===== 供給エリア（各社の公式資料で確認、2026-11-19） =====
+// f: 市区町村の全域が供給区域／p: 一部地域のみ供給（または全域・一部の別が公式に未公表）
+var AREA = {
+"東京ガス":{p:{
+ "東京都":["千代田区","中央区","港区","新宿区","文京区","台東区","墨田区","江東区","品川区","目黒区","大田区","世田谷区","渋谷区","中野区","杉並区","豊島区","北区","荒川区","板橋区","練馬区","足立区","葛飾区","江戸川区","八王子市","立川市","武蔵野市","三鷹市","府中市","昭島市","調布市","町田市","小金井市","小平市","日野市","東村山市","国分寺市","国立市","狛江市","東大和市","清瀬市","東久留米市","多摩市","稲城市","西東京市","武蔵村山市"],
+ "神奈川県":["横浜市","川崎市","相模原市","横須賀市","平塚市","鎌倉市","藤沢市","茅ヶ崎市","逗子市","三浦市","大和市","海老名市","座間市","南足柄市","綾瀬市","葉山町","寒川町","大磯町","中井町","開成町"],
+ "千葉県":["千葉市","木更津市","成田市","佐倉市","八千代市","君津市","富津市","四街道市","袖ケ浦市","八街市","印西市","白井市","富里市","酒々井町","栄町","多古町","芝山町"],
+ "埼玉県":["さいたま市","川口市","所沢市","上尾市","草加市","蕨市","戸田市","朝霞市","和光市","新座市","久喜市","八潮市","三郷市","蓮田市","白岡市","熊谷市","行田市","羽生市","鴻巣市","深谷市","越谷市","伊奈町"],
+ "茨城県":["古河市","日立市","ひたちなか市","龍ヶ崎市","取手市","牛久市","つくば市","稲敷市","つくばみらい市","阿見町","利根町","美浦村"],
+ "栃木県":["宇都宮市","真岡市","上三川町","芳賀町","壬生町","高根沢町"],
+ "群馬県":["前橋市","高崎市","藤岡市","渋川市","吉岡町","玉村町","明和町","千代田町","邑楽町"]},
+ note:"東京ガスの公式資料では市区町村単位の全域／一部の別が公表されていないため、供給区域に含まれる市区町村でも、番地によっては対象外の場合があります。正確な供給エリアは公式サイトでご確認ください。"},
+"大阪ガス":{f:{
+ "大阪府":["大阪市","泉大津市","松原市","羽曳野市","高石市","藤井寺市","忠岡町","田尻町","豊中市","吹田市","摂津市","八尾市","柏原市","東大阪市","守口市","枚方市","寝屋川市","門真市"],
+ "兵庫県":["尼崎市","芦屋市","伊丹市","明石市","播磨町"],
+ "京都府":["八幡市","向日市","大山崎町","久御山町"],
+ "奈良県":["三郷町","王寺町"]},
+ p:{
+ "大阪府":["堺市","岸和田市","貝塚市","泉佐野市","富田林市","河内長野市","和泉市","泉南市","大阪狭山市","阪南市","熊取町","岬町","河南町","太子町","池田市","高槻市","茨木市","箕面市","島本町","豊能町","能勢町","大東市","四條畷市","交野市"],
+ "兵庫県":["神戸市","西宮市","宝塚市","川西市","猪名川町","三木市","三田市","加東市","姫路市","相生市","太子町","加古川市","赤穂市","高砂市","小野市","加西市","たつの市","稲美町","佐用町","上郡町"],
+ "京都府":["京都市","宇治市","亀岡市","城陽市","長岡京市","井手町","宇治田原町","京田辺市","木津川市","精華町"],
+ "奈良県":["奈良市","大和高田市","大和郡山市","天理市","生駒市","香芝市","平群町","斑鳩町","安堵町","田原本町","上牧町","広陵町","河合町","川西町"],
+ "和歌山県":["和歌山市","海南市","岩出市"],
+ "滋賀県":["大津市","近江八幡市","草津市","守山市","栗東市","甲賀市","野洲市","湖南市","東近江市","日野町","竜王町","彦根市","長浜市","米原市","愛荘町","甲良町","多賀町"],
+ "岡山県":["備前市"]}},
+"東邦ガス":{f:{
+ "愛知県":["名古屋市","日進市","東郷町","長久手市","豊山町","豊明市","みよし市","東海市","知多市","大府市","半田市","東浦町","刈谷市","知立市","高浜市","尾張旭市","岩倉市","北名古屋市","大治町","清須市","一宮市"],
+ "岐阜県":["岐南町","北方町"],
+ "三重県":["朝日町"]},
+ p:{
+ "愛知県":["常滑市","武豊町","美浜町","碧南市","安城市","阿久比町","岡崎市","豊川市","西尾市","幸田町","蒲郡市","豊田市","瀬戸市","春日井市","小牧市","犬山市","大口町","扶桑町","江南市","あま市","津島市","愛西市","稲沢市","弥富市","飛島村","蟹江町"],
+ "岐阜県":["岐阜市","各務原市","笠松町","本巣市","安八町","瑞穂市","大垣市","山県市","大野町","羽島市","美濃加茂市","関市","多治見市","可児市","土岐市","御嵩町"],
+ "三重県":["木曽岬町","いなべ市","桑名市","川越町","菰野町","亀山市","東員町","四日市市","鈴鹿市","津市","松阪市","伊勢市"]}},
+"西部ガス":{f:{"福岡県":["春日市"]},
+ p:{"福岡県":["福岡市","北九州市","大野城市","那珂川市","粕屋町","新宮町","古賀市","宮若市","福津市","志免町","糸島市","宗像市","久山町","水巻町","中間市","苅田町","遠賀町","芦屋町","岡垣町","鞍手町"]}},
+"西部ガス熊本・長崎・佐世保":{p:{
+ "熊本県":["熊本市","合志市","菊陽町","益城町","大津町","嘉島町","御船町"],
+ "長崎県":["長崎市","時津町","長与町","佐世保市"]}},
+"北海道ガス":{p:{"北海道":["札幌市","石狩市","小樽市","北広島市","千歳市","恵庭市","函館市","北斗市","北見市"]}},
+"仙台市ガス局":{p:{"宮城県":["仙台市","多賀城市","名取市","富谷市","利府町","大和町","大衡村"]}}
+};
+var PART_NOTE = "この会社は市区町村の一部地域のみに供給しています。お住まいの番地によっては対象外の場合があります。正確な供給エリアは公式サイトでご確認ください。";
+var PREFS = ["北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県","茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県","新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県","徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"];
+var locState = {pref:"", city:"", other:false};
+function normCity(s){
+  if(!s) return "";
+  var m = s.match(/^(.+?市).+区$/); // 政令市は市単位に丸める（例：横浜市鶴見区→横浜市）
+  if(m) return m[1];
+  var i = s.indexOf("郡"); // 郡名を落とす（例：宮城郡利府町→利府町）
+  if(i >= 0) return s.slice(i + 1);
+  return s;
+}
+function areaStatus(c, pref, city){
+  var a = AREA[c.name];
+  if(!a) return null;
+  if(a.f && a.f[pref] && a.f[pref].indexOf(city) >= 0) return "full";
+  if(a.p && a.p[pref] && a.p[pref].indexOf(city) >= 0) return "part";
+  return null;
+}
+function locActive(){ return !!(locState.pref && (locState.city || locState.other)); }
+function locLabel(){
+  if(locState.other) return locState.pref + "のその他の市区町村";
+  return locState.pref + locState.city;
+}
+function citiesForPref(pref){
+  var set = {};
+  COMPANIES.forEach(function(c){
+    var a = AREA[c.name]; if(!a) return;
+    ["f","p"].forEach(function(k){
+      if(a[k] && a[k][pref]) a[k][pref].forEach(function(x){ set[x] = 1; });
+    });
+  });
+  return Object.keys(set).sort(function(a,b){ return a.localeCompare(b, "ja"); });
+}
+function buildCityOptions(pref){
+  var sel = $("citySel");
+  sel.innerHTML = "";
+  var o0 = document.createElement("option");
+  if(!pref){ o0.value = ""; o0.textContent = "先に都道府県を選んでください"; sel.appendChild(o0); sel.disabled = true; return; }
+  sel.disabled = false;
+  o0.value = ""; o0.textContent = "市区町村を選択"; sel.appendChild(o0);
+  citiesForPref(pref).forEach(function(x){
+    var o = document.createElement("option"); o.value = x; o.textContent = x; sel.appendChild(o);
+  });
+  var o9 = document.createElement("option");
+  o9.value = "__other__"; o9.textContent = "その他の市区町村"; sel.appendChild(o9);
+}
+function matchedCompanies(){
+  if(!locActive()) return null;
+  var out = [];
+  COMPANIES.forEach(function(c){
+    var st = locState.other ? null : areaStatus(c, locState.pref, locState.city);
+    if(st) out.push({c:c, st:st});
+  });
+  return out;
+}
+function updateLocStatus(){
+  var el = $("locStatus");
+  if(!locState.pref){ el.textContent = ""; return; }
+  if(!locActive()){ el.textContent = "市区町村を選ぶと、その地域で契約できる会社だけに絞り込みます。"; return; }
+  var m = matchedCompanies();
+  if(m.length === 0){
+    el.textContent = locLabel() + "は、収録している都市ガス会社の供給エリア外の可能性があります。LPガスは利用できます。";
+  } else {
+    el.textContent = locLabel() + "で契約できる都市ガス： " + m.map(function(x){ return x.c.name; }).join("、");
+  }
+}
+function setLoc(pref, cityRaw, other){
+  locState.pref = pref || "";
+  locState.other = !!other;
+  locState.city = other ? "" : normCity(cityRaw || "");
+  $("prefSel").value = locState.pref;
+  buildCityOptions(locState.pref);
+  if(locState.pref) $("citySel").value = locState.other ? "__other__" : locState.city;
+  updateLocStatus();
+  render();
+}
+
 // LPガス全国平均アンカー（石油情報センター 2026年8月確報、税込・基本料金込み）
 var LP_ANCHORS = [
  {v:5, price:6016},
@@ -289,6 +442,9 @@ function render(){
   var v = parseFloat(raw);
   var chips = $("usageChips").querySelectorAll("button");
   chips.forEach(function(b){ b.classList.toggle("on", raw !== "" && parseFloat(b.getAttribute("data-v")) === v); });
+  var COMPARE_NOTE_DEFAULT = "都市ガスは住んでいる地域で契約できる会社が決まっています。他地域の会社とは契約できませんが、地域ごとの料金水準の違いを見る目安として並べています。会社ごとにガスの熱量（45MJ／46MJなど）が異なるため、m³あたりの単純比較には限界があります。";
+  var COMPARE_NOTE_FILTERED = "地域で絞り込み中です。表示しているのは、その地域で契約できる会社だけです。会社ごとにガスの熱量（45MJ／46MJなど）が異なるため、m³あたりの単純比較には限界があります。";
+  $("compareNote").textContent = locActive() ? COMPARE_NOTE_FILTERED : COMPARE_NOTE_DEFAULT;
   if(raw === "" || isNaN(v) || v < 0){
     $("resultCount").textContent = "";
     $("resultList").innerHTML = "";
@@ -300,23 +456,37 @@ function render(){
   var rows = COMPANIES.map(function(c){
     var t = tierFor(c, v);
     var total = Math.floor(t.tier.base + t.tier.unit * v);
-    return {c:c, tier:t.tier, idx:t.idx, total:total};
+    return {c:c, tier:t.tier, idx:t.idx, total:total, areaState:null};
   });
+  if(locActive()){
+    rows = rows.filter(function(r){
+      if(locState.other) return false;
+      var st = areaStatus(r.c, locState.pref, locState.city);
+      r.areaState = st;
+      return !!st;
+    });
+  }
   rows.sort(function(a,b){ return a.total - b.total; });
-  $("resultCount").textContent = "月 " + v + "m³ の場合（基準単位料金・原料費調整なし）";
-  $("resultList").innerHTML = rows.map(function(r, i){
-    var bd = "基本料金 " + yen(r.tier.base) + " ＋ 基準単位料金 " + num2(r.tier.unit) + "円/m³ × " + v + "m³";
-    var html = '<div class="plan' + (i === 0 ? " best" : "") + '">'
-      + '<div class="phead"><div><div class="brand">' + r.c.area + '</div>'
-      + '<div class="pname">' + r.c.name + " " + r.c.plan + '</div></div>'
-      + '<div class="price"><span class="yen">' + yen(r.total) + '</span><br><span class="per">／月（税込）</span></div></div>'
-      + '<div class="badges">' + (i === 0 ? '<span class="best-b">この条件で最安</span>' : "")
-      + '<span>料金表' + TIER_NAMES[r.idx] + '</span><span>原料費調整なし</span></div>'
-      + '<div class="breakdown">' + bd + '</div>';
-    if(r.c.note) html += '<p class="pnote">' + r.c.note + '</p>';
-    html += '<p class="meta">出典：<a href="' + r.c.src + '" target="_blank" rel="noopener">' + r.c.name + ' 公式ページ</a></p></div>';
-    return html;
-  }).join("");
+  $("resultCount").textContent = "月 " + v + "m³ の場合（基準単位料金・原料費調整なし）" + (locActive() ? "｜" + locLabel() + "で契約できる会社" : "");
+  if(locActive() && rows.length === 0){
+    $("resultList").innerHTML = '<div class="area-out">' + locLabel() + "は、収録している都市ガス会社の供給エリア外の可能性があります。都市ガスは使えない地域でも、LPガス（プロパンガス）は全国で利用できます。下の「LPガスの目安試算」をご覧ください。</div>";
+  } else {
+    $("resultList").innerHTML = rows.map(function(r, i){
+      var bd = "基本料金 " + yen(r.tier.base) + " ＋ 基準単位料金 " + num2(r.tier.unit) + "円/m³ × " + v + "m³";
+      var html = '<div class="plan' + (i === 0 ? " best" : "") + '">'
+        + '<div class="phead"><div><div class="brand">' + r.c.area + '</div>'
+        + '<div class="pname">' + r.c.name + " " + r.c.plan + '</div></div>'
+        + '<div class="price"><span class="yen">' + yen(r.total) + '</span><br><span class="per">／月（税込）</span></div></div>'
+        + '<div class="badges">' + (i === 0 ? '<span class="best-b">この条件で最安</span>' : "")
+        + '<span>料金表' + TIER_NAMES[r.idx] + '</span><span>原料費調整なし</span>'
+        + (r.areaState === "part" ? '<span>一部地域のみ供給</span>' : "") + '</div>'
+        + '<div class="breakdown">' + bd + '</div>';
+      if(r.c.note) html += '<p class="pnote">' + r.c.note + '</p>';
+      if(r.areaState === "part") html += '<p class="pnote">' + (AREA[r.c.name].note || PART_NOTE) + '</p>';
+      html += '<p class="meta">出典：<a href="' + r.c.src + '" target="_blank" rel="noopener">' + r.c.name + ' 公式ページ</a></p></div>';
+      return html;
+    }).join("");
+  }
   var lp = lpEstimate(v);
   if(lp === null){
     $("lpResult").innerHTML = '<p class="note">使用量が0m³のため、LPガスの目安は表示しません。</p>';
@@ -338,6 +508,64 @@ $("usageChips").addEventListener("click", function(e){
   $("usageInput").value = b.getAttribute("data-v");
   render();
 });
+
+// ===== 地域の指定（郵便番号／プルダウン） =====
+(function(){
+  var prefSel = $("prefSel");
+  PREFS.forEach(function(p){
+    var o = document.createElement("option"); o.value = p; o.textContent = p; prefSel.appendChild(o);
+  });
+  buildCityOptions("");
+  $("citySel").disabled = true;
+  prefSel.addEventListener("change", function(){
+    $("zipInput").value = "";
+    $("zipMsg").textContent = "";
+    setLoc(prefSel.value, "", false);
+  });
+  $("citySel").addEventListener("change", function(){
+    var v = $("citySel").value;
+    if(v === "__other__") setLoc(locState.pref, "", true);
+    else if(v) setLoc(locState.pref, v, false);
+    else { locState.city = ""; locState.other = false; updateLocStatus(); render(); }
+  });
+  $("locClear").addEventListener("click", function(){
+    $("zipInput").value = "";
+    $("zipMsg").textContent = "";
+    setLoc("", "", false);
+  });
+  // 郵便番号→都道府県・市区町村（zipcloud、invoice.html と同方式）
+  var lastZip = "";
+  $("zipInput").addEventListener("input", function(){
+    var msgEl = $("zipMsg");
+    var digits = $("zipInput").value.replace(/[０-９]/g, function(c){ return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); }).replace(/[^0-9]/g, "");
+    if(digits.length !== 7){
+      msgEl.textContent = "";
+      if(digits.length < 7) lastZip = "";
+      return;
+    }
+    if(digits === lastZip) return;
+    lastZip = digits;
+    msgEl.textContent = "";
+    fetch("https://zipcloud.ibsnet.co.jp/api/search?zipcode=" + digits)
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if(lastZip !== digits) return;
+        var r = data && data.results && data.results[0];
+        if(!r){ msgEl.textContent = "住所が見つかりませんでした"; return; }
+        var pref = r.address1 || "";
+        var city = normCity(r.address2 || "");
+        var cities = citiesForPref(pref);
+        msgEl.textContent = (r.address1 || "") + (r.address2 || "");
+        if(cities.indexOf(city) >= 0) setLoc(pref, city, false);
+        else setLoc(pref, "", true);
+      })
+      .catch(function(){
+        if(lastZip !== digits) return;
+        msgEl.textContent = "住所を検索できませんでした";
+      });
+  });
+})();
+
 render();
 })();
 </script>
