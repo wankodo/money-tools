@@ -196,6 +196,7 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
       <li>政府の電気・ガス料金負担軽減支援による値引きは、実施月が限られるため含んでいません。</li>
       <li>地域の絞り込みは、各社の公式資料（供給約款の別表・供給計画など）に載っている供給区域をもとに、市区町村単位で判定しています。同じ市区町村でも番地によって供給の有無が分かれることが多く、「一部地域のみ供給」の会社はその旨を表示します。東京ガスは公式資料に市区町村単位の全域／一部の別が公表されていないため、供給区域に含まれる市区町村でも番地により対象外の場合がある旨を表示します。</li>
       <li>LPガスの目安は全国平均です。同じ使用量でも都道府県平均で月3,000円以上の差があり（2026年8月確報、10m³で奈良県8,741円〜北海道12,052円）、販売店ごとの差はさらに大きいことがあります。</li>
+      <li>料金を収録しているのは66エントリです。このほかに、料金表の数値を公式サイトで確認できなかった9社（塩釜ガス・古川ガス・弘前ガス・新庄都市ガス・水沢ガス・出雲ガス・鳥取ガス・因島ガス・足利ガス）は、金額を出さず「未収録・案内」として表示しています（全社表示のときのみ）。</li>
     </ul>
   </div>
 
@@ -523,7 +524,246 @@ var COMPANIES = [
   {max:215, base:1442.10, unit:200.15},
   {max:Infinity, base:7114.80, unit:173.77}],
  note:"熱量43.5MJ（13A）で、他社より熱量が低めです。",
- src:"https://okinawagas.co.jp/userfiles/files/oshirase/michiko/202606_01_city_gas_normal.pdf"}
+ src:"https://okinawagas.co.jp/userfiles/files/oshirase/michiko/202606_01_city_gas_normal.pdf"},
+{name:"青森ガス", plan:"一般料金", area:"青森県青森市",
+ tiers:[
+  {max:16, base:1375.00, unit:276.782},
+  {max:166, base:1848.00, unit:247.852},
+  {max:Infinity, base:3274.70, unit:239.283}],
+ note:"45MJ。2026年10月1日改定。基準単位料金は公式の窓口料金表（調整単価と調整額）から確認しています。単位料金は小数第3位までが正式値のため、内訳表示から手計算すると1円程度ずれることがあります。",
+ src:"https://www.aogas.co.jp/contents/wp-content/uploads/2026/10/7d8ee138fb8a92cf10f307c5c6ba6491.pdf"},
+{name:"八戸ガス", plan:"一般料金", area:"青森県八戸市",
+ tiers:[
+  {max:16, base:1320.00, unit:291.50},
+  {max:167, base:1643.40, unit:271.843},
+  {max:459, base:3942.40, unit:258.126},
+  {max:Infinity, base:10322.40, unit:244.233}],
+ note:"令和8年7月1日実施の改定料金表です。単位料金は小数第3位までが正式値のため、内訳表示から手計算すると1円程度ずれることがあります。",
+ src:"https://www.hachinohe-gas.co.jp/pdf/ryoukin/202608.pdf"},
+{name:"石巻ガス", plan:"一般料金", area:"宮城県石巻市",
+ tiers:[
+  {max:20, base:1963.50, unit:333.39},
+  {max:208, base:2474.71, unit:307.83},
+  {max:Infinity, base:5844.94, unit:291.62}],
+ note:"2026年10月1日実施の小売供給約款の料金表です。供給は石巻市の一部地域です。",
+ src:"http://www.ishinomaki-gas.co.jp/_src/76518797/20261001_kouriyakkan.pdf"},
+{name:"山形ガス", plan:"一般料金", area:"山形県山形市",
+ tiers:[
+  {max:20, base:1045.00, unit:248.126},
+  {max:100, base:1180.30, unit:241.361},
+  {max:250, base:1536.70, unit:237.797},
+  {max:400, base:3065.70, unit:231.681},
+  {max:Infinity, base:5507.70, unit:225.576}],
+ note:"46MJ。2026年4月検針分から基準単位料金が一律12円（税込）引き上げられ、基本料金は変更なしとする公式告知を反映しています。単位料金は小数第3位までが正式値のため、内訳表示から手計算すると1円程度ずれることがあります。",
+ src:"https://yamagatagas.co.jp/"},
+{name:"庄内中部ガス", plan:"一般料金", area:"山形県鶴岡市・酒田市・庄内町・三川町",
+ tiers:[
+  {max:30, base:737.00, unit:211.75},
+  {max:200, base:877.80, unit:207.064},
+  {max:Infinity, base:2076.80, unit:201.091}],
+ note:"熱量41.8605MJ。基準単位料金は公式の料金案内と計算例で確認しています。単位料金は小数第3位までが正式値のため、内訳表示から手計算すると1円程度ずれることがあります。",
+ src:"http://www.shonai-chubu.jp/charge/index.html"},
+{name:"酒田天然ガス", plan:"一般料金", area:"山形県酒田市",
+ tiers:[
+  {max:20, base:1184.70, unit:270.303},
+  {max:143, base:1606.00, unit:249.238},
+  {max:Infinity, base:4621.10, unit:228.151}],
+ note:"46MJ。令和8年7月1日実施の小売供給約款の料金表です。単位料金は小数第3位までが正式値のため、内訳表示から手計算すると1円程度ずれることがあります。",
+ src:"https://www.sakata-n-gas.co.jp/pdf/kourikyokyu03.pdf"},
+{name:"福島ガス", plan:"一般料金", area:"福島県福島市",
+ tiers:[
+  {max:20, base:1100.00, unit:218.262},
+  {max:100, base:1276.00, unit:209.462},
+  {max:350, base:2376.00, unit:198.462},
+  {max:Infinity, base:6611.00, unit:186.362}],
+ note:"46MJ。基準単位料金は公式の月次お知らせ（調整単価と調整額）から確認しています。単位料金は小数第3位までが正式値のため、内訳表示から手計算すると1円程度ずれることがあります。",
+ src:"https://www.f-gas.co.jp/data/upload/20251201101428fb7485.pdf"},
+{name:"若松ガス", plan:"一般料金", area:"福島県会津若松市",
+ tiers:[
+  {max:21, base:957.00, unit:246.02},
+  {max:158, base:1743.50, unit:208.57},
+  {max:Infinity, base:3870.90, unit:195.10}],
+ note:"46MJ。基準単位料金は公式の原料費調整計算書から確認しています。",
+ src:"https://wakagas.co.jp/wordpress/wp-content/uploads/2026/11/原料費調整（スライド）制度に基づく2026年12月の都市ガス料金について.pdf"},
+{name:"常磐共同ガス", plan:"一般料金（常磐・内郷・好間地区）", area:"福島県いわき市（常磐・内郷・好間地区）",
+ tiers:[
+  {max:16, base:1079.00, unit:236.676},
+  {max:162, base:1397.00, unit:216.81},
+  {max:Infinity, base:2897.00, unit:207.548}],
+ note:"45MJ。地区で料金が異なります。基本料金は2025年9月検針分からの改定値で、従量単価は変更なしとする公式の改定お知らせを反映しています。単位料金は小数第3位までが正式値のため、内訳表示から手計算すると1円程度ずれることがあります。",
+ src:"https://jkg-energy.co.jp/wordpress/wp-content/uploads/2022/04/都市ガス小売供給約款.pdf"},
+{name:"常磐共同ガス（小名浜地区）", plan:"一般料金（小名浜地区）", area:"福島県いわき市（小名浜地区）",
+ tiers:[
+  {max:16, base:1122.00, unit:267.28},
+  {max:Infinity, base:1485.00, unit:245.12}],
+ note:"45MJ。地区で料金が異なります。基本料金は2025年9月検針分からの改定値で、従量単価は変更なしとする公式の改定お知らせを反映しています。",
+ src:"https://jkg-energy.co.jp/wordpress/wp-content/uploads/2025/08/料金改定のお知らせ.xlsx-小名浜一般-101.pdf"},
+{name:"桐生ガス", plan:"一般料金", area:"群馬県桐生市",
+ tiers:[
+  {max:25, base:792.00, unit:198.11},
+  {max:250, base:1071.40, unit:186.95},
+  {max:Infinity, base:2957.90, unit:179.40}],
+ note:"公式の料金案内（2026年9月1日現在）の料金表です。",
+ src:"https://www.kiryu-gas.co.jp/customer/fee_001.html"},
+{name:"館林ガス", plan:"一般料金", area:"群馬県館林市",
+ tiers:[
+  {max:20, base:995.50, unit:197.95},
+  {max:81, base:1127.50, unit:191.35},
+  {max:204, base:1531.20, unit:186.36},
+  {max:511, base:2520.10, unit:181.51},
+  {max:Infinity, base:5392.20, unit:175.89}],
+ note:"2026年4月1日実施の料金等定義書の一般料金です。",
+ src:"https://www.tate-gas.co.jp/wp/wp-content/uploads/2026/03/料金等定義書_一般料金_20260401.pdf"},
+{name:"北日本ガス", plan:"一般料金（日本瓦斯・旧北日本ガスエリア）", area:"栃木県小山市・鹿沼市",
+ tiers:[
+  {max:20, base:929.90, unit:198.17},
+  {max:80, base:1360.00, unit:176.68},
+  {max:200, base:1538.20, unit:174.44},
+  {max:500, base:2922.00, unit:167.53},
+  {max:Infinity, base:4770.00, unit:163.83}],
+ note:"現在の供給者は日本瓦斯（エナジー宇宙）で、旧・北日本ガスエリアの料金表です。供給は小山市・鹿沼市の一部地域です。",
+ src:"https://files.microcms-assets.io/assets/dc5078bb619b44e981f63da17a6bea97/b8c8302504cf483babd9a70c734f377a/都市ガス料金表2026年12月.pdf"},
+{name:"武陽ガス", plan:"一般料金", area:"埼玉県福生市・羽村市・武蔵村山市・瑞穂町",
+ tiers:[
+  {max:5, base:998.00, unit:217.24},
+  {max:25, base:1364.00, unit:144.68},
+  {max:70, base:1540.00, unit:137.73},
+  {max:200, base:1936.00, unit:132.07},
+  {max:Infinity, base:2645.50, unit:128.53}],
+ note:"新規契約者向けの小売供給約款の料金表（2026年3月実施）です。",
+ src:"https://www.buyo-gas.co.jp/wp-content/uploads/2026/01/2026.3-3-1.pdf"},
+{name:"青梅ガス", plan:"一般料金", area:"東京都青梅市",
+ tiers:[
+  {max:25, base:1158.63, unit:199.76},
+  {max:77, base:1485.88, unit:186.67},
+  {max:194, base:1638.34, unit:184.69},
+  {max:Infinity, base:3516.26, unit:175.01}],
+ note:"45MJ。2026年4月1日実施の改定料金表です。供給は青梅市の一部地域です。",
+ src:"https://www.omegas.co.jp/wp-content/uploads/ryoukinkaitei20260401.pdf"},
+{name:"昭島ガス", plan:"一般料金", area:"東京都昭島市",
+ tiers:[
+  {max:10, base:980.00, unit:208.82},
+  {max:50, base:1085.00, unit:198.32},
+  {max:100, base:1140.00, unit:197.22},
+  {max:250, base:1280.00, unit:195.82},
+  {max:Infinity, base:5500.00, unit:178.94}],
+ note:"2023年4月20日実施の小売供給約款の料金表です。",
+ src:"https://www.akishimagas.co.jp/assets/pdf/kouri_yakkan20230420.pdf"},
+{name:"習志野市企業局", plan:"一般料金", area:"千葉県習志野市",
+ tiers:[
+  {max:18, base:572.00, unit:130.82},
+  {max:279, base:649.00, unit:126.54},
+  {max:Infinity, base:1130.80, unit:124.81}],
+ note:"45MJ。公営の都市ガス。早収料金の表です。",
+ src:"https://www.city.narashino.lg.jp/material/files/group/42/R05_09_kyoukyuzyouken_setsumei.pdf"},
+{name:"小田原ガス", plan:"一般料金", area:"神奈川県小田原市・南足柄市・二宮町・大井町・開成町・箱根町",
+ tiers:[
+  {max:10, base:990.00, unit:240.54},
+  {max:25, base:1485.00, unit:191.04},
+  {max:80, base:1815.00, unit:177.84},
+  {max:150, base:2364.60, unit:170.97},
+  {max:400, base:3464.10, unit:163.64},
+  {max:Infinity, base:9624.10, unit:148.24}],
+ note:"45MJ。2024年9月1日実施のガス小売供給約款の料金表です。",
+ src:"https://www.odawaragas.co.jp/global-image/units/upfiles/291647-1-20240830134415_b66d14e1f30e64.pdf"},
+{name:"サーラエナジー", plan:"一般料金", area:"愛知県豊橋市・豊川市・田原市・蒲郡市、静岡県浜松市・磐田市・湖西市",
+ tiers:[
+  {max:22, base:902.00, unit:226.30},
+  {max:232, base:1119.80, unit:216.38},
+  {max:Infinity, base:2192.30, unit:211.76}],
+ note:"45MJ。旧・中部ガス。基準単位料金は公式の料金シミュレーションと約款資料で確認しています。",
+ src:"https://www.salaenergy.co.jp/simulation/withgas/view"},
+{name:"島田ガス", plan:"一般料金", area:"静岡県島田市",
+ tiers:[
+  {max:25, base:838.20, unit:239.94},
+  {max:159, base:1353.00, unit:219.34},
+  {max:Infinity, base:6528.50, unit:186.79}],
+ note:"45MJ。2026年1月1日実施の約款の料金表です。供給は島田市の一部地域です。",
+ src:"https://www.shimadagas.co.jp/images/pdf_yakkan_kouri_20260101.pdf"},
+{name:"御殿場ガス", plan:"一般料金", area:"静岡県御殿場市",
+ tiers:[
+  {max:10, base:869.00, unit:273.17},
+  {max:25, base:919.72, unit:268.08},
+  {max:150, base:1072.50, unit:261.97},
+  {max:Infinity, base:2368.05, unit:253.33}],
+ note:"45MJ。供給は御殿場市の一部地域です。",
+ src:"https://gotemba-gas.jp/wp-content/uploads/2021/12/一般ガス供給約款20191001.pdf"},
+{name:"山口合同ガス", plan:"一般料金", area:"山口県下関市・山陽小野田市・宇部市・防府市・山口市・周南市・下松市・光市",
+ tiers:[
+  {max:25, base:1329.90, unit:271.381},
+  {max:100, base:2431.00, unit:227.337},
+  {max:250, base:2634.50, unit:225.302},
+  {max:Infinity, base:3072.30, unit:223.553}],
+ note:"46MJ。2026年8月1日実施の約款の料金表です。各市とも供給は市内の一部地域です。単位料金は小数第3位までが正式値のため、内訳表示から手計算すると1円程度ずれることがあります。",
+ src:"https://www.yamago-gas.co.jp/pdf/household/standard/20260801/yakkan-jyuuraiyamagou-20260801.pdf"},
+{name:"米子ガス", plan:"一般料金", area:"鳥取県米子市",
+ tiers:[
+  {max:10, base:1520.20, unit:257.31},
+  {max:20, base:1541.10, unit:255.22},
+  {max:80, base:2443.10, unit:210.12},
+  {max:150, base:3059.10, unit:202.42},
+  {max:Infinity, base:3630.00, unit:198.61}],
+ note:"2026年10月1日実施の料金表です。供給は米子市の一部地域です。",
+ src:"https://www.yonago-gas.co.jp/upload/user/00003277-4gSxVq.pdf"},
+{name:"松江エナジープラス", plan:"一般料金", area:"島根県松江市",
+ tiers:[
+  {max:10, base:660.00, unit:265.254},
+  {max:40, base:737.00, unit:257.554},
+  {max:100, base:1047.20, unit:249.799},
+  {max:Infinity, base:1821.16, unit:242.044}],
+ note:"2026年4月1日に松江市ガス局から事業譲渡を受けた会社で、料金はガス局時代のものを引き継いでいます。供給は松江市の一部地域です。単位料金は小数第3位までが正式値のため、内訳表示から手計算すると1円程度ずれることがあります。",
+ src:"https://mep.itami-grp.co.jp/wpcms/wp-content/uploads/2026/10/HP用料金表2026年11月.pdf"},
+{name:"津山ガス", plan:"一般料金", area:"岡山県津山市",
+ tiers:[
+  {max:10, base:861.30, unit:282.59},
+  {max:25, base:927.30, unit:275.99},
+  {max:100, base:1944.80, unit:235.29},
+  {max:Infinity, base:3934.04, unit:215.39}],
+ note:"2019年実施の約款料金表です。基本料金は2026年の公式資料でも据え置きを確認しています。",
+ src:"https://www.tsuyama-gas.co.jp/wp/wp-content/uploads/2019/08/報道資料2019（消費税）.pdf"},
+{name:"飯塚ガス", plan:"一般料金", area:"福岡県飯塚市",
+ tiers:[
+  {max:20, base:902.00, unit:294.73},
+  {max:326, base:1716.00, unit:254.03},
+  {max:Infinity, base:10444.50, unit:227.26}],
+ note:"46MJ。供給は飯塚市の一部地域です。",
+ src:"https://www.iigas.co.jp/wordpress/wp-content/uploads/2021/07/小売供給約款一般契約.pdf"},
+{name:"久留米ガス", plan:"一般料金", area:"福岡県久留米市",
+ tiers:[
+  {max:24, base:756.80, unit:229.24},
+  {max:Infinity, base:1610.84, unit:193.65}],
+ note:"45MJ。供給は久留米市の一部地域です。",
+ src:"https://www.kurumegas.co.jp/asset/home/price/pdf/supply_article.pdf"},
+{name:"鳥栖ガス", plan:"一般料金", area:"佐賀県鳥栖市",
+ tiers:[
+  {max:25, base:1100.00, unit:259.89},
+  {max:157, base:2090.00, unit:220.29},
+  {max:Infinity, base:5156.80, unit:200.76}],
+ note:"45MJ。令和8年8月1日実施の小売供給約款の料金表です。",
+ src:"http://www.tosugas.co.jp/pdf/2026_ippan.pdf"}
+];
+
+// ===== 案内エントリ（料金表の数値を公式で確認できなかった会社、2026-11-19確認） =====
+// 料金の数字は載せず、案内のみ表示する。src は公式サイトのトップ（確認できた会社のみ）
+var GUIDE_COMPANIES = [
+{name:"塩釜ガス",
+ note:"公式情報誌で確認できたのは原料費調整後の従量単価のみで、調整額の記載がなく、基準単位料金を復元できませんでした。"},
+{name:"古川ガス", src:"https://www.furukawa-gas.jp/",
+ note:"公式サイトに約款のページはありますが、約款PDFの本文を取得できず、料金表の数値を確認できませんでした。"},
+{name:"弘前ガス", src:"http://hg-group.co.jp/",
+ note:"公式サイトに都市ガス料金のページはありますが、料金表の数値に到達できませんでした。"},
+{name:"新庄都市ガス",
+ note:"一般料金表は公開されていません（公式サイトで確認できたのは最終保障供給約款の料金表のみで、一般料金とは別物のため載せていません）。"},
+{name:"水沢ガス",
+ note:"供給団地ごとに料金表が異なる地点群供給のため、単一の一般料金表がありません。お住まいの団地の料金は窓口でご確認ください。"},
+{name:"出雲ガス", src:"http://www.izumogas.co.jp/",
+ note:"一般約款の料金表が公式サイト内で見つかりませんでした（選択約款のみ掲載）。"},
+{name:"鳥取ガス", src:"https://www.enetopia.jp/",
+ note:"現行の公式サイト「エネトピア」内にガス料金表・約款が見当たらず、数値を確認できませんでした。"},
+{name:"因島ガス", src:"https://www.innoshima-gas.co.jp/",
+ note:"一般約款本体の料金表は公開されておらず、数値を確認できませんでした。"},
+{name:"足利ガス",
+ note:"2026年3月に料金改定があり、改定後の料金表を確認中です（確認できないまま旧料金を載せることはしません）。"}
 ];
 
 // ===== 供給エリア（各社の公式資料で確認、2026-11-19） =====
@@ -591,7 +831,21 @@ var AREA = {
 "水島ガス":{p:{"岡山県":["倉敷市"]}},
 "宮崎ガス":{p:{"宮崎県":["宮崎市","延岡市","都城市"]}},
 "日本ガス":{p:{"鹿児島県":["鹿児島市"]}},
-"沖縄ガス":{p:{"沖縄県":["那覇市"]}}
+"沖縄ガス":{p:{"沖縄県":["那覇市"]}},
+"サーラエナジー":{p:{"愛知県":["豊橋市","豊川市","田原市","蒲郡市"],"静岡県":["浜松市","磐田市","湖西市"]}},
+"島田ガス":{p:{"静岡県":["島田市"]}},
+"御殿場ガス":{p:{"静岡県":["御殿場市"]}},
+"飯塚ガス":{p:{"福岡県":["飯塚市"]}},
+"久留米ガス":{p:{"福岡県":["久留米市"]}},
+"山口合同ガス":{p:{"山口県":["下関市","山陽小野田市","宇部市","防府市","山口市","周南市","下松市","光市"]}},
+"米子ガス":{p:{"鳥取県":["米子市"]}},
+"松江エナジープラス":{p:{"島根県":["松江市"]}},
+"青梅ガス":{p:{"東京都":["青梅市"]}},
+"石巻ガス":{p:{"宮城県":["石巻市"]}},
+"北日本ガス":{p:{"栃木県":["小山市","鹿沼市"]}},
+"常磐共同ガス":{p:{"福島県":["いわき市"]}},
+"常磐共同ガス（小名浜地区）":{p:{"福島県":["いわき市"]}},
+"小田原ガス":{p:{"神奈川県":["小田原市","南足柄市","二宮町","大井町","開成町","箱根町"]}}
 };
 var PART_NOTE = "この会社は市区町村の一部地域のみに供給しています。お住まいの番地によっては対象外の場合があります。正確な供給エリアは公式サイトでご確認ください。";
 var PREFS = ["北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県","茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県","新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県","徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"];
@@ -733,11 +987,11 @@ function render(){
     });
   }
   rows.sort(function(a,b){ return a.total - b.total; });
-  $("resultCount").textContent = "月 " + v + "m³ の場合（基準単位料金・原料費調整なし）" + (locActive() ? "｜" + locLabel() + "で契約できる会社" : "");
+  $("resultCount").textContent = "月 " + v + "m³ の場合（基準単位料金・原料費調整なし）" + (locActive() ? "｜" + locLabel() + "で契約できる会社" : "｜料金収録 " + rows.length + "エントリ＋案内 " + GUIDE_COMPANIES.length + "社（料金未収録）");
   if(locActive() && rows.length === 0){
     $("resultList").innerHTML = '<div class="area-out">' + locLabel() + "は、収録している都市ガス会社の供給エリア外の可能性があります。都市ガスは使えない地域でも、LPガス（プロパンガス）は全国で利用できます。下の「LPガスの目安試算」をご覧ください。</div>";
   } else {
-    $("resultList").innerHTML = rows.map(function(r, i){
+    var listHtml = rows.map(function(r, i){
       var bd = "基本料金 " + yen(r.tier.base) + " ＋ 基準単位料金 " + num2(r.tier.unit) + "円/m³ × " + v + "m³";
       var html = '<div class="plan' + (i === 0 ? " best" : "") + '">'
         + '<div class="phead"><div><div class="brand">' + r.c.area + '</div>'
@@ -752,6 +1006,20 @@ function render(){
       html += '<p class="meta">出典：<a href="' + r.c.src + '" target="_blank" rel="noopener">' + r.c.name + ' 公式ページ</a></p></div>';
       return html;
     }).join("");
+    if(!locActive()){
+      listHtml += GUIDE_COMPANIES.map(function(g){
+        var gh = '<div class="plan guide">'
+          + '<div class="phead"><div><div class="brand">都市ガス（一般契約）</div>'
+          + '<div class="pname">' + g.name + '（未収録・案内）</div></div></div>'
+          + '<div class="badges"><span>料金未収録</span></div>'
+          + '<div class="breakdown">この会社の料金表は、公式サイトで数値を確認できなかったため未収録です。最新の料金は公式サイトまたは窓口でご確認ください。</div>';
+        if(g.note) gh += '<p class="pnote">' + g.note + '</p>';
+        if(g.src) gh += '<p class="meta"><a href="' + g.src + '" target="_blank" rel="noopener">' + g.name + ' 公式サイト</a></p>';
+        gh += '</div>';
+        return gh;
+      }).join("");
+    }
+    $("resultList").innerHTML = listHtml;
   }
   var lp = lpEstimate(v);
   if(lp === null){
