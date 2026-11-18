@@ -68,6 +68,7 @@ tr.tot td{font-weight:800;background:var(--soft)}
 .bd-fixed{background:#dbe7f5;color:var(--navy);border:1px solid #9db9d6}
 .bd-manual{background:#e6e6e6;color:#444;border:1px solid #bbb}
 .bd-import{background:#dff2e2;color:var(--green);border:1px solid #9fd3ab}
+.bd-wh{background:#e8e0f3;color:#4a2d82;border:1px solid #b39ddb}
 .kind-in{color:var(--green);font-weight:700}
 .kind-out{color:var(--red);font-weight:700}
 .ok{color:var(--green);font-weight:700}
@@ -195,6 +196,9 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
             </select>
           </div>
         </div>
+        <label class="flabel" for="inWh">源泉徴収額（円・任意）</label>
+        <input type="number" id="inWh" min="0" step="1" placeholder="例：10210">
+        <p class="note">請求した金額から所得税を天引きされて入金されたときは、天引きされた金額を入れてください。売上は総額のまま記録され、天引き分は「税金の前払い」として分けて記録します。源泉徴収がない収入では空欄のままで大丈夫です。</p>
         <label class="flabel" for="inMemo">摘要（店名・内容など）</label>
         <input type="text" id="inMemo" placeholder="例：○○商店 売上">
         <button class="btn" id="inAdd">収入を追加</button>
@@ -308,7 +312,7 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
   <div class="tabpage" id="tab-list">
     <div class="card">
       <h2>入力の一覧</h2>
-      <p class="note">日付順に並んでいます。<span class="badge bd-ded">控除</span> の印が付いた項目は、申告のときに経費ではなく控除として自動で振り分けられます。</p>
+      <p class="note">日付順に並んでいます。<span class="badge bd-ded">控除</span> の印が付いた項目は、申告のときに経費ではなく控除として自動で振り分けられます。<span class="badge bd-wh">源泉</span> の印は、金額から所得税が天引きされた収入です（金額は天引き前の総額で表示しています）。</p>
       <div class="tblwrap">
         <table>
           <thead><tr><th>日付</th><th>区分</th><th>項目</th><th class="num">金額</th><th>方法</th><th>摘要</th><th></th></tr></thead>
@@ -336,6 +340,14 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
         </table>
       </div>
       <p class="note">控除は、確定申告書の所得控除の欄に転記します。転記ガイド付きCSVにも欄名付きで含まれます。</p>
+      <h3>所得税の源泉徴収税額</h3>
+      <div class="tblwrap">
+        <table>
+          <thead><tr><th>項目</th><th class="num">金額</th></tr></thead>
+          <tbody id="whBody"></tbody>
+        </table>
+      </div>
+      <p class="note">収入から天引きされた源泉徴収税額の年間合計です。確定申告書 第二表の『所得税の源泉徴収税額』欄へ転記し、計算した税額から差し引いて精算します。転記ガイド付きCSVにも含まれます。支払調書が届いたら、金額が合っているか照合してください。</p>
     </div>
     <div class="card" id="bsCard">
       <h2>貸借対照表の簡易集計</h2>
@@ -538,12 +550,21 @@ function debitOf(e) {
   if (a && a.attr !== "expense") return "事業主貸";
   return e.account;
 }
-function entryJournal(e) {
-  if (e.kind === "manual") return { date: e.date, debit: e.debit, credit: e.credit, amount: e.amount, memo: e.memo, seq: e.seq };
-  if (e.kind === "income") return { date: e.date, debit: METHOD_IN[e.method], credit: e.account, amount: e.amount, memo: e.memo, seq: e.seq };
+function entryJournals(e) {
+  if (e.kind === "manual") return [{ date: e.date, debit: e.debit, credit: e.credit, amount: e.amount, memo: e.memo, seq: e.seq }];
+  if (e.kind === "income") {
+    var wh = e.wh || 0;
+    if (wh > 0 && wh < e.amount) {
+      return [
+        { date: e.date, debit: METHOD_IN[e.method], credit: e.account, amount: e.amount - wh, memo: e.memo, seq: e.seq },
+        { date: e.date, debit: "事業主貸", credit: e.account, amount: wh, memo: (e.memo ? e.memo + " " : "") + "（源泉徴収分）", seq: e.seq }
+      ];
+    }
+    return [{ date: e.date, debit: METHOD_IN[e.method], credit: e.account, amount: e.amount, memo: e.memo, seq: e.seq }];
+  }
   var memo = e.memo || "";
   if (e.method === "credit" && e.source !== "fixed") memo = (memo ? memo + " " : "") + "（クレジット払い・引落は別途）";
-  return { date: e.date, debit: debitOf(e), credit: METHOD_OUT[e.method], amount: e.amount, memo: memo, seq: e.seq };
+  return [{ date: e.date, debit: debitOf(e), credit: METHOD_OUT[e.method], amount: e.amount, memo: memo, seq: e.seq }];
 }
 function sortedEntries() {
   return Y().entries.slice().sort(function (a, b) {
@@ -553,7 +574,11 @@ function sortedEntries() {
   });
 }
 function journalRows() {
-  return sortedEntries().map(entryJournal);
+  var out = [];
+  sortedEntries().forEach(function (e) {
+    entryJournals(e).forEach(function (r) { out.push(r); });
+  });
+  return out;
 }
 function plNameOf(account) {
   var a = EXP_MAP[account];
@@ -573,11 +598,13 @@ function aggregate() {
     if (ca && ca.attr === "expense") { var n2 = plNameOf(r.credit); pl[n2] = (pl[n2] || 0) - r.amount; expenses -= r.amount; }
   });
   var ded = { social: 0, life: 0, earthquake: 0, tax: 0 };
+  var whTotal = 0;
   Y().entries.forEach(function (e) {
     if (e.kind === "expense") {
       var a = EXP_MAP[e.account];
       if (a && a.attr !== "expense") ded[a.attr] += e.amount;
     }
+    if (e.kind === "income") whTotal += (e.wh || 0);
   });
   var bal = {};
   rows.forEach(function (r) {
@@ -586,7 +613,7 @@ function aggregate() {
     bal[r.debit].d += r.amount;
     bal[r.credit].c += r.amount;
   });
-  return { rows: rows, pl: pl, revenue: revenue, expenses: expenses, profit: revenue - expenses, ded: ded, bal: bal };
+  return { rows: rows, pl: pl, revenue: revenue, expenses: expenses, profit: revenue - expenses, ded: ded, bal: bal, whTotal: whTotal };
 }
 function balOf(bal, name, side) {
   var b = bal[name];
@@ -619,6 +646,7 @@ function renderTypeNote() {
 }
 function badgesFor(e) {
   var s = "";
+  if (e.kind === "income" && (e.wh || 0) > 0) s += '<span class="badge bd-wh">源泉 ' + fmt(e.wh) + "</span>";
   if (e.kind === "expense") {
     var a = EXP_MAP[e.account];
     if (a && a.attr !== "expense") s += '<span class="badge bd-ded">控除</span>';
@@ -672,6 +700,11 @@ function renderPL() {
   });
   if (!anyDed) dh = '<tr><td colspan="2" class="note">控除に振り分けられた項目はまだありません。</td></tr>';
   $("dedBody").innerHTML = dh;
+  if (ag.whTotal > 0) {
+    $("whBody").innerHTML = "<tr><td>所得税の源泉徴収税額（年間合計）</td><td class=\"num\">" + fmt(ag.whTotal) + "</td></tr>";
+  } else {
+    $("whBody").innerHTML = '<tr><td colspan="2" class="note">源泉徴収された収入はまだありません。</td></tr>';
+  }
   if (isDouble()) {
     var yd = Y();
     var cash = yd.opening.cash + balOf(ag.bal, "現金", "d");
@@ -859,6 +892,7 @@ function guideRows() {
   Object.keys(DED_LABELS).forEach(function (k) {
     if (ag.ded[k] > 0) rows.push([DED_LABELS[k], ag.ded[k], "確定申告書第一表 所得控除の『" + DED_LABELS[k] + "』欄へ"]);
   });
+  if (ag.whTotal > 0) rows.push(["所得税の源泉徴収税額", ag.whTotal, "確定申告書 第二表『所得税の源泉徴収税額』欄へ"]);
   return rows;
 }
 function exportGuideCSV() {
@@ -1047,10 +1081,16 @@ function init() {
     var amount = parseInt($("inAmount").value, 10);
     if (!$("inDate").value) { alert("日付を入れてください。"); return; }
     if (!amount || amount <= 0) { alert("金額を入れてください。"); return; }
+    var wh = 0;
+    if ($("inWh").value !== "") {
+      wh = parseInt($("inWh").value, 10);
+      if (isNaN(wh) || wh < 0) { alert("源泉徴収額は0以上の金額で入れてください。"); return; }
+      if (wh >= amount) { alert("源泉徴収額は金額より小さくしてください。"); return; }
+    }
     var yd = Y();
-    yd.entries.push({ id: uid(), seq: yd.seq++, date: $("inDate").value, kind: "income", account: $("inAccount").value, amount: amount, method: $("inMethod").value, memo: $("inMemo").value.trim(), source: "simple" });
+    yd.entries.push({ id: uid(), seq: yd.seq++, date: $("inDate").value, kind: "income", account: $("inAccount").value, amount: amount, method: $("inMethod").value, memo: $("inMemo").value.trim(), wh: wh, source: "simple" });
     touch(); renderAll();
-    $("inAmount").value = ""; $("inMemo").value = "";
+    $("inAmount").value = ""; $("inMemo").value = ""; $("inWh").value = "";
   });
   $("exAdd").addEventListener("click", function () {
     var amount = parseInt($("exAmount").value, 10);
