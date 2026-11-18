@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>水道代 比較・試算ツール｜お金計算ツール集</title>
-<meta name="description" content="口径と月の使用量を入れるだけで、全国20都市の水道代（水道料金＋下水道使用料）を安い順に比較。郵便番号や住所を入れると、お住まいの都市だけに絞り込むこともできます。各自治体の公式料金表で確認した料金だけで試算します。">
+<meta name="description" content="口径と月の使用量を入れるだけで、全国43都市の水道代（水道料金＋下水道使用料）を安い順に比較。郵便番号や住所を入れると、お住まいの都市だけに絞り込むこともできます。各自治体の公式料金表で確認した料金だけで試算します。">
 <style>
 :root{
   --navy:#12283f; --navy2:#0b1a2c; --amber:#f2a007; --amber-d:#c77f02;
@@ -118,7 +118,7 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
 <header>
   <div class="wrap">
     <h1>水道代 <span class="accent">比較・試算ツール</span></h1>
-    <p>メーターの口径と月の使用量を入れるだけで、全国20都市の水道代（水道料金＋下水道使用料）を1か月分に換算して安い順に比較します。料金は各自治体の公式料金表で確認したものだけを使っています。郵便番号や住所を入れると、お住まいの都市だけに絞り込むこともできます。</p>
+    <p>メーターの口径と月の使用量を入れるだけで、全国43都市の水道代（水道料金＋下水道使用料）を1か月分に換算して安い順に比較します。料金は各自治体の公式料金表で確認したものだけを使っています。郵便番号や住所を入れると、お住まいの都市だけに絞り込むこともできます。</p>
   </div>
 </header>
 
@@ -150,7 +150,7 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
 
   <div class="card">
     <h2>お住まいの地域で絞り込む（任意）</h2>
-    <p class="note">郵便番号を入れるか、都道府県・市区町村を選ぶと、収録している20都市のうち、お住まいの地域の水道料金だけを表示します。収録していない地域の場合は、その旨を表示します。</p>
+    <p class="note">郵便番号を入れるか、都道府県・市区町村を選ぶと、収録している43都市のうち、お住まいの地域の水道料金だけを表示します。収録していない地域の場合は、その旨を表示します。</p>
     <label class="flabel">郵便番号</label>
     <input type="text" id="zipInput" class="zipin" inputmode="numeric" autocomplete="postal-code" placeholder="例：1000001">
     <div class="zip-msg" id="zipMsg"></div>
@@ -172,11 +172,11 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
     <h2>知っておくこと</h2>
     <ul class="facts">
       <li>表示はすべて税込の1か月分です。水道料金と下水道使用料の合計で比べています。</li>
-      <li>2か月検針が標準の自治体は、料金表を1か月分に換算して表示しています。料金表自体が2か月単位の都市（新潟・名古屋・京都・神戸・福岡と、岡山の下水道）は、2か月分の請求額を計算して2で割った1か月換算額です（換算額の端数は四捨五入）。実際の請求は2か月分まとめて行われます。</li>
+      <li>2か月検針が標準の自治体は、料金表を1か月分に換算して表示しています。料金表自体が2か月単位の都市は、2か月分の請求額を計算して2で割った1か月換算額です（換算額の端数は四捨五入）。実際の請求は2か月分まとめて行われます。</li>
       <li>相模原市は、下水道の従量単価表が公式の単価表で確認できなかったため収録していません。確認できない数字は載せない方針です。</li>
       <li>期間限定の減免・無償化（物価高騰対策など）は反映していません。岡山市は令和8年度の負担軽減で据え置かれている第1段階料金で表示しています。</li>
       <li>実際の請求額は、検針期間の使用量の分け方や端数処理の関係で、本ツールの試算と数円〜数十円異なる場合があります。正確な金額は各自治体の公式ページや検針票でご確認ください。</li>
-      <li>地域の絞り込みは市区町村単位です。収録している20都市以外の地域は「未収録」と表示されますが、収録都市の一覧は絞り込みを解除すればそのまま見られます。</li>
+      <li>地域の絞り込みは市区町村単位です。収録している43都市以外の地域は「未収録」と表示されますが、収録都市の一覧は絞り込みを解除すればそのまま見られます。</li>
       <li>郵便番号を入力した場合、市区町村の判定のために郵便番号だけを住所検索サービス（zipcloud）に送信します。番地など、それ以外の情報は送信されません。</li>
     </ul>
   </div>
@@ -184,7 +184,7 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
   <footer>
     <div class="card">
       このツールは非公式の個人ツールです。料金は各自治体の公式料金表で確認した2026年11月時点の料金に基づく目安で、実際の請求額は使用状況・検針期間・契約内容により異なります。最新の料金は各自治体の公式ページでご確認ください（出典リンクは各都市のカードに付けています）。<br>
-      料金確認日：2026-11-18
+      料金確認日：2026-11-19
     </div>
     <p class="credit">制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
   </footer>
@@ -323,7 +323,145 @@ var CITIES = [
  sewer:{basic:890.47, tax:"incl", period:1, tiers:[[10,14.65],[20,130.95],[50,172.85],[200,209.51],[500,251.42],[2000,293.32],[INF,340.47]]},
  note:"料金は税込表示の公式表を使っています。",
  srcW:"https://www.kumamoto-waterworks.jp/wp-content/uploads/2019/09/keisanhou201910.pdf",
- srcS:"https://www.kumamoto-waterworks.jp/wp-content/uploads/2019/09/keisanhou201910.pdf"}
+ srcS:"https://www.kumamoto-waterworks.jp/wp-content/uploads/2019/09/keisanhou201910.pdf"},
+{name:"青森市", pref:"青森県", muni:"青森市", cycle:"検針は2か月ごと（令和8年1月から）・請求は毎月",
+ water:{basic:{"13":638,"20":1199}, tax:"incl", period:1, tiers:[[10,66],[20,143],[30,187],[1000000000,258.5]]},
+ sewer:{basic:1337.6, tax:"incl", period:1, tiers:[[10,0],[20,177.1],[30,242],[100,310.2],[1000000000,360.8]]},
+ note:"税込・1か月単位の公式料金表です。令和8年1月から隔月検針（2か月分を各月均等とみなして1か月ごとに算定）で、単価の変更はありません。",
+ srcW:"https://www.city.aomori.aomori.jp/_res/projects/default_project/_page_/001/001/904/ryoukinnhyou.pdf",
+ srcS:"https://www.city.aomori.aomori.jp/_res/projects/default_project/_page_/001/001/904/ryoukinnhyou.pdf"},
+{name:"盛岡市", pref:"岩手県", muni:"盛岡市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":990,"20":1650}, tax:"incl", period:1, tiers:[[10,66],[20,124],[30,220],[1000,275],[1000000000,220]]},
+ sewer:{basic:1287, tax:"incl", period:1, tiers:[[5,66],[10,77],[15,132],[20,143],[25,176],[30,198],[1000000000,275]]},
+ note:"税込・1か月分の料金表です（公式に2か月分表も併記）。水道の従量段階は口径25mm以下の区分です。下水道使用料は令和7年4月1日改定後の料金です。",
+ srcW:"https://morioka-water.jp/general/pdf/r07_charge.pdf",
+ srcS:"https://morioka-water.jp/general/pdf/r07_charge.pdf"},
+{name:"秋田市", pref:"秋田県", muni:"秋田市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":700,"20":1200}, tax:"excl", period:1, tiers:[[10,55],[20,135],[50,190],[100,220],[200,245],[1000000000,271]]},
+ sewer:{basic:1020, tax:"excl", period:1, tiers:[[10,0],[30,181],[50,226],[100,249],[500,305],[1000,352],[1000000000,427]]},
+ note:"税抜の料金表（計算額に消費税等相当額を加算）です。水道の従量段階は口径20mm以下の区分です。令和9年4月1日施行の料金改定が公表済みで、表示は現行料金です。",
+ srcW:"http://www.city.akita.lg.jp/_res/projects/default_project/_page_/001/035/676/2022jouge.pdf",
+ srcS:"https://www.city.akita.lg.jp/_res/projects/default_project/_page_/001/045/766/sw_management.pdf"},
+{name:"福島市", pref:"福島県", muni:"福島市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":1250,"20":2500}, tax:"excl", period:1, tiers:[[10,84],[20,129],[50,192],[1000000000,247]]},
+ sewer:{basic:1100, tax:"excl", period:1, tiers:[[10,0],[20,150],[30,185],[50,225],[100,275],[500,305],[1000000000,325]]},
+ note:"税抜・1か月単位の公式表です（合計額に消費税10％を加算し1円未満切り捨て）。",
+ srcW:"https://www.city.fukushima.fukushima.jp/material/files/group/109/3b9be429d04cb8e778d44b67dccfa727-1.pdf",
+ srcS:"https://www.city.fukushima.fukushima.jp/material/files/group/67/keieisennryakukaiteibann.pdf"},
+{name:"郡山市", pref:"福島県", muni:"郡山市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":1166,"20":3157}, tax:"incl", period:1, tiers:[[20,102.3],[1000000000,226.6]]},
+ sewer:{basic:1306, tax:"incl", period:1, tiers:[[10,0],[20,176],[50,203],[100,230],[200,263],[500,291],[1000000000,318]]},
+ note:"税込・1か月あたりの公式表です。水道は準備料金＋水量料金の二部制で基本水量はありません。期間限定の準備料金免除（令和8年6月～11月検針分）は反映していません。中田町柳橋・中津川地区と簡易水道は別料金です。",
+ srcW:"https://www.city.koriyama.lg.jp/uploaded/attachment/118572.pdf",
+ srcS:"https://www.city.koriyama.lg.jp/uploaded/attachment/118572.pdf"},
+{name:"いわき市", pref:"福島県", muni:"いわき市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":1188,"20":2376}, tax:"incl", period:1, tiers:[[10,82.5],[20,171.6],[50,213.4],[100,238.7],[1000000000,260.7]]},
+ sewer:{basic:2065.8, tax:"incl", period:1, tiers:[[10,0],[20,224.4],[30,249.7],[50,261.8],[100,343.2],[200,369.6],[500,396],[1000000000,420.2]]},
+ note:"税込・1か月単位の表です。下水道は令和6年4月以降請求分の改定後料金です。",
+ srcW:"https://www.city.iwaki.lg.jp/www/contents/1705919896240/simple/siryou7-070123-1.pdf",
+ srcS:"https://www.city.iwaki.lg.jp/www/contents/1001000002003/simple/gesuiryoukinhyou.pdf"},
+{name:"宇都宮市", pref:"栃木県", muni:"宇都宮市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":780,"20":1160}, tax:"excl", period:1, tiers:[[5,0],[10,22],[20,171],[50,199],[100,232],[200,260],[1000000000,308]]},
+ sewer:{basic:1100, tax:"excl", period:1, tiers:[[10,0],[20,135],[50,160],[100,180],[500,200],[1000,220],[1000000000,240]]},
+ note:"水道・下水道とも1か月表・税抜です。審議会で令和8年10月改定が検討中と公式資料に記載がありますが、表示は現行料金です。",
+ srcW:"https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/638/071006shiryou1.pdf",
+ srcS:"https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/018/797/09ryoukinn.pdf"},
+{name:"川越市", pref:"埼玉県", muni:"川越市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":500,"20":760}, tax:"excl", period:2, tiers:[[16,60],[30,85],[60,125],[100,185],[300,240],[500,300],[1000000000,350]]},
+ sewer:{basic:1314, tax:"excl", period:2, tiers:[[20,50],[40,90],[60,119],[100,147],[400,170],[1000,198],[1000000000,215]]},
+ note:"料金表が2か月分単位のため、2か月分の請求額を2で割った1か月換算で表示しています。下水道は2026年10月1日改定後の料金です。",
+ srcW:"https://www.city.kawagoe.saitama.jp/kurashi/jogesuidobu/1002779/1002801/1002811.html",
+ srcS:"https://www.city.kawagoe.saitama.jp/kurashi/jogesuidobu/1002779/1002801/1002811.html"},
+{name:"柏市", pref:"千葉県", muni:"柏市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":920,"20":2480}, tax:"excl", period:2, tiers:[[20,60],[40,100],[60,155],[100,210],[200,280],[1000000000,370]]},
+ sewer:{basic:543, tax:"excl", period:1, tiers:[[10,46],[20,114],[30,136],[50,183],[100,233],[500,292],[1000000000,351]]},
+ note:"水道の基本料金・従量段階は2か月分単位の公式表のため、2か月分の請求額を2で割った1か月換算で表示しています。下水道は1か月表です。",
+ srcW:"https://www.city.kashiwa.lg.jp/ryokin/living_environment/jousuidou/suidoryokin/ryokin/ryokin.html",
+ srcS:"http://www.city.kashiwa.lg.jp/documents/45233/bijyonshiryouhen.pdf"},
+{name:"横須賀市", pref:"神奈川県", muni:"横須賀市", cycle:"検針・請求は2か月ごと",
+ water:{basic:1840, tax:"excl", period:2, tiers:[[20,25],[50,165],[100,210],[200,275],[1000,300],[1000000000,320]]},
+ sewer:{basic:1976, tax:"excl", period:2, tiers:[[20,16],[50,143],[100,211],[200,297],[1000,394],[1000000000,488]]},
+ note:"2026年10月1日改定後の料金です。水道基本料金は口径20mm以下一律です。料金表が2か月分単位のため、2か月分の請求額を2で割った1か月換算で表示しています。令和10年4月に第2段階改定が予定されています。",
+ srcW:"https://www.city.yokosuka.kanagawa.jp/6731/documents/20261027.pdf",
+ srcS:"https://www.city.yokosuka.kanagawa.jp/6731/documents/20261027.pdf"},
+{name:"八王子市", pref:"東京都", muni:"八王子市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":860,"20":1170}, tax:"excl", period:1, tiers:[[5,0],[10,22],[20,128],[30,163],[50,202],[100,213],[200,298],[1000,372],[1000000000,404]]},
+ sewer:{basic:560, tax:"excl", period:1, tiers:[[8,0],[20,110],[30,140],[50,170],[100,200],[200,230],[500,270],[1000,310],[1000000000,345]]},
+ note:"水道は東京都水道局の料金（多摩地区共通で、23区と同じ）です。下水道は八王子市の料金で、市街化調整区域は月600円（税抜）の特別使用料が別途かかります（未収録）。",
+ srcW:"https://www.waterworks.metro.tokyo.lg.jp/tetsuduki/ryokin/rk_hatiouji",
+ srcS:"https://www.waterworks.metro.tokyo.lg.jp/tetsuduki/ryokin/rk_hatiouji"},
+{name:"町田市", pref:"東京都", muni:"町田市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":860,"20":1170}, tax:"excl", period:1, tiers:[[5,0],[10,22],[20,128],[30,163],[50,202],[100,213],[200,298],[1000,372],[1000000000,404]]},
+ sewer:{basic:560, tax:"excl", period:1, tiers:[[8,0],[20,110],[30,140],[50,170],[100,200],[200,230],[500,270],[1000,310],[1000000000,345]]},
+ note:"水道は東京都水道局の料金（多摩地区共通で、23区と同じ）です。下水道は2027年1月1日に改定が公表済みで、表示は現行料金です。",
+ srcW:"https://www.waterworks.metro.tokyo.lg.jp/tetsuduki/ryokin/rk_matida",
+ srcS:"https://www.waterworks.metro.tokyo.lg.jp/tetsuduki/ryokin/rk_matida"},
+{name:"金沢市", pref:"石川県", muni:"金沢市", cycle:"検針・請求は2か月ごと（使用量を2等分して毎月計算）",
+ water:{basic:1000, tax:"excl", period:1, tiers:[[10,22],[20,105],[30,113],[50,140],[100,165],[200,185],[1000000000,210]]},
+ sewer:{basic:900, tax:"excl", period:1, tiers:[[10,27],[30,124],[50,129],[100,135],[200,140],[300,146],[500,154],[1000,162],[1000000000,171]]},
+ note:"水道は口径別ではなく用途別（家庭用）の料金で、基本料金は口径13mm・20mm共通です。",
+ srcW:"https://www4.city.kanazawa.lg.jp/material/files/group/39/suidoujourei.pdf",
+ srcS:"http://www.city.kanazawa.ishikawa.jp/reiki/reiki_honbun/a400RG00000751.html?id=j12_k2_g2"},
+{name:"福井市", pref:"福井県", muni:"福井市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":1023,"20":1045}, tax:"incl", period:1, tiers:[[10,15.4],[20,107.8],[30,126.5],[40,162.8],[150,211.2],[1000000000,238.7]]},
+ sewer:{basic:2100, tax:"excl", period:2, tiers:[[20,11],[40,122],[60,138],[100,161],[400,208],[1000,222],[1000000000,230]]},
+ note:"水道は税込・1か月表、下水道は税抜・2か月表のため、下水道は2か月分の請求額を2で割った1か月換算で表示しています。",
+ srcW:"https://www.city.fukui.lg.jp/sisei/gikai/shigikaishikumi/p022677_d/fil/15jyougesuidou.pdf",
+ srcS:"https://www.city.fukui.lg.jp/kurasi/gesui/syurakuhaisui/keieisennryaku_d/fil/syuhaikeieisenryaku2026.pdf"},
+{name:"長野市", pref:"長野県", muni:"長野市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":1090,"20":1500}, tax:"excl", period:1, tiers:[[10,62],[20,159],[30,172],[50,196],[100,228],[1000000000,245]]},
+ sewer:{basic:1488.3, tax:"incl", period:1, tiers:[[8,0],[20,170.5],[50,194.7],[100,227.7],[300,259.6],[500,288.2],[1000000000,310.2]]},
+ note:"水道は篠ノ井・川中島・更北地区が別料金のため、それ以外の地区の料金です。下水道は基本水量8m³を含む基本使用料制です。",
+ srcW:"https://www.city.nagano.nagano.jp/documents/1673/301114.pdf",
+ srcS:"https://www.city.nagano.nagano.jp/documents/25337/r7-4siryou2.pdf"},
+{name:"岐阜市", pref:"岐阜県", muni:"岐阜市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":1640,"20":1860}, tax:"excl", period:2, tiers:[[20,15],[1000000000,163]]},
+ sewer:{basic:2160, tax:"excl", period:2, tiers:[[20,35],[40,132],[100,146],[1000,153],[20000,159],[1000000000,166]]},
+ note:"家事用の料金です。水道の基本料金にはメーター料金（2か月・税抜：13mm 140円、20mm 360円）を含めています。料金表が2か月分単位のため、2か月分の請求額を2で割った1か月換算で表示しています。",
+ srcW:"https://www.city.gifu.lg.jp/kurashi/suidou/1003202/1003211/1025395/1030457.html",
+ srcS:"https://www.city.gifu.lg.jp/kurashi/suidou/1003202/1003211/1025395/1030457.html"},
+{name:"四日市市", pref:"三重県", muni:"四日市市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":946,"20":1496}, tax:"incl", period:1, tiers:[[5,0],[10,22],[20,135.3],[30,167.2],[50,232.1],[100,295.9],[1000000000,361.9]]},
+ sewer:{basic:715, tax:"incl", period:1, tiers:[[5,0],[30,187],[100,275],[500,374],[1000000000,418]]},
+ note:"水道・下水道とも基本料金に5m³までの基本水量を含みます。税込・1か月表です。",
+ srcW:"https://www.city.yokkaichi.mie.jp/new_water/wp/wp-content/uploads/2025/11/bp-plancommon1-2025business.pdf",
+ srcS:"https://www.city.yokkaichi.mie.jp/new_water/wp/wp-content/uploads/2025/11/bp-plancommon1-2025sewage.pdf"},
+{name:"豊橋市", pref:"愛知県", muni:"豊橋市", cycle:"検針・請求は2か月ごと（使用量を前月・後月に分けて毎月計算）",
+ water:{basic:{"13":480,"20":1310}, tax:"excl", period:1, tiers:[[10,57],[20,85],[50,121],[100,189],[1000000000,269]]},
+ sewer:{basic:770, tax:"excl", period:1, tiers:[[10,10],[20,120],[50,190],[100,270],[1000000000,300]]},
+ note:"令和8年4月の水道料金改定後の料金です。下水道は公共下水道の料金です（地域下水道は別料金）。",
+ srcW:"https://www.city.toyohashi.lg.jp/38195.htm",
+ srcS:"https://www.city.toyohashi.lg.jp/38195.htm"},
+{name:"豊田市", pref:"愛知県", muni:"豊田市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":935,"20":1035}, tax:"excl", period:1, tiers:[[20,86],[40,166],[60,246],[1000000000,316]]},
+ sewer:{basic:740, tax:"excl", period:1, tiers:[[10,20],[20,100],[40,130],[60,160],[300,180],[1000000000,230]]},
+ note:"下水道は令和7〜10年度の料金体系です。令和9年度からの水道料金改定が答申されており、条例化されれば料金が変わります。表示は現行料金です。",
+ srcW:"https://www.city.toyota.aichi.jp/_res/projects/default_project/_page_/001/006/520/r0405/03.pdf",
+ srcS:"https://www.city.toyota.aichi.jp:443/_res/projects/default_project/_page_/001/006/520/r0610/0601.pdf"},
+{name:"奈良市", pref:"奈良県", muni:"奈良市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":1023,"20":1804}, tax:"incl", period:1, tiers:[[10,0],[20,170.5],[50,220],[1000000000,236.5]]},
+ sewer:{basic:165, tax:"incl", period:1, tiers:[[1000000000,136.4]]},
+ note:"水道の基本料金は基本水量10m³分を含む額です。下水道は基本使用料165円＋一般排水の単一単価（税込）です。",
+ srcW:"https://www.city.nara.lg.jp/uploaded/attachment/152857.pdf",
+ srcS:"https://www.city.nara.lg.jp/uploaded/attachment/152857.pdf"},
+{name:"西宮市", pref:"兵庫県", muni:"西宮市", cycle:"検針・請求は2か月ごと",
+ water:{basic:{"13":835,"20":955}, tax:"excl", period:1, tiers:[[10,14],[20,155],[30,179],[100,258],[1000000000,320]]},
+ sewer:{basic:626, tax:"excl", period:1, tiers:[[10,10],[30,89],[50,99],[100,110],[200,115],[600,132],[1000,153],[5000,179],[10000,200],[1000000000,215]]},
+ note:"公式表は1か月分・税抜です。下水道使用料は令和9年度からの改定が答申済みで、表示は現行料金です。",
+ srcW:"https://www.nishi.or.jp/kurashi/suido/jogesuidoryokin/ryokin.html",
+ srcS:"https://www.nishi.or.jp/kurashi/suido/jogesuidoryokin/ryokin.html"},
+{name:"徳島市", pref:"徳島県", muni:"徳島市", cycle:"検針・請求は2か月ごと",
+ water:{basic:1296, tax:"incl", period:2, tiers:[[16,0],[40,143],[60,178],[1000000000,224]]},
+ sewer:{basic:2420, tax:"incl", period:2, tiers:[[16,77],[40,110],[60,143],[800,176],[1000000000,200]]},
+ note:"令和8年4月1日適用の公式早見表（税込・1戸2か月分）に基づきます。2か月分の請求額を2で割った1か月換算で表示しています。早見表の合計には別掲のメーター使用料（13mm：146円／2か月、20mm：166円／2か月）を含まないため、本ツールでも含めていません。下水道は一部団地を除く一般用の料率です。",
+ srcW:"https://www.city.tokushima.tokushima.jp/jogesuidokyoku/customer/tetuzuki/ryokin.files/20260401_hayami.pdf",
+ srcS:"https://www.city.tokushima.tokushima.jp/jogesuidokyoku/customer/tetuzuki/ryokin.files/20260401_hayami.pdf"},
+{name:"宮崎市", pref:"宮崎県", muni:"宮崎市", cycle:"料金表は1か月単位",
+ water:{basic:{"13":981,"20":1407}, tax:"excl", period:1, tiers:[[10,30],[30,166],[100,198],[1000000000,227]]},
+ sewer:{basic:898, tax:"excl", period:1, tiers:[[10,24],[30,151],[100,196],[500,236],[1000,251],[1000000000,280]]},
+ note:"令和7年4月1日改定後の現行料金です。公式料金表は税抜・1か月単位で、基本料金は水道のみ口径別です。",
+ srcW:"https://www.city.miyazaki.miyazaki.jp/fs/8/1/2/4/0/6/_/812406.pdf",
+ srcS:"https://www.city.miyazaki.miyazaki.jp/suidou/carge/carge19.html"}
 ];
 
 var state = { diam: "20", usage: 20, area: null };
@@ -386,7 +524,7 @@ function render(){
       banner.innerHTML = "お住まいの地域：<b>" + state.area.label + "</b> → " + single.name + "の水道料金だけを表示しています。" +
         '<button type="button" class="clearbtn" id="areaClear">絞り込みを解除</button>';
     } else {
-      banner.innerHTML = "<b>" + state.area.label + "</b>の水道料金は未収録です。収録している20都市の一覧を表示しています。" +
+      banner.innerHTML = "<b>" + state.area.label + "</b>の水道料金は未収録です。収録している" + CITIES.length + "都市の一覧を表示しています。" +
         '<button type="button" class="clearbtn" id="areaClear">絞り込みを解除</button>';
     }
   } else {
