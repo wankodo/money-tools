@@ -117,13 +117,14 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
   <div class="card">
     <h2>月のデータ使用量</h2>
     <div class="seg" id="usageSeg">
+      <button type="button" data-usage="0">0GB</button>
       <button type="button" data-usage="3">〜3GB</button>
       <button type="button" data-usage="7">〜7GB</button>
       <button type="button" data-usage="20" class="on">〜20GB</button>
       <button type="button" data-usage="30">〜30GB</button>
       <button type="button" data-usage="inf">無制限</button>
     </div>
-    <p class="note">段階制プランは、選んだ使用量に当たる段階の料金で表示します。容量が足りないプランは結果に出ません。</p>
+    <p class="note">段階制プランは、選んだ使用量に当たる段階の料金で表示します。容量が足りないプランは結果に出ません。「0GB」はデータを使わない月の想定で、povo2.0はトッピングなしの基本料0円で表示します。</p>
   </div>
 
   <div class="card">
@@ -165,7 +166,7 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
     <ul class="facts">
       <li>表示はすべて税込の通常月額です。家族割・光セット割・カード支払い割などの条件付き割引や、期間限定キャンペーンの価格は含んでいません（各プランの備考に割引の存在だけ記しています）。</li>
       <li>段階制プラン（楽天モバイル、ドコモ MAX、LINEMOベストプラン等）は、その月に使ったデータ量で料金が自動で変わります。ここでは「選んだ使用量を使った場合」の段階額を表示しています。</li>
-      <li>povo2.0は基本料0円＋トッピング方式です。ここでは30日間トッピングで1か月をまかなう前提で月額換算しています。</li>
+      <li>povo2.0は基本料0円＋トッピング方式です。ここでは30日間トッピングで1か月をまかなう前提で月額換算しています。「0GB」を選んだ場合はトッピングなしの基本料0円で表示します（0GB時は送受信最大128kbps。180日間以上、有料トッピングの購入等がないと利用停止・契約解除となることがあります）。</li>
       <li>日本通信SIMは「1GBごとに220円」の従量制です。ここでは選んだ使用量ちょうどを使った場合の額を表示しています。</li>
       <li>ドコモ／ahamoは2026年12月1日に料金改定が予定されています（ahamoは段階制化、大盛りオプションは2026年11月30日で提供終了予定）。本ツールの料金は確認日時点のものです。</li>
     </ul>
@@ -288,11 +289,11 @@ var PLANS = [
  note:"使ったデータ量で料金が変わる3段階制。通話はRakuten Linkアプリ利用時が無料（標準の電話アプリは22円/30秒、15分かけ放題オプションもあり）。海外は対象国で月2GBまで含まれます。最強家族割（-110円）は含んでいません。",
  src:"https://network.mobile.rakuten.co.jp/fee/"},
 {brand:"povo2.0", name:"povo2.0（トッピング方式）", kind:"sub", mode:"tiers",
- tiers:[{upTo:3,price:990,tlabel:"データ追加3GB（30日間）"},{upTo:5,price:1380,tlabel:"データ追加5GB（30日間）"},{upTo:30,price:2780,tlabel:"データ追加30GB（30日間）"}],
+ tiers:[{upTo:0,price:0,tlabel:"トッピングなし（0GB）"},{upTo:3,price:990,tlabel:"データ追加3GB（30日間）"},{upTo:5,price:1380,tlabel:"データ追加5GB（30日間）"},{upTo:30,price:2780,tlabel:"データ追加30GB（30日間）"}],
  capText:"トッピング次第（最大30GBで表示）", callUnit:22,
  five:{price:550,label:"5分以内通話かけ放題トッピング"}, full:{price:1650,label:"通話かけ放題トッピング"},
  f:{tether:1,overseas:0,mail:0,shop:0,family:0,g5:1},
- note:"基本料0円＋データトッピング方式。ここでは30日間トッピングで1か月をまかなう前提の月額換算です。長期間有料トッピングの購入等がないと利用停止になる場合があります。",
+ note:"基本料0円＋データトッピング方式。ここでは30日間トッピングで1か月をまかなう前提の月額換算です。トッピングなし（0GB）の間は送受信最大128kbps。180日間以上、有料トッピングの購入等がない場合、利用停止・契約解除となることがあります（データ専用は契約時に初回トッピング購入が必要）。",
  src:"https://povo.jp/spec/topping/"},
 {brand:"LINEMO", name:"LINEMOベストプラン", kind:"sub", mode:"tiers",
  tiers:[{upTo:3,price:990},{upTo:10,price:2090}],
