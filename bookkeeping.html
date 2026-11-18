@@ -69,6 +69,7 @@ tr.tot td{font-weight:800;background:var(--soft)}
 .bd-manual{background:#e6e6e6;color:#444;border:1px solid #bbb}
 .bd-import{background:#dff2e2;color:var(--green);border:1px solid #9fd3ab}
 .bd-wh{background:#e8e0f3;color:#4a2d82;border:1px solid #b39ddb}
+.bd-asset{background:#d9f0e3;color:#14532d;border:1px solid #8fd0a8}
 .kind-in{color:var(--green);font-weight:700}
 .kind-out{color:var(--red);font-weight:700}
 .ok{color:var(--green);font-weight:700}
@@ -279,7 +280,7 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
 
       <details>
         <summary>詳細モード（帳簿を直接書きたいとき）</summary>
-        <p class="note">減価償却や複合の支払いなど、上の窓で扱えないものを直接入力できます。</p>
+        <p class="note">複合の支払いなど、上の窓で扱えないものを直接入力できます。減価償却は下の「固定資産の窓」から登録してください。</p>
         <div class="frow3">
           <div>
             <label class="flabel" for="mnDate">日付</label>
@@ -307,12 +308,82 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
         <button class="btn btn-navy" id="mnAdd">詳細入力を追加</button>
       </details>
     </div>
+
+    <div class="card">
+      <h2>固定資産の窓（減価償却）</h2>
+      <p class="note">パソコンや車、撮影機材など10万円以上の買い物は、買った年に全部を経費にはできず、何年かに分けて経費にします（減価償却）。ここで登録すると、買った記録と毎年の償却が自動で帳簿に入ります。<strong>固定資産として登録した買い物は、支出の窓から二重に入力しないでください。</strong></p>
+      <div class="frow">
+        <div>
+          <label class="flabel" for="asName">資産の名前</label>
+          <input type="text" id="asName" placeholder="例：ノートパソコン">
+        </div>
+        <div>
+          <label class="flabel" for="asDate">取得日（買った日）</label>
+          <input type="date" id="asDate">
+        </div>
+      </div>
+      <div class="frow3">
+        <div>
+          <label class="flabel" for="asPrice">取得価額（円）</label>
+          <input type="number" id="asPrice" min="0" step="1" placeholder="例：250000">
+        </div>
+        <div>
+          <label class="flabel" for="asPreset">種類（耐用年数の目安）</label>
+          <select id="asPreset"></select>
+        </div>
+        <div>
+          <label class="flabel" for="asYears">耐用年数（年）</label>
+          <input type="number" id="asYears" min="1" max="100" step="1">
+        </div>
+      </div>
+      <div class="frow3">
+        <div>
+          <label class="flabel" for="asAccount">固定資産の項目</label>
+          <select id="asAccount"></select>
+        </div>
+        <div>
+          <label class="flabel" for="asRatio">事業で使う割合（％）</label>
+          <input type="number" id="asRatio" min="0" max="100" step="1" value="100">
+        </div>
+        <div>
+          <label class="flabel" for="asPayment">支払い方法</label>
+          <select id="asPayment">
+            <option value="cash">現金</option>
+            <option value="bank">銀行</option>
+            <option value="credit">クレジット</option>
+            <option value="kake">掛け（あとで支払い）</option>
+          </select>
+        </div>
+      </div>
+      <div class="frow">
+        <div>
+          <label class="flabel" for="asDepMethod">償却方法（通常償却のとき）</label>
+          <select id="asDepMethod">
+            <option value="teigaku">定額法（毎年同じ額）</option>
+            <option value="teiritsu">定率法（初めに多く、だんだん少なく）</option>
+          </select>
+        </div>
+        <div>
+          <p class="note" style="margin-top:24px">個人で定率法を使うには、税務署へ「償却方法の届出書」の提出が必要です（出していない場合は定額法になります）。一括償却・少額特例を選んだときは償却方法は使いません。</p>
+        </div>
+      </div>
+      <p class="note" id="asJudge"></p>
+      <div id="asChoice"></div>
+      <button class="btn" id="asAdd">固定資産を登録</button>
+      <div class="tblwrap">
+        <table>
+          <thead><tr><th>資産名</th><th>取得日</th><th class="num">取得価額</th><th>耐用年数</th><th>分け方</th><th class="num">事業割合</th><th class="num">今年の償却費</th><th class="num">未償却残高</th><th></th></tr></thead>
+          <tbody id="assetBody"></tbody>
+        </table>
+      </div>
+      <p class="note" id="assetNote"></p>
+    </div>
   </div>
 
   <div class="tabpage" id="tab-list">
     <div class="card">
       <h2>入力の一覧</h2>
-      <p class="note">日付順に並んでいます。<span class="badge bd-ded">控除</span> の印が付いた項目は、申告のときに経費ではなく控除として自動で振り分けられます。<span class="badge bd-wh">源泉</span> の印は、金額から所得税が天引きされた収入です（金額は天引き前の総額で表示しています）。</p>
+      <p class="note">日付順に並んでいます。<span class="badge bd-ded">控除</span> の印が付いた項目は、申告のときに経費ではなく控除として自動で振り分けられます。<span class="badge bd-wh">源泉</span> の印は、金額から所得税が天引きされた収入です（金額は天引き前の総額で表示しています）。<span class="badge bd-asset">資産</span> の印は、固定資産の窓から自動で作られた仕訳です（消したいときは固定資産の窓で資産を削除してください）。</p>
       <div class="tblwrap">
         <table>
           <thead><tr><th>日付</th><th>区分</th><th>項目</th><th class="num">金額</th><th>方法</th><th>摘要</th><th></th></tr></thead>
@@ -492,7 +563,19 @@ var EXPENSE_ACCOUNTS = [
 ];
 var EXP_MAP = {};
 EXPENSE_ACCOUNTS.forEach(function (a) { EXP_MAP[a.name] = a; });
-var BS_ACCOUNTS = ["現金", "普通預金", "売掛金", "買掛金", "未払金", "事業主貸", "事業主借", "元入金"];
+var BS_ACCOUNTS = ["現金", "普通預金", "売掛金", "買掛金", "未払金", "事業主貸", "事業主借", "元入金", "建物", "建物附属設備", "車両運搬具", "工具器具備品", "ソフトウェア", "減価償却累計額"];
+var FA_ACCOUNTS = ["建物", "建物附属設備", "車両運搬具", "工具器具備品", "ソフトウェア"];
+var ASSET_PRESETS = [
+  { key: "pc", label: "パソコン（4年）", years: 4, account: "工具器具備品" },
+  { key: "server", label: "サーバー（5年）", years: 5, account: "工具器具備品" },
+  { key: "car", label: "普通自動車（6年）", years: 6, account: "車両運搬具" },
+  { key: "bike", label: "バイク（3年）", years: 3, account: "車両運搬具" },
+  { key: "ac", label: "エアコン（6年）", years: 6, account: "工具器具備品" },
+  { key: "fridge", label: "冷蔵庫（6年）", years: 6, account: "工具器具備品" },
+  { key: "camera", label: "カメラ・光学機器（5年）", years: 5, account: "工具器具備品" },
+  { key: "furniture", label: "家具（8年）", years: 8, account: "工具器具備品" },
+  { key: "other", label: "その他（自由入力）", years: 0, account: "工具器具備品" }
+];
 var ALL_ACCOUNTS = INCOME_ACCOUNTS.concat(EXPENSE_ACCOUNTS.map(function (a) { return a.name; }), BS_ACCOUNTS);
 var DED_LABELS = { social: "社会保険料控除", life: "生命保険料控除", earthquake: "地震保険料控除", tax: "寄附金控除" };
 var METHOD_IN = { cash: "現金", bank: "普通預金", credit: "売掛金" };
@@ -518,9 +601,17 @@ function freshYear() {
 function loadStore() {
   try {
     var raw = localStorage.getItem(LS_KEY);
-    if (raw) { var s = JSON.parse(raw); if (s && s.years) return s; }
+    if (raw) { var s = JSON.parse(raw); if (s && s.years) {
+      if (!s.assets) s.assets = [];
+      s.assets.forEach(function (a) {
+        if (!a.treat && (a.method === "normal" || a.method === "lump" || a.method === "small")) { a.treat = a.method; a.method = "teigaku"; }
+        if (!a.treat) a.treat = "normal";
+        if (!a.method) a.method = "teigaku";
+      });
+      return s;
+    } }
   } catch (e) {}
-  return { currentYear: "2026", years: {} };
+  return { currentYear: "2026", years: {}, assets: [] };
 }
 var store = loadStore();
 function Y() {
@@ -651,6 +742,7 @@ function badgesFor(e) {
     var a = EXP_MAP[e.account];
     if (a && a.attr !== "expense") s += '<span class="badge bd-ded">控除</span>';
   }
+  if (e.source === "asset") s += '<span class="badge bd-asset">資産</span>';
   if (e.source === "fixed") s += '<span class="badge bd-fixed">固定費</span>';
   if (e.source === "import") s += '<span class="badge bd-import">取込</span>';
   if (e.kind === "manual") s += '<span class="badge bd-manual">詳細</span>';
@@ -667,7 +759,7 @@ function renderList() {
     var method = e.kind === "manual" ? "―" : esc(METHOD_LABEL[e.method] || "");
     html += "<tr><td>" + esc(e.date) + "</td><td>" + kind + "</td><td>" + item + badgesFor(e) + "</td>" +
       '<td class="num">' + fmt(e.amount) + "</td><td>" + method + "</td><td>" + esc(e.memo || "") + "</td>" +
-      '<td><button class="btn btn-del btn-sm" data-del="' + e.id + '">削除</button></td></tr>';
+      "<td>" + (e.source === "asset" ? "" : '<button class="btn btn-del btn-sm" data-del="' + e.id + '">削除</button>') + "</td></tr>";
   });
   if (!list.length) html = '<tr><td colspan="7" class="note">まだ入力がありません。</td></tr>';
   $("entryBody").innerHTML = html;
@@ -715,17 +807,26 @@ function renderPL() {
     var accrued = balOf(ag.bal, "未払金", "c");
     var ownerB = balOf(ag.bal, "事業主借", "c");
     var capital = yd.opening.capital;
-    var aTotal = cash + bank + ar + owner;
-    var lTotal = ap + accrued + ownerB + capital + ag.profit;
+    var left = [["現金", cash], ["普通預金", bank], ["売掛金", ar], ["事業主貸", owner]];
+    FA_ACCOUNTS.forEach(function (n) {
+      var v = balOf(ag.bal, n, "d");
+      if (v) left.push([n, v]);
+    });
+    var accum = balOf(ag.bal, "減価償却累計額", "c");
+    if (accum) left.push(["減価償却累計額", -accum]);
+    var right = [["買掛金", ap], ["未払金", accrued], ["事業主借", ownerB], ["元入金", capital], ["所得金額", ag.profit]];
+    var aTotal = 0, lTotal = 0;
+    left.forEach(function (it) { aTotal += it[1]; });
+    right.forEach(function (it) { lTotal += it[1]; });
     function bsRow(l1, v1, l2, v2) {
-      return "<tr><td>" + l1 + '</td><td class="num">' + fmt(v1) + "</td><td>" + l2 + '</td><td class="num">' + fmt(v2) + "</td></tr>";
+      return "<tr><td>" + l1 + '</td><td class="num">' + (l1 ? fmt(v1) : "") + "</td><td>" + l2 + '</td><td class="num">' + (l2 ? fmt(v2) : "") + "</td></tr>";
     }
     var bh = "";
-    bh += bsRow("現金", cash, "買掛金", ap);
-    bh += bsRow("普通預金", bank, "未払金", accrued);
-    bh += bsRow("売掛金", ar, "事業主借", ownerB);
-    bh += bsRow("事業主貸", owner, "元入金", capital);
-    bh += bsRow("", 0, "所得金額", ag.profit);
+    var maxR = Math.max(left.length, right.length);
+    for (var ri = 0; ri < maxR; ri++) {
+      var L = left[ri] || ["", 0], R = right[ri] || ["", 0];
+      bh += bsRow(L[0], L[1], R[0], R[1]);
+    }
     bh += '<tr class="tot"><td>資産の合計</td><td class="num">' + fmt(aTotal) + '</td><td>負債・資本の合計</td><td class="num">' + fmt(lTotal) + "</td></tr>";
     $("bsBody").innerHTML = bh;
     var diff = aTotal - lTotal;
@@ -764,6 +865,69 @@ function renderFixed() {
     });
   });
 }
+function renderAssetJudge() {
+  var price = parseInt($("asPrice").value, 10);
+  var jEl = $("asJudge"), cEl = $("asChoice");
+  if (!price || price <= 0) { jEl.textContent = ""; cEl.innerHTML = ""; return; }
+  var j = assetJudge(price);
+  if (j === "immediate") {
+    jEl.textContent = "10万円未満なので、買った年に全額を経費にできます。登録すると「消耗品費」の支出として記録します（資産台帳には残りません）。";
+    cEl.innerHTML = "";
+  } else if (j === "choice-lump") {
+    jEl.textContent = "10万円以上20万円未満の資産です。経費への分け方を選んでください。";
+    cEl.innerHTML = '<label style="display:block;margin:4px 0"><input type="radio" name="asMethod" value="lump"> 一括償却（3年間で均等に分ける。月割りなし）</label>' +
+      '<label style="display:block;margin:4px 0"><input type="radio" name="asMethod" value="normal" checked> 通常の償却（耐用年数で分ける）</label>';
+  } else if (j === "choice-small") {
+    jEl.textContent = "20万円以上30万円未満で、青色申告の少額特例が使えます。経費への分け方を選んでください。";
+    cEl.innerHTML = '<label style="display:block;margin:4px 0"><input type="radio" name="asMethod" value="small"> 少額特例で、買った年に全額を経費にする（年間合計300万円まで）</label>' +
+      '<label style="display:block;margin:4px 0"><input type="radio" name="asMethod" value="normal" checked> 通常の償却（耐用年数で分ける）</label>';
+  } else if (j === "normal-white") {
+    jEl.textContent = "白色申告では少額特例が使えないため、通常の償却（耐用年数で分割）になります。";
+    cEl.innerHTML = "";
+  } else {
+    jEl.textContent = "30万円以上の資産は、通常の償却（耐用年数で分割）になります。";
+    cEl.innerHTML = "";
+  }
+}
+function renderAssets() {
+  var cy = parseInt(store.currentYear, 10);
+  var html = "";
+  var smallTotal = 0;
+  (store.assets || []).forEach(function (a) {
+    var sch = depSchedule(a);
+    var cur = null, bal = a.price;
+    sch.forEach(function (s) {
+      if (s.year === cy) cur = s;
+      if (s.year <= cy) bal = s.balance;
+    });
+    var methodLabel = a.treat === "lump" ? "一括償却" : a.treat === "small" ? "少額特例（即時）" : "通常償却（" + (a.method === "teiritsu" ? "定率法" : "定額法") + "）";
+    if (a.treat === "small" && parseInt(a.acqDate.slice(0, 4), 10) === cy) smallTotal += a.price;
+    html += "<tr><td>" + esc(a.name) + "</td><td>" + esc(a.acqDate) + '</td><td class="num">' + fmt(a.price) + "</td>" +
+      "<td>" + (a.treat === "lump" ? "―" : a.years + "年") + "</td><td>" + methodLabel + '</td><td class="num">' + a.ratio + "%</td>" +
+      '<td class="num">' + (cur ? fmt(cur.dep) + (a.ratio < 100 ? "<br>（経費 " + fmt(cur.biz) + "）" : "") : "―") + "</td>" +
+      '<td class="num">' + fmt(bal) + "</td>" +
+      '<td><button class="btn btn-del btn-sm" data-as-del="' + a.id + '">削除</button></td></tr>';
+  });
+  if (!(store.assets || []).length) html = '<tr><td colspan="9" class="note">固定資産はまだ登録されていません。</td></tr>';
+  $("assetBody").innerHTML = html;
+  var note = "一覧に「資産」の印で出てくる仕訳は、この台帳から自動で作られています。消したいときは資産そのものを削除してください。";
+  if (smallTotal > 0) {
+    note += " 少額特例で即時経費にした資産（今年取得分）の合計は " + fmt(smallTotal) + " で、上限は年間300万円です。";
+    if (smallTotal > 3000000) note += "【注意】上限の300万円を超えています。超えた分には特例を使えません。";
+  }
+  $("assetNote").textContent = note;
+  Array.prototype.forEach.call(document.querySelectorAll("[data-as-del]"), function (b) {
+    b.addEventListener("click", function () {
+      var id = b.getAttribute("data-as-del");
+      if (!confirm("この資産を削除します。帳簿に入っている取得・償却の仕訳も消えます。よろしいですか？")) return;
+      store.assets = store.assets.filter(function (x) { return x.id !== id; });
+      Object.keys(store.years).forEach(function (y) {
+        store.years[y].entries = store.years[y].entries.filter(function (e) { return e.assetId !== id; });
+      });
+      regenAssets(); touch(); renderAll();
+    });
+  });
+}
 function renderExportInfo() {
   var yd = Y();
   if (yd.lastExport) {
@@ -775,7 +939,7 @@ function renderExportInfo() {
   $("unsavedInfo").innerHTML = yd.dirty ? '<span class="unsaved">未保存のデータがあります。CSVを書き出して保管してください。</span>' : '<span class="ok">書き出し済みの状態です。</span>';
 }
 function renderAll() {
-  renderSummary(); renderTypeNote(); renderList(); renderPL(); renderFixed(); renderExportInfo();
+  renderSummary(); renderTypeNote(); renderList(); renderPL(); renderFixed(); renderAssets(); renderExportInfo();
   var yd = Y();
   $("opCash").value = yd.opening.cash || "";
   $("opBank").value = yd.opening.bank || "";
@@ -802,6 +966,143 @@ function regenFixed() {
         yd.entries.push({ id: uid(), seq: yd.seq++, date: date, kind: "expense", account: "事業主貸", amount: priv, method: f.method, memo: (f.memo || "") + "（家事分）", source: "fixed", fixedId: f.id });
       }
     }
+  });
+}
+
+function depRate(years) { return Math.round((1 / years) * 1000) / 1000; }
+// 200%定率法の率表（耐用年数省令 別表第十）。償却率は 2÷耐用年数 の小数第3位丸めで出るため、改定償却率と保証率のみを年数順（3年〜100年）に持つ。2年は償却率1.000で改定償却なし
+var TEIRITSU_K = [
+  1.000, 1.000, 0.500, 0.334, 0.334, 0.334, 0.250, 0.250, 0.200, 0.200,
+  0.167, 0.167, 0.143, 0.143, 0.125, 0.112, 0.112, 0.112, 0.100, 0.100,
+  0.091, 0.084, 0.084, 0.084, 0.077, 0.072, 0.072, 0.072, 0.067, 0.067,
+  0.063, 0.063, 0.059, 0.059, 0.056, 0.056, 0.053, 0.053, 0.050, 0.050,
+  0.048, 0.046, 0.046, 0.044, 0.044, 0.044, 0.042, 0.042, 0.040, 0.039,
+  0.039, 0.038, 0.038, 0.038, 0.036, 0.035, 0.035, 0.034, 0.034, 0.033,
+  0.033, 0.032, 0.032, 0.031, 0.031, 0.030, 0.030, 0.030, 0.029, 0.029,
+  0.027, 0.027, 0.027, 0.027, 0.027, 0.027, 0.026, 0.026, 0.026, 0.024,
+  0.024, 0.024, 0.024, 0.023, 0.023, 0.023, 0.022, 0.022, 0.022, 0.022,
+  0.021, 0.021, 0.021, 0.021, 0.020, 0.020, 0.020, 0.020
+];
+var TEIRITSU_G = [
+  0.11089, 0.12499, 0.10800, 0.09911, 0.08680, 0.07909, 0.07126, 0.06552, 0.05992, 0.05566,
+  0.05180, 0.04854, 0.04565, 0.04294, 0.04038, 0.03884, 0.03693, 0.03486, 0.03335, 0.03182,
+  0.03052, 0.02969, 0.02841, 0.02716, 0.02624, 0.02568, 0.02463, 0.02366, 0.02286, 0.02216,
+  0.02161, 0.02097, 0.02051, 0.01974, 0.01950, 0.01882, 0.01860, 0.01791, 0.01741, 0.01694,
+  0.01664, 0.01664, 0.01634, 0.01601, 0.01532, 0.01499, 0.01475, 0.01440, 0.01422, 0.01422,
+  0.01370, 0.01370, 0.01337, 0.01288, 0.01281, 0.01281, 0.01240, 0.01240, 0.01201, 0.01201,
+  0.01165, 0.01165, 0.01130, 0.01130, 0.01097, 0.01097, 0.01065, 0.01034, 0.01034, 0.01006,
+  0.01063, 0.01035, 0.01007, 0.00980, 0.00954, 0.00929, 0.00929, 0.00907, 0.00884, 0.00929,
+  0.00907, 0.00885, 0.00864, 0.00885, 0.00864, 0.00844, 0.00863, 0.00844, 0.00825, 0.00807,
+  0.00790, 0.00807, 0.00790, 0.00773, 0.00757, 0.00773, 0.00757, 0.00742
+];
+function teiritsuRates(years) {
+  if (years === 2) return { r: 1.000, k: null, g: 0 };
+  var i = years - 3;
+  if (i < 0 || i >= TEIRITSU_K.length) return null;
+  return { r: Math.round(2000 / years) / 1000, k: TEIRITSU_K[i], g: TEIRITSU_G[i] };
+}
+function depScheduleTeiritsu(a, ay, am) {
+  var t = teiritsuRates(a.years);
+  if (!t) return depScheduleTeigaku(a, ay, am);
+  var out = [];
+  var guarantee = a.price * t.g;
+  var bal = a.price;
+  var y = ay;
+  var revised = false, revisedAmt = 0;
+  while (bal > 1 && y <= ay + a.years + 2) {
+    var dep, rateUsed, adj = 0;
+    if (!revised) {
+      // 切替判定は月割前の年額（調整前償却額）と償却保証額で行う（国税庁 No.2106 の手順）
+      adj = Math.floor(bal * t.r);
+      if (t.k != null && adj < guarantee) {
+        revised = true;
+        revisedAmt = Math.floor(bal * t.k);
+      }
+    }
+    if (revised) {
+      dep = Math.min(revisedAmt, bal - 1);
+      rateUsed = t.k;
+    } else {
+      dep = y === ay ? Math.floor(adj * (13 - am) / 12) : adj;
+      dep = Math.min(dep, bal - 1);
+      rateUsed = t.r;
+    }
+    if (dep <= 0) dep = bal - 1;
+    bal -= dep;
+    out.push({ year: y, dep: dep, balance: bal, rate: rateUsed, revised: revised });
+    y++;
+  }
+  return out;
+}
+function depScheduleTeigaku(a, ay, am) {
+  var out = [];
+  var rate = depRate(a.years);
+  var bal = a.price;
+  var y = ay;
+  while (bal > 1 && y <= ay + a.years + 2) {
+    var months = y === ay ? 13 - am : 12;
+    var baseD = Math.floor(a.price * rate * months / 12);
+    var d = Math.min(baseD, bal - 1);
+    if (d <= 0) d = bal - 1;
+    bal -= d;
+    out.push({ year: y, dep: d, balance: bal, rate: rate, revised: false });
+    y++;
+  }
+  return out;
+}
+function depSchedule(a) {
+  var out = [];
+  var ay = parseInt(a.acqDate.slice(0, 4), 10);
+  var am = parseInt(a.acqDate.slice(5, 7), 10);
+  if (a.treat === "small") {
+    out.push({ year: ay, dep: a.price, balance: 0 });
+  } else if (a.treat === "lump") {
+    var base = Math.floor(a.price / 3);
+    var bal2 = a.price;
+    for (var i = 0; i < 3; i++) {
+      var d2 = i === 2 ? bal2 : base;
+      bal2 -= d2;
+      out.push({ year: ay + i, dep: d2, balance: bal2 });
+    }
+  } else {
+    // 通常償却は償却方法（method）で分岐する（定額法 teigaku／定率法 teiritsu、資産ごとに選択）
+    var rows = a.method === "teiritsu" ? depScheduleTeiritsu(a, ay, am) : depScheduleTeigaku(a, ay, am);
+    rows.forEach(function (s) { out.push(s); });
+  }
+  out.forEach(function (s) {
+    s.biz = Math.round(s.dep * (a.ratio == null ? 100 : a.ratio) / 100);
+    s.priv = s.dep - s.biz;
+  });
+  return out;
+}
+function assetJudge(price) {
+  if (price < 100000) return "immediate";
+  if (price < 200000) return "choice-lump";
+  if (price < 300000) return Y().type !== "white" ? "choice-small" : "normal-white";
+  return "normal";
+}
+function regenAssets() {
+  var yd = Y();
+  yd.entries = yd.entries.filter(function (e) { return e.source !== "asset"; });
+  var year = parseInt(store.currentYear, 10);
+  (store.assets || []).forEach(function (a) {
+    var acqYear = parseInt(a.acqDate.slice(0, 4), 10);
+    if (a.treat === "small") {
+      if (acqYear === year) {
+        var s0 = depSchedule(a)[0];
+        if (s0.biz > 0) yd.entries.push({ id: uid(), seq: yd.seq++, date: a.acqDate, kind: "expense", account: "減価償却費", amount: s0.biz, method: a.payment, memo: a.name + "（少額特例で即時償却）", source: "asset", assetId: a.id });
+        if (s0.priv > 0) yd.entries.push({ id: uid(), seq: yd.seq++, date: a.acqDate, kind: "expense", account: "事業主貸", amount: s0.priv, method: a.payment, memo: a.name + "（少額特例で即時償却・家事分）", source: "asset", assetId: a.id });
+      }
+      return;
+    }
+    if (acqYear === year) {
+      yd.entries.push({ id: uid(), seq: yd.seq++, date: a.acqDate, kind: "manual", debit: a.account, credit: METHOD_OUT[a.payment], amount: a.price, memo: a.name + "（取得）", source: "asset", assetId: a.id });
+    }
+    depSchedule(a).forEach(function (s) {
+      if (s.year !== year) return;
+      if (s.biz > 0) yd.entries.push({ id: uid(), seq: yd.seq++, date: year + "-12-31", kind: "manual", debit: "減価償却費", credit: "減価償却累計額", amount: s.biz, memo: a.name + "の減価償却", source: "asset", assetId: a.id });
+      if (s.priv > 0) yd.entries.push({ id: uid(), seq: yd.seq++, date: year + "-12-31", kind: "manual", debit: "事業主貸", credit: "減価償却累計額", amount: s.priv, memo: a.name + "の減価償却（家事分）", source: "asset", assetId: a.id });
+    });
   });
 }
 
@@ -879,7 +1180,10 @@ function guideRows() {
       ["事業主借", balOf(ag.bal, "事業主借", "c")],
       ["元入金", yd.opening.capital]
     ];
+    FA_ACCOUNTS.forEach(function (n) { var v = balOf(ag.bal, n, "d"); if (v) bsItems.push([n, v]); });
     bsItems.forEach(function (it) { if (it[1]) rows.push([it[0], it[1], "決算書4ページ目（貸借対照表）『" + it[0] + "』欄へ"]); });
+    var accumG = balOf(ag.bal, "減価償却累計額", "c");
+    if (accumG) rows.push(["減価償却累計額", accumG, "決算書4ページ目（貸借対照表）で、固定資産の金額から差し引く額です"]);
   } else {
     rows.push(["売上（収入）金額", gPl("売上高"), "収支内訳書 収入金額の『売上（収入）金額』欄へ"]);
     if (gPl("家事消費等")) rows.push(["家事消費等", gPl("家事消費等"), "収支内訳書 収入金額の『家事消費等』欄へ"]);
@@ -893,6 +1197,16 @@ function guideRows() {
     if (ag.ded[k] > 0) rows.push([DED_LABELS[k], ag.ded[k], "確定申告書第一表 所得控除の『" + DED_LABELS[k] + "』欄へ"]);
   });
   if (ag.whTotal > 0) rows.push(["所得税の源泉徴収税額", ag.whTotal, "確定申告書 第二表『所得税の源泉徴収税額』欄へ"]);
+  var cyGuide = parseInt(store.currentYear, 10);
+  (store.assets || []).forEach(function (a) {
+    var cur = null;
+    depSchedule(a).forEach(function (s) { if (s.year === cyGuide) cur = s; });
+    if (!cur) return;
+    var dest = (isDouble() ? "決算書3ページ目" : "収支内訳書2ページ目") + "『減価償却費の計算』欄へ：取得年月 " + a.acqDate.slice(0, 4) + "年" + parseInt(a.acqDate.slice(5, 7), 10) + "月／取得価額 " + a.price.toLocaleString("ja-JP") + "円／" +
+      (a.treat === "lump" ? "一括償却（3年均等）" : a.treat === "small" ? "少額減価償却資産の特例（即時償却）" : "耐用年数 " + a.years + "年・" + (a.method === "teiritsu" ? "定率法" : "定額法") + "・" + (cur.revised ? "改定償却率 " : "償却率 ") + (cur.rate != null ? cur.rate : depRate(a.years)).toFixed(3)) +
+      "／本年分の償却費 " + cur.dep.toLocaleString("ja-JP") + "円／必要経費算入額 " + cur.biz.toLocaleString("ja-JP") + "円／未償却残高 " + cur.balance.toLocaleString("ja-JP") + "円";
+    rows.push([a.name + "（減価償却費の計算）", cur.biz, dest]);
+  });
   return rows;
 }
 function exportGuideCSV() {
@@ -1058,16 +1372,31 @@ function init() {
   fillSelect($("fxAccount"), EXPENSE_ACCOUNTS.map(function (a) { return a.name; }));
   fillSelect($("mnDebit"), ALL_ACCOUNTS);
   fillSelect($("mnCredit"), ALL_ACCOUNTS);
+  fillSelect($("asAccount"), FA_ACCOUNTS);
+  var asPreset = $("asPreset");
+  asPreset.innerHTML = "";
+  ASSET_PRESETS.forEach(function (p) {
+    var o = document.createElement("option");
+    o.value = p.key; o.textContent = p.label;
+    asPreset.appendChild(o);
+  });
+  asPreset.addEventListener("change", function () {
+    var p = ASSET_PRESETS.filter(function (x) { return x.key === asPreset.value; })[0];
+    if (p) { if (p.years) $("asYears").value = p.years; $("asAccount").value = p.account; }
+  });
   var t = todayStr();
-  $("inDate").value = t; $("exDate").value = t; $("mnDate").value = t;
+  $("inDate").value = t; $("exDate").value = t; $("mnDate").value = t; $("asDate").value = t;
+  $("asYears").value = ASSET_PRESETS[0].years;
+  renderAssetJudge();
+  $("asPrice").addEventListener("input", renderAssetJudge);
 
   yearSel.addEventListener("change", function () {
     store.currentYear = yearSel.value;
-    Y(); save(); renderAll();
+    Y(); regenAssets(); save(); renderAll();
   });
   $("typeSel").addEventListener("change", function () {
     Y().type = $("typeSel").value;
-    touch(); renderAll();
+    touch(); renderAll(); renderAssetJudge();
   });
   Array.prototype.forEach.call(document.querySelectorAll("#tabBar button"), function (b) {
     b.addEventListener("click", function () {
@@ -1131,9 +1460,43 @@ function init() {
     touch(); renderAll();
     alert("期首残高を保存しました。");
   });
+  $("asAdd").addEventListener("click", function () {
+    var name = $("asName").value.trim();
+    var date = $("asDate").value;
+    var price = parseInt($("asPrice").value, 10);
+    var years = parseInt($("asYears").value, 10);
+    var ratio = parseInt($("asRatio").value, 10);
+    var payment = $("asPayment").value;
+    if (!name) { alert("資産の名前を入れてください。"); return; }
+    if (!date) { alert("取得日を入れてください。"); return; }
+    if (!price || price <= 0) { alert("取得価額を入れてください。"); return; }
+    if (isNaN(ratio) || ratio < 0 || ratio > 100) { alert("事業で使う割合は0〜100で入れてください。"); return; }
+    var judge = assetJudge(price);
+    var yd = Y();
+    if (judge === "immediate") {
+      var biz = Math.round(price * ratio / 100), priv = price - biz;
+      if (biz > 0) yd.entries.push({ id: uid(), seq: yd.seq++, date: date, kind: "expense", account: "消耗品費", amount: biz, method: payment, memo: name + "（10万円未満のため即時経費）", source: "simple" });
+      if (priv > 0) yd.entries.push({ id: uid(), seq: yd.seq++, date: date, kind: "expense", account: "事業主貸", amount: priv, method: payment, memo: name + "（家事分）", source: "simple" });
+      touch(); renderAll();
+      alert("10万円未満のため、資産ではなく「消耗品費」の支出として記録しました。");
+      $("asName").value = ""; $("asPrice").value = ""; renderAssetJudge();
+      return;
+    }
+    if (!years || years < 1 || years > 100) { alert("耐用年数を入れてください。"); return; }
+    var treat = "normal";
+    if (judge === "choice-lump" || judge === "choice-small") {
+      var sel = document.querySelector('input[name="asMethod"]:checked');
+      if (sel) treat = sel.value;
+    }
+    if (!store.assets) store.assets = [];
+    store.assets.push({ id: uid(), name: name, acqDate: date, price: price, years: years, account: $("asAccount").value, ratio: ratio, payment: payment, treat: treat, method: $("asDepMethod").value === "teiritsu" ? "teiritsu" : "teigaku" });
+    regenAssets(); touch(); renderAll();
+    $("asName").value = ""; $("asPrice").value = ""; renderAssetJudge();
+  });
   $("clearYear").addEventListener("click", function () {
     if (!confirm(store.currentYear + "年のデータを全部消します。よろしいですか？")) return;
     store.years[store.currentYear] = freshYear();
+    regenAssets();
     save(); renderAll();
   });
   $("exportJournal").addEventListener("click", exportJournalCSV);
@@ -1155,6 +1518,8 @@ function init() {
   });
   $("importDraft").addEventListener("click", buildDrafts);
   $("importExec").addEventListener("click", execImport);
+  regenAssets();
+  save();
   renderAll();
 }
 document.addEventListener("DOMContentLoaded", init);
