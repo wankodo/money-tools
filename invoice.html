@@ -189,13 +189,7 @@ html[data-theme="andy"] .doc table.d-tbl td{background:transparent;color:#26221c
     <div class="frow">
       <div class="fitem wide"><label class="flabel">件名</label><input type="text" id="subject"></div>
     </div>
-    <label class="flabel">源泉徴収（源泉所得税等 10.21%）</label>
-    <div class="seg" id="whSeg">
-      <button type="button" data-wh="on" class="on">あり（報酬から差し引く）</button>
-      <button type="button" data-wh="off">なし</button>
-    </div>
-    <p class="note" id="whNote"></p>
-    <p class="note">伝票番号は発行日から自動で入ります（YYYYMMDD-連番）。書き換えもできます。日付は書類に和暦（令和）で印字されます。</p>
+    <p class="note">伝票番号は発行日から自動で入ります（YYYYMMDD-連番）。書き換えもできます。日付は書類に和暦（令和）で印字されます。源泉徴収（源泉所得税等 10.21%）は、明細の行ごとに「対象／対象外」を選んで計算します。</p>
   </div>
 
   <div class="card">
@@ -285,7 +279,7 @@ html[data-theme="andy"] .doc table.d-tbl td{background:transparent;color:#26221c
   <div class="card">
     <h2>計算のしかた</h2>
     <ul class="facts">
-      <li>源泉所得税等は「源泉対象の報酬行の合計 × 10.21%」を切り捨てた額です（報酬・料金等に対する源泉徴収税率、復興特別所得税を含みます）。対象かどうかは行ごとに選べます。実費は源泉徴収の対象外です。</li>
+      <li>源泉所得税等は「源泉対象の報酬行の合計 × 10.21%」を切り捨てた額です（報酬・料金等に対する源泉徴収税率、復興特別所得税を含みます）。対象かどうかは行ごとに選べます。源泉対象の行が1行もない場合は、源泉所得税等の行は表示されません。実費は源泉徴収の対象外です。</li>
       <li>明細の入力方式を「税込の欲しい金額を入力」にすると、その行の税込合計（行金額＋消費税）が入力額になるよう、税抜単価を自動で計算します。</li>
       <li>消費税相当額は、明細の行ごとに「行金額 × 税率」を切り捨てて合計した額です。小計にまとめて税率をかけた額とは、端数の関係で数円ずれることがあります。</li>
       <li>合計は「小計（報酬）− 源泉所得税等 ＋ 消費税相当額 ＋ 実費」の順で計算します。</li>
@@ -312,7 +306,6 @@ var WH_RATE = 0.1021;
 
 var state = {
   type: "invoice",
-  whOn: true,
   docNoDirty: false,
   adjIdx: 0,
   rows: [ { kind:"fee", name:"", price:"", qty:"", unit:"", rate:"10", amount:"", wh:"on", mode:"ex", want:"" } ]
@@ -354,7 +347,9 @@ function autoDocNo(){
   var v = $("issueDate").value || todayStr();
   return v.replace(/-/g, "") + "-1";
 }
-function effWh(){ return state.type === "invoice" && state.whOn; }
+function hasWhTarget(rows){
+  return state.type === "invoice" && rows.some(function(r){ return r.kind === "fee" && r.wh !== "off"; });
+}
 
 function lineAmt(r){
   return r.kind === "fee" ? num(r.price) * num(r.qty) : num(r.amount);
@@ -372,8 +367,9 @@ function calcWith(rows){
       actuals.push({ name: r.name, amount: a });
     }
   });
-  var wh = effWh() ? Math.floor(whBase * WH_RATE) : 0;
-  return { feeSub: feeSub, tax: tax, wh: wh, whBase: whBase, actuals: actuals, actualTotal: actualTotal,
+  var hasWh = hasWhTarget(rows);
+  var wh = hasWh ? Math.floor(whBase * WH_RATE) : 0;
+  return { feeSub: feeSub, tax: tax, wh: wh, whBase: whBase, hasWh: hasWh, actuals: actuals, actualTotal: actualTotal,
            total: feeSub - wh + tax + actualTotal };
 }
 function calc(){ return calcWith(state.rows); }
@@ -467,7 +463,7 @@ function renderDoc(){
   /* 集計 */
   h += '<div class="d-sum"><table>';
   h += '<tr><td>小計（報酬）</td><td class="val">' + fmt(c.feeSub) + "</td></tr>";
-  if (effWh()) h += '<tr><td>源泉所得税等（対象 ' + fmt(c.whBase) + '）</td><td class="val">-' + fmt(c.wh) + "</td></tr>";
+  if (c.hasWh) h += '<tr><td>源泉所得税等（対象 ' + fmt(c.whBase) + '）</td><td class="val">-' + fmt(c.wh) + "</td></tr>";
   h += '<tr><td>消費税相当額</td><td class="val">' + fmt(c.tax) + "</td></tr>";
   c.actuals.forEach(function(a){
     h += "<tr><td>" + esc(a.name || "実費") + '</td><td class="val">' + fmt(a.amount) + "</td></tr>";
@@ -619,22 +615,8 @@ $("typeSeg").addEventListener("click", function(e){
   $("typeSeg").querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
   $("dueLabel").textContent = state.type === "invoice" ? "お支払い期限" : "有効期限";
   $("bankCard").classList.toggle("hidden", state.type !== "invoice");
-  applyWhMode();
   renderDoc();
 });
-$("whSeg").addEventListener("click", function(e){
-  var b = e.target.closest("button"); if (!b) return;
-  if (state.type !== "invoice") return;
-  state.whOn = b.getAttribute("data-wh") === "on";
-  $("whSeg").querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
-  renderDoc();
-});
-function applyWhMode(){
-  var est = state.type !== "invoice";
-  $("whSeg").style.opacity = est ? "0.45" : "1";
-  $("whSeg").style.pointerEvents = est ? "none" : "auto";
-  $("whNote").textContent = est ? "見積書では源泉徴収は使わないため、この切替は請求書のときだけ効きます。" : "";
-}
 ["issueDate","dueDate","subject","cZip","cAddr1","cAddr2","cCompany","cHonor","iZip","iAddr1","iAddr2","iTel","iShop","iName","iReg","bBank","bBranch","bBranchNo","bType","bNum","bHolder","bHolderKana","noteText"].forEach(function(id){
   $(id).addEventListener("input", function(){
     if (SAVE_IDS.indexOf(id) >= 0) saveIssuer();
