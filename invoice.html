@@ -70,6 +70,7 @@ footer{margin:26px 0 40px}
 footer .card{font-size:12.5px;color:var(--mut)}
 .credit{text-align:center;color:var(--mut);font-size:12px;margin:10px 0 30px}
 .hidden{display:none}
+#allDocs{display:none}
 a{color:var(--navy)}
 ul.facts{margin:6px 0;padding-left:20px}
 ul.facts li{margin:5px 0;font-size:14px}
@@ -150,6 +151,11 @@ ul.facts li{margin:5px 0;font-size:14px}
   .doc .d-box-label{break-after:avoid;page-break-after:avoid}
   .doc .d-total{break-inside:avoid;page-break-inside:avoid}
   .doc table.d-tbl tr{break-inside:avoid;page-break-inside:avoid}
+  /* 控え用（3種まとめて印刷）の時だけ、単体プレビューを隠して3書類を1ページずつ出す */
+  body.all-mode #docPreview{display:none!important}
+  body.all-mode #allDocs{display:block}
+  body.all-mode #allDocs .doc{break-after:page;page-break-after:always}
+  body.all-mode #allDocs .doc:last-child{break-after:auto;page-break-after:auto}
 }
 </style>
 <style id="hud-theme-style">
@@ -302,10 +308,12 @@ html[data-theme="andy"] .doc table.d-tbl td{background:transparent;color:#26221c
   <div class="card doc-card">
     <div class="no-print" style="text-align:center;margin-bottom:14px">
       <button type="button" class="btn big" id="printBtn">PDFで保存／印刷</button>
-      <p class="note">印刷画面で「PDFに保存」を選ぶと、そのまま送れる書類になります。</p>
+      <button type="button" class="btn sub big" id="printAllBtn">控え用：3種まとめてPDF</button>
+      <p class="note">印刷画面で「PDFに保存」を選ぶと、そのまま送れる書類になります。「控え用」は、同じ内容の見積書・請求書・領収書を1つのPDF（3ページ）にまとめて出します。</p>
       <p class="note">このPDFは通常のPDFのため、編集ソフトで内容を変更できます。送った内容の控えとして、このツールの入力データも手元に残しておくのがおすすめです。</p>
     </div>
     <div class="doc" id="docPreview"></div>
+    <div id="allDocs"></div>
   </div>
 
   <div class="card">
@@ -732,6 +740,29 @@ $("addActualBtn").addEventListener("click", function(){
 });
 $("solveBtn").addEventListener("click", solve);
 $("printBtn").addEventListener("click", function(){ window.print(); });
+
+/* ===== 控え用：3種まとめて印刷 ===== */
+$("printAllBtn").addEventListener("click", function(){
+  var savedType = state.type;
+  var html = "";
+  ["estimate", "invoice", "receipt"].forEach(function(t){
+    state.type = t;
+    renderDoc();
+    html += '<div class="doc">' + $("docPreview").innerHTML + "</div>";
+  });
+  state.type = savedType;
+  renderDoc();
+  $("allDocs").innerHTML = html;
+  document.body.classList.add("all-mode");
+  var cleanup = function(){
+    document.body.classList.remove("all-mode");
+    $("allDocs").innerHTML = "";
+    window.removeEventListener("afterprint", cleanup);
+  };
+  window.addEventListener("afterprint", cleanup);
+  setTimeout(cleanup, 60000);
+  window.print();
+});
 
 /* ===== 郵便番号→住所の自動入力（zipcloud） ===== */
 function setupZipLookup(zipId, addrId, msgId, isIssuer){
