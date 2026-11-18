@@ -1,0 +1,2357 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<script>try{var _t=localStorage.getItem("ido_theme_v1");if(_t==="andy"||_t==="kuma")document.documentElement.dataset.theme=_t;}catch(e){}</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>帳簿ツール（法人用・法人税申告補助）｜わんこ堂</title>
+<meta name="description" content="入ってきたお金と出ていくお金を入力するだけで、法人の複式簿記の帳簿と法人税申告書（別表）への転記ガイドが作れる無料ツール。データはこの端末の中だけに保存されます。">
+<style>
+:root{
+  --navy:#12283f; --navy2:#0b1a2c; --amber:#f2a007; --amber-d:#c77f02;
+  --bg:#f4f2ec; --card:#ffffff; --ink:#1d2733; --mut:#68707c;
+  --line:#ddd6c8; --red:#b03a2e; --green:#1e7d46; --soft:#fdf6e0;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6}
+header{background:linear-gradient(135deg,var(--navy2),var(--navy));color:#fff;padding:22px 16px 18px;border-bottom:4px solid var(--amber)}
+header .wrap{max-width:980px;margin:0 auto}
+header h1{margin:0;font-size:24px;letter-spacing:.04em}
+header h1 .accent{color:var(--amber)}
+header p{margin:6px 0 0;font-size:13px;color:#cfd9e4}
+.wrap{max-width:980px;margin:0 auto;padding:0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin:14px 0;box-shadow:0 1px 3px rgba(18,40,63,.06)}
+.card h2{margin:0 0 10px;font-size:17px;color:var(--navy);border-left:5px solid var(--amber);padding-left:9px}
+.card h3{margin:14px 0 8px;font-size:15px;color:var(--navy)}
+.note{font-size:12.5px;color:var(--mut)}
+.warn{background:var(--soft);border:1px solid #ecd27a;border-radius:8px;padding:10px 12px;font-size:13px;margin:10px 0}
+.topgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.topgrid{grid-template-columns:1fr}}
+label.flabel{display:block;font-size:12.5px;color:var(--mut);margin:8px 0 3px}
+input[type="text"],input[type="number"],input[type="date"],select,textarea{
+  width:100%;padding:9px 10px;border:1px solid #c9c2b2;border-radius:7px;font-size:15px;background:#fff;color:var(--ink);
+}
+input:focus,select:focus{outline:2px solid var(--amber);outline-offset:0;border-color:var(--amber)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:640px){.frow,.frow3{grid-template-columns:1fr}}
+.btn{display:inline-block;background:var(--amber);color:#231a00;border:none;border-radius:8px;padding:11px 18px;font-size:15px;font-weight:700;cursor:pointer;margin-top:12px}
+.btn:hover{background:var(--amber-d);color:#fff}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-navy:hover{background:var(--navy2)}
+.btn-ghost{background:#fff;border:1px solid var(--navy);color:var(--navy)}
+.btn-ghost:hover{background:var(--navy);color:#fff}
+.btn-sm{padding:5px 10px;font-size:12.5px;margin-top:0;border-radius:6px}
+.btn-del{background:#fff;border:1px solid #d8a49e;color:var(--red)}
+.btn-del:hover{background:var(--red);color:#fff}
+.summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0}
+@media(max-width:640px){.summary{grid-template-columns:1fr}}
+.sumcard{background:var(--navy);color:#fff;border-radius:10px;padding:14px 16px}
+.sumcard .lab{font-size:12.5px;color:#b9c8d8}
+.sumcard .val{font-size:26px;font-weight:800;color:var(--amber);font-variant-numeric:tabular-nums}
+.sumcard.white{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.sumcard.white .lab{color:var(--mut)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 0}
+.tabs button{background:#e9e4d8;border:1px solid var(--line);border-bottom:none;border-radius:8px 8px 0 0;padding:9px 16px;font-size:14.5px;cursor:pointer;color:var(--ink)}
+.tabs button.on{background:var(--navy);color:#fff;font-weight:700}
+.tabpage{display:none}
+.tabpage.on{display:block}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{background:#f0ead9;color:var(--navy);font-size:12.5px;white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.tot td{font-weight:800;background:var(--soft)}
+.tblwrap{overflow-x:auto}
+.badge{display:inline-block;font-size:11px;padding:1px 7px;border-radius:9px;margin-left:5px;vertical-align:middle;white-space:nowrap}
+.bd-ded{background:#fde9c8;color:#8a5a00;border:1px solid #e3b959}
+.bd-fixed{background:#dbe7f5;color:var(--navy);border:1px solid #9db9d6}
+.bd-manual{background:#e6e6e6;color:#444;border:1px solid #bbb}
+.bd-import{background:#dff2e2;color:var(--green);border:1px solid #9fd3ab}
+.bd-wh{background:#e8e0f3;color:#4a2d82;border:1px solid #b39ddb}
+.bd-asset{background:#d9f0e3;color:#14532d;border:1px solid #8fd0a8}
+.kind-in{color:var(--green);font-weight:700}
+.kind-out{color:var(--red);font-weight:700}
+.ok{color:var(--green);font-weight:700}
+.ng{color:var(--red);font-weight:700}
+.unsaved{color:var(--red);font-weight:700}
+details{border:1px dashed #c9c2b2;border-radius:8px;padding:10px 12px;margin-top:14px}
+details summary{cursor:pointer;font-weight:700;color:var(--navy)}
+footer{margin:26px 0 40px}
+footer .card{font-size:12.5px;color:var(--mut)}
+.credit{text-align:center;color:var(--mut);font-size:12px;margin:10px 0 30px}
+.hidden{display:none}
+select.inline{width:auto}
+
+.sitebar{background:var(--navy2);border-bottom:2px solid var(--amber)}
+.sitebar .sb-in{max-width:980px;margin:0 auto;padding:7px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.sitebar a{color:#fff;text-decoration:none;font-size:13px}
+.sitebar a:hover{color:var(--amber)}
+.sitebar .sb-name{font-weight:700;letter-spacing:.03em}
+</style>
+<style id="hud-theme-style">
+/* ===== DEF/HUD テーマ切替（共通） ===== */
+.ido-theme-switch{position:relative;z-index:1;display:flex;gap:4px;padding:4px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(255,255,255,.07);flex:none}
+.ido-theme-switch button{border:0;border-radius:999px;padding:6px 13px;background:transparent;box-shadow:none;color:#cfe2f3;font:inherit;font-size:12.5px;font-weight:800;line-height:1.25;cursor:pointer}
+.ido-theme-switch button[aria-pressed="true"]{background:linear-gradient(180deg,#ffc44d,var(--amber));color:#14273c}
+html[data-theme="andy"] .ido-theme-switch button[aria-pressed="true"]{background:linear-gradient(180deg,#8ff2ff,#46d9ec);color:#03222e;box-shadow:0 0 16px rgba(70,217,236,.55)}
+:root[data-theme="andy"]{color-scheme:dark;--navy:#1d4568;--navy2:#02070d;--amber:#46d9ec;--amber-d:#8ff2ff;--bg:#04090f;--card:#081623;--ink:#d8f1f6;--mut:#a9c9d9;--line:rgba(110,205,230,.32);--red:#ff6b61;--green:#3ddc97;--soft:rgba(70,217,236,.10);--good:#3ddc97;--bad:#ff6b61;--sat:#7cc7ff;--sun:#ff6b61}
+html[data-theme="andy"]{background:#04090f}
+html[data-theme="andy"] body{background:radial-gradient(900px 480px at 85% -120px,rgba(70,217,236,.13),rgba(70,217,236,0) 60%),repeating-linear-gradient(0deg,rgba(140,230,255,.022) 0 1px,transparent 1px 4px),linear-gradient(rgba(110,205,230,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(110,205,230,.045) 1px,transparent 1px),linear-gradient(180deg,#030a12,#04090f);background-size:auto,auto,52px 52px,52px 52px,auto}
+html[data-theme="andy"] a{color:#ffcf4d}
+html[data-theme="andy"] .sitebar a{color:#fff}
+/* 濃色文字（--navy）を担う見出し・数値類は明色に固定 */
+html[data-theme="andy"] :is(.card h2,.card h3,.tool-card h2,.today .word,.today.word,.result .word,.sumcard .val,.sumcard.white.val,.count,.date-line,.plan .pname,.plan.pname,.pname .pn,.prod .pname,.prod h4,.vs h3,.total3 h3,.bar-row .b-lab,.bar-row .bar-head .cat,.penline .amt,.bd-fixed,.stone .sname,.plabel,details summary,.adv-row .a-lab,.cal-title,.compat .ctext,.detail-rk,.detail-word,.dir-cell .d-dir,.dir-cell .d-star,.dnav .dlabel,.fortune-name,.grade,.kv dt,.lp-line .lp b,.person h3,.pos-name,.rank .bt,.read-head .pname,.result-word,.rname,.star-row .s-lab,.star-row .s-name,.sumline b){color:#d8f1f6}
+/* 白・淡色の面は背景と文字色をセットでダークパネル化 */
+html[data-theme="andy"] :is(.suggest,.chip,.plan,.rank li,.dir-cell,.hexbox.sub,.result .action,.checks label,.badges span,.rank-num,.prod .cond,.prod .nodatabox,.chips button,.tabs button,.cal-nav button,.btn-ghost,.btn.ghost,.presets button,.lp-line .lp,button.dbtn,.plan.dim){background:#0a1e30;color:#d8f1f6;border-color:rgba(110,205,230,.32)}
+html[data-theme="andy"] .btn-del{background:#0a1e30;border-color:rgba(110,205,230,.32)}
+html[data-theme="andy"] .sumcard.white{background:#0a1e30;color:#d8f1f6}
+html[data-theme="andy"] .seg button{background:#0a1e30;color:#d8f1f6;border-color:rgba(110,205,230,.32)}
+html[data-theme="andy"] .seg button.active{background:#1d4568;color:#fff}
+html[data-theme="andy"] :is(th,table.anchors th){background:#0d2a42;color:#d8f1f6}
+html[data-theme="andy"] table.cal td{background:#0a1e30;color:#d8f1f6}
+html[data-theme="andy"] table.cal td.empty{background:#060f18;color:#a9c9d9}
+html[data-theme="andy"] tr.total td{background:rgba(70,217,236,.12)}
+html[data-theme="andy"] :is(.bar-track,.bar-row .b-track){background:rgba(110,205,230,.15)}
+html[data-theme="andy"] :is(.warn,.sumcard.alert,.chip.unknown){background:rgba(255,82,82,.13)}
+html[data-theme="andy"] :is(.total3 .plan.win,.vs .side.win){background:rgba(61,220,151,.12)}
+html[data-theme="andy"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),html[data-theme="andy"] select,html[data-theme="andy"] textarea{background-color:#0a1a29;color:#d8f1f6;border-color:rgba(110,205,230,.42)}
+/* アンバー地に白文字だったバッジ類は濃色文字に */
+html[data-theme="andy"] :is(.badge,.best-b,.birthday-banner,.rank-num.top,.chip.active,button.draw,.mini.kyo,.mini.kichi){color:#03222e}
+html[data-theme="andy"] .rank-num.top{background:var(--amber)}
+/* サイコロの目は白いままにする */
+html[data-theme="andy"] .die{background:#eef3f8;color:#1d2733}
+/* 色付きバッジ変種は白文字に戻す／淡色バッジ変種はダーク化する */
+html[data-theme="andy"] :is(.badge.badge-ins,.badge.badge-uranai,.badge.badge-mob,.badge.na,.badge.agency){color:#fff}
+html[data-theme="andy"] .badge.mid{background:#6b6557;color:#fff}
+html[data-theme="andy"] .badge.t1{background:rgba(255,82,82,.16);color:#ff9d94;border-color:rgba(255,82,82,.4)}
+html[data-theme="andy"] .badge.t2{background:#0d2a42;color:#d8f1f6;border-color:rgba(110,205,230,.32)}
+html[data-theme="andy"] .badge.t3{background:rgba(61,220,151,.14);color:#3ddc97;border-color:rgba(61,220,151,.4)}
+html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222e}
+</style>
+</head>
+<body>
+<div class="sitebar"><div class="sb-in"><a class="sb-name" href="index.html">お金計算ツール集</a><a href="index.html">トップへ戻る</a><div class="ido-theme-switch" role="group" aria-label="表示モード切替"><button type="button" data-ido-theme="kuma" aria-pressed="true">DEF</button><button type="button" data-ido-theme="andy" aria-pressed="false">HUD</button></div></div></div>
+
+<header>
+  <div class="wrap">
+    <h1>帳簿ツール <span class="accent">（法人用・法人税申告補助）</span></h1>
+    <p>入ってきたお金と、出ていくお金を、レシートを見ながら入れるだけ。法人の帳簿と、法人税申告書への転記ガイドができます。</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <div class="topgrid">
+      <div>
+        <label class="flabel" for="yearSel">対象の事業年度</label>
+        <select id="yearSel"></select>
+      </div>
+      <div>
+        <label class="flabel">法人情報</label>
+        <p id="corpSummary" style="margin:6px 0 0;font-weight:700;color:var(--navy)"></p>
+      </div>
+    </div>
+    <p class="note" id="corpNote"></p>
+  </div>
+
+  <div class="summary">
+    <div class="sumcard white"><div class="lab">収入の合計</div><div class="val" id="sumIncome">¥0</div></div>
+    <div class="sumcard white"><div class="lab">支出の合計</div><div class="val" id="sumExpense">¥0</div></div>
+    <div class="sumcard"><div class="lab">差引（今の収支）</div><div class="val" id="sumBalance">¥0</div></div>
+  </div>
+
+  <div class="tabs" id="tabBar">
+    <button data-tab="input" class="on">入力</button>
+    <button data-tab="list">一覧</button>
+    <button data-tab="summary">集計</button>
+    <button data-tab="tax">申告</button>
+    <button data-tab="io">入出力</button>
+    <button data-tab="settings">設定</button>
+  </div>
+
+  <div class="tabpage on" id="tab-input">
+    <div class="topgrid">
+      <div class="card">
+        <h2>収入の窓</h2>
+        <label class="flabel" for="inDate">日付</label>
+        <input type="date" id="inDate">
+        <label class="flabel" for="inAccount">項目</label>
+        <select id="inAccount"></select>
+        <div class="frow">
+          <div>
+            <label class="flabel" for="inAmount">金額（円）</label>
+            <input type="number" id="inAmount" min="0" step="1" placeholder="例：500000">
+          </div>
+          <div>
+            <label class="flabel" for="inMethod">受け取り方法</label>
+            <select id="inMethod">
+              <option value="cash">現金</option>
+              <option value="bank">銀行</option>
+              <option value="credit">掛け（あとで入金）</option>
+            </select>
+          </div>
+        </div>
+        <div class="frow">
+          <div>
+            <label class="flabel" for="inWh">源泉徴収額（円・任意）</label>
+            <input type="number" id="inWh" min="0" step="1" placeholder="例：15315">
+          </div>
+          <div>
+            <label class="flabel" for="inVat">消費税区分</label>
+            <select id="inVat">
+              <option value="10">課税 10%</option>
+              <option value="8">課税 8%（軽減税率）</option>
+              <option value="0">対象外・非課税</option>
+            </select>
+          </div>
+        </div>
+        <p class="note">請求した金額から所得税を天引きされて入金されたときは、天引きされた金額を「源泉徴収額」に入れてください。売上は総額のまま記録され、天引き分は「仮払所得税（税金の前払い）」として分けて記録します。消費税区分は、設定で「税抜経理」を選んだときにだけ使います（税込経理では無視されます）。配当金や利息は「対象外・非課税」を選んでください。</p>
+        <label class="flabel" for="inMemo">摘要（取引先・内容など）</label>
+        <input type="text" id="inMemo" placeholder="例：○○商店 売上">
+        <button class="btn" id="inAdd">収入を追加</button>
+      </div>
+
+      <div class="card">
+        <h2>支出の窓</h2>
+        <label class="flabel" for="exDate">日付</label>
+        <input type="date" id="exDate">
+        <label class="flabel" for="exAccount">項目</label>
+        <select id="exAccount"></select>
+        <div class="frow">
+          <div>
+            <label class="flabel" for="exAmount">金額（円）</label>
+            <input type="number" id="exAmount" min="0" step="1" placeholder="例：30000">
+          </div>
+          <div>
+            <label class="flabel" for="exMethod">支払い方法</label>
+            <select id="exMethod">
+              <option value="cash">現金</option>
+              <option value="bank">銀行</option>
+              <option value="credit">クレジット</option>
+              <option value="kake">掛け（あとで支払い）</option>
+            </select>
+          </div>
+        </div>
+        <label class="flabel" for="exVat">消費税区分</label>
+        <select id="exVat">
+          <option value="10">課税 10%</option>
+          <option value="8">課税 8%（軽減税率）</option>
+          <option value="0">対象外・非課税</option>
+        </select>
+        <p class="note">消費税区分は、設定で「税抜経理」を選んだときにだけ使います。給料・役員報酬・保険料・税金などは「対象外・非課税」を選んでください。法人税・住民税・事業税を払ったときは、項目で「法人税・住民税・事業税」を選んでください（申告のときに自動で損金不算入の調整をします）。</p>
+        <label class="flabel" for="exMemo">摘要（取引先・内容など）</label>
+        <input type="text" id="exMemo" placeholder="例：コンビニ コピー用紙">
+        <button class="btn" id="exAdd">支出を追加</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>固定費の窓</h2>
+      <p class="note">家賃や定額の通信費など、毎月決まって出ていくものを1回登録すると、対象の事業年度の毎月に支出の下書きが自動で立ちます。</p>
+      <div class="frow3">
+        <div>
+          <label class="flabel" for="fxAccount">項目</label>
+          <select id="fxAccount"></select>
+        </div>
+        <div>
+          <label class="flabel" for="fxAmount">金額（円）</label>
+          <input type="number" id="fxAmount" min="0" step="1" placeholder="例：80000">
+        </div>
+        <div>
+          <label class="flabel" for="fxDay">毎月の引き落とし日</label>
+          <input type="number" id="fxDay" min="1" max="31" step="1" placeholder="例：27">
+        </div>
+      </div>
+      <div class="frow3">
+        <div>
+          <label class="flabel" for="fxMethod">支払い方法</label>
+          <select id="fxMethod">
+            <option value="cash">現金</option>
+            <option value="bank">銀行</option>
+            <option value="credit">クレジット</option>
+            <option value="kake">掛け（あとで支払い）</option>
+          </select>
+        </div>
+        <div>
+          <label class="flabel" for="fxVat">消費税区分</label>
+          <select id="fxVat">
+            <option value="10">課税 10%</option>
+            <option value="8">課税 8%（軽減税率）</option>
+            <option value="0">対象外・非課税</option>
+          </select>
+        </div>
+        <div>
+          <label class="flabel" for="fxMemo">摘要</label>
+          <input type="text" id="fxMemo" placeholder="例：事務所 家賃">
+        </div>
+      </div>
+      <button class="btn" id="fxAdd">固定費を登録</button>
+      <div class="tblwrap">
+        <table id="fixedTable">
+          <thead><tr><th>項目</th><th class="num">金額</th><th>引き落とし日</th><th>支払い方法</th><th>摘要</th><th>状態</th><th></th></tr></thead>
+          <tbody id="fixedBody"></tbody>
+        </table>
+      </div>
+      <p class="note">固定費の内容を変更・停止すると、その固定費から作られた下書きは作り直されます。下書きを個別に消した場合は、次に固定費を変更したときに再び作られます。</p>
+
+      <details>
+        <summary>詳細モード（帳簿を直接書きたいとき）</summary>
+        <p class="note">複合の支払いなど、上の窓で扱えないものを直接入力できます。減価償却は下の「固定資産の窓」から登録してください。消費税の分割は行いません。</p>
+        <div class="frow3">
+          <div>
+            <label class="flabel" for="mnDate">日付</label>
+            <input type="date" id="mnDate">
+          </div>
+          <div>
+            <label class="flabel" for="mnAmount">金額（円）</label>
+            <input type="number" id="mnAmount" min="0" step="1">
+          </div>
+          <div>
+            <label class="flabel" for="mnMemo">摘要</label>
+            <input type="text" id="mnMemo">
+          </div>
+        </div>
+        <div class="frow">
+          <div>
+            <label class="flabel" for="mnDebit">借方</label>
+            <select id="mnDebit"></select>
+          </div>
+          <div>
+            <label class="flabel" for="mnCredit">貸方</label>
+            <select id="mnCredit"></select>
+          </div>
+        </div>
+        <button class="btn btn-navy" id="mnAdd">詳細入力を追加</button>
+      </details>
+    </div>
+
+    <div class="card">
+      <h2>固定資産の窓（減価償却）</h2>
+      <p class="note">パソコンや車、機械など10万円以上の買い物は、買った年に全部を経費にはできず、何年かに分けて経費にします（減価償却）。ここで登録すると、買った記録と毎年の償却が自動で帳簿に入ります。<strong>固定資産として登録した買い物は、支出の窓から二重に入力しないでください。</strong></p>
+      <div class="frow">
+        <div>
+          <label class="flabel" for="asName">資産の名前</label>
+          <input type="text" id="asName" placeholder="例：ノートパソコン">
+        </div>
+        <div>
+          <label class="flabel" for="asDate">取得日（買った日）</label>
+          <input type="date" id="asDate">
+        </div>
+      </div>
+      <div class="frow3">
+        <div>
+          <label class="flabel" for="asPrice">取得価額（円）</label>
+          <input type="number" id="asPrice" min="0" step="1" placeholder="例：250000">
+        </div>
+        <div>
+          <label class="flabel" for="asPreset">種類（耐用年数の目安）</label>
+          <select id="asPreset"></select>
+        </div>
+        <div>
+          <label class="flabel" for="asYears">耐用年数（年）</label>
+          <input type="number" id="asYears" min="1" max="100" step="1">
+        </div>
+      </div>
+      <div class="frow3">
+        <div>
+          <label class="flabel" for="asAccount">固定資産の項目</label>
+          <select id="asAccount"></select>
+        </div>
+        <div>
+          <label class="flabel" for="asPayment">支払い方法</label>
+          <select id="asPayment">
+            <option value="cash">現金</option>
+            <option value="bank">銀行</option>
+            <option value="credit">クレジット</option>
+            <option value="kake">掛け（あとで支払い）</option>
+          </select>
+        </div>
+        <div>
+          <label class="flabel" for="asVat">消費税区分</label>
+          <select id="asVat">
+            <option value="10">課税 10%</option>
+            <option value="8">課税 8%（軽減税率）</option>
+            <option value="0">対象外・非課税</option>
+          </select>
+        </div>
+      </div>
+      <div class="frow">
+        <div>
+          <label class="flabel" for="asDepMethod">償却方法（通常償却のとき）</label>
+          <select id="asDepMethod">
+            <option value="teiritsu">定率法（初めに多く、だんだん少なく）</option>
+            <option value="teigaku">定額法（毎年同じ額）</option>
+          </select>
+        </div>
+        <div>
+          <p class="note" style="margin-top:24px" id="asMethodNote">法人の原則は定率法です。建物・建物附属設備・構築物は、平成28年4月1日以後に買ったものは定額法しか使えません。一括償却・少額特例を選んだときは償却方法は使いません。</p>
+        </div>
+      </div>
+      <p class="note" id="asJudge"></p>
+      <div id="asChoice"></div>
+      <button class="btn" id="asAdd">固定資産を登録</button>
+      <div class="tblwrap">
+        <table>
+          <thead><tr><th>資産名</th><th>取得日</th><th class="num">取得価額</th><th>耐用年数</th><th>分け方</th><th class="num">今年の償却費</th><th class="num">未償却残高</th><th></th></tr></thead>
+          <tbody id="assetBody"></tbody>
+        </table>
+      </div>
+      <p class="note" id="assetNote"></p>
+    </div>
+  </div>
+
+  <div class="tabpage" id="tab-list">
+    <div class="card">
+      <h2>入力の一覧</h2>
+      <p class="note">日付順に並んでいます。<span class="badge bd-wh">源泉</span> の印は、金額から所得税が天引きされた収入です（金額は天引き前の総額で表示しています）。<span class="badge bd-asset">資産</span> の印は、固定資産の窓から自動で作られた仕訳です（消したいときは固定資産の窓で資産を削除してください）。</p>
+      <div class="tblwrap">
+        <table>
+          <thead><tr><th>日付</th><th>区分</th><th>項目</th><th class="num">金額</th><th>方法</th><th>摘要</th><th></th></tr></thead>
+          <tbody id="entryBody"></tbody>
+        </table>
+      </div>
+      <p class="note" id="entryCount"></p>
+    </div>
+  </div>
+
+  <div class="tabpage" id="tab-summary">
+    <div class="card">
+      <h2>集計（損益計算書の形）</h2>
+      <div class="tblwrap">
+        <table>
+          <thead><tr><th>項目</th><th class="num">金額</th></tr></thead>
+          <tbody id="plBody"></tbody>
+        </table>
+      </div>
+      <p class="note">「法人税、住民税及び事業税」は、支出の窓で「法人税・住民税・事業税」を選んで払った分です。税金の計算そのものは「申告」タブで行い、未払いの分は期末に別途計上してください。</p>
+    </div>
+    <div class="card" id="bsCard">
+      <h2>貸借対照表の簡易集計</h2>
+      <div class="tblwrap">
+        <table>
+          <thead><tr><th>資産</th><th class="num">金額</th><th>負債・純資産</th><th class="num">金額</th></tr></thead>
+          <tbody id="bsBody"></tbody>
+        </table>
+      </div>
+      <p id="bsCheck"></p>
+      <p class="note">期首残高は「設定」タブで入力できます。期首の資産と資本が釣り合っていないと、ここの合計も一致しません。</p>
+    </div>
+  </div>
+
+  <div class="tabpage" id="tab-tax">
+    <div class="card">
+      <h2>申告のための入力</h2>
+      <p class="note">帳簿だけでは決まらない数字をここで入れます。全部任意で、空欄は0として計算します。入れた内容は下の別表の計算と、転記ガイド付きCSVに反映されます。</p>
+      <div class="frow3">
+        <div>
+          <label class="flabel" for="txMonths">当期の月数</label>
+          <input type="number" id="txMonths" min="1" max="12" step="1" value="12">
+        </div>
+        <div>
+          <label class="flabel" for="txInterimCorp">中間納付額（法人税）</label>
+          <input type="number" id="txInterimCorp" min="0" step="1">
+        </div>
+        <div>
+          <label class="flabel" for="txInterimLocal">中間納付額（地方法人税）</label>
+          <input type="number" id="txInterimLocal" min="0" step="1">
+        </div>
+      </div>
+      <div class="frow3">
+        <div>
+          <label class="flabel" for="txInterimInhab">中間納付額（法人住民税）</label>
+          <input type="number" id="txInterimInhab" min="0" step="1">
+        </div>
+        <div>
+          <label class="flabel" for="txInterimBiz">中間納付額（法人事業税）</label>
+          <input type="number" id="txInterimBiz" min="0" step="1">
+        </div>
+        <div>
+          <label class="flabel" for="txOfficer">役員給与の損金不算入額</label>
+          <input type="number" id="txOfficer" min="0" step="1">
+        </div>
+      </div>
+      <p class="note">役員給与の損金不算入額は、定期同額給与・事前確定届出給与・業績連動給与のどれにも当てはまらず損金に入れられない分です。役員賞与を届出なしで払った場合は、その全額がここに入ります。</p>
+      <div class="frow3">
+        <div>
+          <label class="flabel" for="txFood">交際費のうち接待飲食費の額</label>
+          <input type="number" id="txFood" min="0" step="1">
+        </div>
+        <div>
+          <label class="flabel" for="txForeignTax">外国所得税額（外国税額控除）</label>
+          <input type="number" id="txForeignTax" min="0" step="1">
+        </div>
+        <div>
+          <label class="flabel" for="txForeignIncome">国外所得金額</label>
+          <input type="number" id="txForeignIncome" min="0" step="1">
+        </div>
+      </div>
+      <h3>受取配当金の区分（別表八）</h3>
+      <p class="note">帳簿の「受取配当金」を、株式の保有割合の区分ごとに分けて入れてください。合計が帳簿の受取配当金と合うようにします。</p>
+      <div class="frow3">
+        <div>
+          <label class="flabel" for="txDivFull">完全子法人株式等（100%）</label>
+          <input type="number" id="txDivFull" min="0" step="1">
+        </div>
+        <div>
+          <label class="flabel" for="txDivRelated">関連法人株式等（1/3超）</label>
+          <input type="number" id="txDivRelated" min="0" step="1">
+        </div>
+        <div>
+          <label class="flabel" for="txDivOther">その他株式等（5%超〜1/3）</label>
+          <input type="number" id="txDivOther" min="0" step="1">
+        </div>
+      </div>
+      <div class="frow">
+        <div>
+          <label class="flabel" for="txDivNonctrl">非支配目的株式等（5%以下）</label>
+          <input type="number" id="txDivNonctrl" min="0" step="1">
+        </div>
+        <div>
+          <label class="flabel" for="txDivDebt">関連法人株式等に係る負債の利子</label>
+          <input type="number" id="txDivDebt" min="0" step="1">
+        </div>
+      </div>
+      <p class="note" id="divCheck"></p>
+      <h3>試験研究費の税額控除</h3>
+      <div class="frow">
+        <div>
+          <label class="flabel" for="txRdCurrent">当期の試験研究費の額</label>
+          <input type="number" id="txRdCurrent" min="0" step="1">
+        </div>
+        <div>
+          <label class="flabel" for="txRdBase">比較試験研究費（前3事業年度の平均）</label>
+          <input type="number" id="txRdBase" min="0" step="1">
+        </div>
+      </div>
+      <h3>賃上げ促進税制（中小企業向け）</h3>
+      <div class="frow3">
+        <div>
+          <label class="flabel" for="txWagePrev">前期の雇用者給与等支給額</label>
+          <input type="number" id="txWagePrev" min="0" step="1">
+        </div>
+        <div>
+          <label class="flabel" for="txWageCurr">当期の雇用者給与等支給額</label>
+          <input type="number" id="txWageCurr" min="0" step="1">
+        </div>
+        <div>
+          <label class="flabel" for="txEduPrev">前期の教育訓練費</label>
+          <input type="number" id="txEduPrev" min="0" step="1">
+        </div>
+      </div>
+      <div class="frow">
+        <div>
+          <label class="flabel" for="txEduCurr">当期の教育訓練費</label>
+          <input type="number" id="txEduCurr" min="0" step="1">
+        </div>
+        <div>
+          <label style="display:block;margin-top:26px"><input type="checkbox" id="txWageCert"> くるみん・えるぼし認定を受けている</label>
+        </div>
+      </div>
+      <p class="note">雇用者給与等支給額は、役員とその親族への給与を除いた、従業員への給与の総額です。当期の欄には初期値として帳簿の「給料賃金」が入ります（違えば直してください）。</p>
+      <button class="btn" id="txSave">申告の入力を保存</button>
+      <h3>繰越欠損金（別表七）</h3>
+      <p class="note">過去の事業年度に生じた青色欠損金を登録します。古い年度から順に使われ、発生から10年で使えなくなります。当期が赤字になった場合は、来期のためにここへ登録してください。</p>
+      <div class="frow3">
+        <div>
+          <label class="flabel" for="lossYear">発生事業年度（決算年）</label>
+          <input type="number" id="lossYear" min="2000" max="2100" step="1" placeholder="例：2024">
+        </div>
+        <div>
+          <label class="flabel" for="lossAmount">欠損金額（円）</label>
+          <input type="number" id="lossAmount" min="0" step="1" placeholder="例：2000000">
+        </div>
+        <div>
+          <button class="btn btn-ghost" id="lossAdd" style="margin-top:26px">欠損金を登録</button>
+        </div>
+      </div>
+      <div class="tblwrap">
+        <table>
+          <thead><tr><th>発生事業年度</th><th class="num">欠損金額</th><th class="num">当期の控除額</th><th class="num">翌期への繰越額</th><th></th></tr></thead>
+          <tbody id="lossBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>別表四　所得の金額の計算</h2>
+      <div class="tblwrap"><table><thead><tr><th>項目</th><th class="num">金額</th><th>区分</th></tr></thead><tbody id="b4Body"></tbody></table></div>
+    </div>
+    <div class="card">
+      <h2>別表一　法人税額の計算</h2>
+      <div class="tblwrap"><table><thead><tr><th>項目</th><th class="num">金額</th></tr></thead><tbody id="b1Body"></tbody></table></div>
+    </div>
+    <div class="card">
+      <h2>別表五（一）　利益積立金額・資本金等の額</h2>
+      <div class="tblwrap"><table><thead><tr><th>項目</th><th class="num">期首</th><th class="num">当期増減</th><th class="num">期末</th></tr></thead><tbody id="b5aBody"></tbody></table></div>
+      <p class="note">利益積立金額は、別表四の「留保」項目をもとにした近似計算です。正確な金額は申告書作成時にご確認ください。</p>
+      <h2 style="margin-top:18px">別表五（二）　租税公課の納付状況</h2>
+      <div class="tblwrap"><table><thead><tr><th>項目</th><th class="num">金額</th></tr></thead><tbody id="b5bBody"></tbody></table></div>
+    </div>
+    <div class="card">
+      <h2>別表六（一）・（二）　所得税額控除・外国税額控除</h2>
+      <div class="tblwrap"><table><thead><tr><th>項目</th><th class="num">金額</th></tr></thead><tbody id="b6Body"></tbody></table></div>
+      <h2 style="margin-top:18px">別表七　欠損金の繰越控除</h2>
+      <div class="tblwrap"><table><thead><tr><th>項目</th><th class="num">金額</th></tr></thead><tbody id="b7Body"></tbody></table></div>
+    </div>
+    <div class="card">
+      <h2>別表八（一）　受取配当等の益金不算入</h2>
+      <div class="tblwrap"><table><thead><tr><th>区分</th><th class="num">配当等の額</th><th class="num">益金不算入額</th></tr></thead><tbody id="b8Body"></tbody></table></div>
+      <h2 style="margin-top:18px">別表十五　交際費等の損金不算入</h2>
+      <div class="tblwrap"><table><thead><tr><th>項目</th><th class="num">金額</th></tr></thead><tbody id="b15Body"></tbody></table></div>
+    </div>
+    <div class="card">
+      <h2>別表十六　減価償却の計算（要点）</h2>
+      <div class="tblwrap"><table><thead><tr><th>資産</th><th class="num">期首残高</th><th class="num">当期償却費</th><th class="num">償却限度額</th><th class="num">期末残高</th></tr></thead><tbody id="b16Body"></tbody></table></div>
+      <h2 style="margin-top:18px">特別控除（試験研究費・賃上げ促進税制）</h2>
+      <div class="tblwrap"><table><thead><tr><th>項目</th><th class="num">金額</th></tr></thead><tbody id="spBody"></tbody></table></div>
+    </div>
+    <div class="card">
+      <h2>地方税（法人住民税・法人事業税）</h2>
+      <div class="tblwrap"><table><thead><tr><th>項目</th><th class="num">金額</th><th>転記先</th></tr></thead><tbody id="localBody"></tbody></table></div>
+      <p class="note">税率は標準税率で計算しています。自治体によっては超過税率が適用されます。資本金1億円超の法人は外形標準課税（付加価値割・資本割）の対象ですが、このツールでは所得割のみを計算します。</p>
+    </div>
+  </div>
+
+  <div class="tabpage" id="tab-io">
+    <div class="card">
+      <h2>出力（CSV）</h2>
+      <p id="exportInfo" class="note"></p>
+      <p id="unsavedInfo"></p>
+      <button class="btn" id="exportJournal">帳簿保存用CSVを書き出す</button>
+      <button class="btn btn-navy" id="exportGuide">転記ガイド付きCSVを書き出す</button>
+      <p class="note">帳簿保存用CSVは、帳簿データそのものです。バックアップとして保管し、下の「読み込む（復元）」から続きを再開できます。転記ガイド付きCSVは、スプレッドシートで開いて見ながら、法人税申告書の様式へ上から順に転記するためのものです（決算書・別表四・別表五・別表六・別表七・別表八・別表十五・別表十六・別表一・地方税の順）。数値ルールの確認日：2026-11-18（令和7年度・2025年度のルールで計算しています。防衛特別法人税は対象外です）。</p>
+      <h3>帳簿保存用CSVを読み込む（復元）</h3>
+      <input type="file" id="restoreFile" accept=".csv,text/csv">
+      <p class="note">読み込んだ内容は、現在の対象年度に追加されます。期首残高の行が含まれている場合は、期首残高として取り込みます。</p>
+    </div>
+
+    <div class="card">
+      <h2>明細CSVの取り込み</h2>
+      <p class="note">銀行やクレジットカードの明細CSVを取り込んで、下書きにできます。Excelファイルは直接読めないので、スプレッドシートで開いてCSVで保存してから取り込んでください。</p>
+      <input type="file" id="importFile" accept=".csv,text/csv">
+      <div id="importMap" class="hidden">
+        <div class="frow3">
+          <div>
+            <label class="flabel" for="mapDate">日付の列</label>
+            <select id="mapDate"></select>
+          </div>
+          <div>
+            <label class="flabel" for="mapAmount">金額の列</label>
+            <select id="mapAmount"></select>
+          </div>
+          <div>
+            <label class="flabel" for="mapMemo">摘要の列</label>
+            <select id="mapMemo"></select>
+          </div>
+        </div>
+        <div class="frow">
+          <div>
+            <label class="flabel" for="mapIo">入出金の列（あれば）</label>
+            <select id="mapIo"></select>
+          </div>
+          <div>
+            <label class="flabel" for="mapIoOut">支出を表す言葉</label>
+            <input type="text" id="mapIoOut" value="出金">
+          </div>
+        </div>
+        <p class="note">入出金の列が無い場合は、金額がマイナスの行を支出、プラスの行を収入として扱います。取り込んだ行は「銀行」で払った・受け取ったものとして登録されます（消費税は税込のままの扱いになります）。</p>
+        <button class="btn btn-ghost" id="importDraft">下書きを作る</button>
+      </div>
+      <div id="importPreview" class="hidden">
+        <h3>取り込みの下書き</h3>
+        <div class="tblwrap">
+          <table>
+            <thead><tr><th>取り込む</th><th>日付</th><th>区分</th><th>項目（推測）</th><th class="num">金額</th><th>摘要</th><th>注意</th></tr></thead>
+            <tbody id="draftBody"></tbody>
+          </table>
+        </div>
+        <button class="btn" id="importExec">選んだ行を取り込む</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabpage" id="tab-settings">
+    <div class="card">
+      <h2>法人情報</h2>
+      <div class="frow3">
+        <div>
+          <label class="flabel" for="corpName">法人名</label>
+          <input type="text" id="corpName" placeholder="例：株式会社○○">
+        </div>
+        <div>
+          <label class="flabel" for="corpClosing">決算月</label>
+          <select id="corpClosing">
+            <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option><option value="5">5月</option><option value="6">6月</option><option value="7">7月</option><option value="8">8月</option><option value="9">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+          </select>
+        </div>
+        <div>
+          <label class="flabel" for="corpCapital">資本金（円）</label>
+          <input type="number" id="corpCapital" min="0" step="1" placeholder="例：10000000">
+        </div>
+      </div>
+      <div class="frow3">
+        <div>
+          <label class="flabel" for="corpEmployees">従業員数（期末）</label>
+          <input type="number" id="corpEmployees" min="0" step="1" placeholder="例：8">
+        </div>
+        <div>
+          <label class="flabel" for="corpBlue">申告の種類</label>
+          <select id="corpBlue">
+            <option value="blue">青色申告</option>
+            <option value="white">白色申告</option>
+          </select>
+        </div>
+        <div>
+          <label class="flabel" for="corpVat">消費税の経理方式</label>
+          <select id="corpVat">
+            <option value="taxin">税込経理</option>
+            <option value="taxex">税抜経理</option>
+          </select>
+        </div>
+      </div>
+      <label style="display:block;margin-top:8px"><input type="checkbox" id="corpDouzoku"> 同族会社である</label>
+      <p class="note" id="corpJudge"></p>
+      <button class="btn" id="corpSave">法人情報を保存</button>
+    </div>
+    <div class="card">
+      <h2>期首残高の設定</h2>
+      <p class="note">事業年度の初めの時点での残高です。貸借対照表と別表五の集計に使います。</p>
+      <div class="frow3">
+        <div>
+          <label class="flabel" for="opCash">現金</label>
+          <input type="number" id="opCash" min="0" step="1">
+        </div>
+        <div>
+          <label class="flabel" for="opBank">普通預金</label>
+          <input type="number" id="opBank" min="0" step="1">
+        </div>
+        <div>
+          <label class="flabel" for="opCapitalStock">資本金</label>
+          <input type="number" id="opCapitalStock" min="0" step="1">
+        </div>
+      </div>
+      <div class="frow3">
+        <div>
+          <label class="flabel" for="opCapitalSurplus">資本剰余金</label>
+          <input type="number" id="opCapitalSurplus" min="0" step="1">
+        </div>
+        <div>
+          <label class="flabel" for="opRetained">利益剰余金（期首）</label>
+          <input type="number" id="opRetained" step="1">
+        </div>
+        <div>
+          <label class="flabel" for="opUnpaidTax">未払法人税等（期首）</label>
+          <input type="number" id="opUnpaidTax" min="0" step="1">
+        </div>
+      </div>
+      <button class="btn" id="opSave">期首残高を保存</button>
+    </div>
+    <div class="card">
+      <h2>データについて</h2>
+      <p class="note">データはこの端末のブラウザの中だけに保存され、サーバーへ送信されることはありません。個人用帳簿ツールとは別の場所に保存されるため、互いのデータが混ざることはありません。ただし、Safariでは長期間開いていないサイトの保存データが自動で消えることがあります。大事な区切りでは帳簿保存用CSVを書き出して、ご自身のファイルとして保管してください。</p>
+      <button class="btn btn-del" id="clearYear">この年度のデータを全部消す</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="card">
+      このツールは非公式の個人ツールです。計算結果は目安であり、申告内容の正確性を保証するものではありません。対象外のもの：防衛特別法人税（令和8年4月1日以後開始の事業年度）／同族会社の留保金課税／外形標準課税の付加価値割・資本割／消費税の申告書／複数自治体への分割申告。最終的な申告は、税務署や税理士にご確認のうえ、ご自身の責任で行ってください。データはこの端末の中だけに保存され、サーバーへ送信されません。
+    </div>
+    <p class="credit">制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
+  </footer>
+</div>
+
+<script>
+"use strict";
+var LS_KEY = "bookkeeping_corp_v1";
+var WORDING_DATE = "2026-11-18";
+
+var INCOME_ACCOUNTS = ["売上高", "受取配当金", "受取利息", "受取手数料", "雑収入", "固定資産売却益"];
+var EXPENSE_ACCOUNTS = [
+  { name: "仕入高", attr: "expense" },
+  { name: "役員報酬", attr: "expense" },
+  { name: "役員賞与", attr: "expense" },
+  { name: "給料賃金", attr: "expense" },
+  { name: "法定福利費", attr: "expense" },
+  { name: "福利厚生費", attr: "expense" },
+  { name: "外注費", attr: "expense" },
+  { name: "地代家賃", attr: "expense" },
+  { name: "水道光熱費", attr: "expense" },
+  { name: "旅費交通費", attr: "expense" },
+  { name: "通信費", attr: "expense" },
+  { name: "広告宣伝費", attr: "expense" },
+  { name: "接待交際費", attr: "expense" },
+  { name: "会議費", attr: "expense" },
+  { name: "寄附金", attr: "expense" },
+  { name: "租税公課", attr: "expense" },
+  { name: "損害保険料", attr: "expense" },
+  { name: "修繕費", attr: "expense" },
+  { name: "消耗品費", attr: "expense" },
+  { name: "減価償却費", attr: "expense" },
+  { name: "支払手数料", attr: "expense" },
+  { name: "支払利息", attr: "expense", pl: "利子割引料" },
+  { name: "新聞図書費", attr: "expense" },
+  { name: "諸会費", attr: "expense" },
+  { name: "貸倒金", attr: "expense" },
+  { name: "雑費", attr: "expense" },
+  { name: "法人税・住民税・事業税", attr: "corpTax", pl: "法人税、住民税及び事業税" }
+];
+var EXP_MAP = {};
+EXPENSE_ACCOUNTS.forEach(function (a) { EXP_MAP[a.name] = a; });
+var BS_ACCOUNTS = ["現金", "普通預金", "売掛金", "買掛金", "未払金", "未払法人税等", "未払消費税等", "預り金", "仮払所得税", "仮払消費税", "仮受消費税", "役員貸付金", "借入金", "資本金", "資本剰余金", "利益剰余金", "建物", "建物附属設備", "構築物", "車両運搬具", "工具器具備品", "ソフトウェア", "減価償却累計額"];
+var FA_ACCOUNTS = ["建物", "建物附属設備", "構築物", "車両運搬具", "工具器具備品", "ソフトウェア"];
+var FA_TEIGAKU_ONLY = ["建物", "建物附属設備", "構築物"];
+var BS_ASSETS = ["現金", "普通預金", "売掛金", "仮払所得税", "仮払消費税", "役員貸付金", "建物", "建物附属設備", "構築物", "車両運搬具", "工具器具備品", "ソフトウェア"];
+var BS_LIABS = ["買掛金", "未払金", "未払法人税等", "未払消費税等", "預り金", "仮受消費税", "借入金"];
+var ASSET_PRESETS = [
+  { key: "pc", label: "パソコン（4年）", years: 4, account: "工具器具備品" },
+  { key: "server", label: "サーバー（5年）", years: 5, account: "工具器具備品" },
+  { key: "car", label: "普通自動車（6年）", years: 6, account: "車両運搬具" },
+  { key: "bike", label: "バイク（3年）", years: 3, account: "車両運搬具" },
+  { key: "ac", label: "エアコン（6年）", years: 6, account: "工具器具備品" },
+  { key: "fridge", label: "冷蔵庫（6年）", years: 6, account: "工具器具備品" },
+  { key: "camera", label: "カメラ・光学機器（5年）", years: 5, account: "工具器具備品" },
+  { key: "furniture", label: "家具（8年）", years: 8, account: "工具器具備品" },
+  { key: "machine", label: "機械装置（10年）", years: 10, account: "工具器具備品" },
+  { key: "building", label: "建物（事務所・鉄骨鉄筋47年）", years: 47, account: "建物" },
+  { key: "other", label: "その他（自由入力）", years: 0, account: "工具器具備品" }
+];
+var ALL_ACCOUNTS = INCOME_ACCOUNTS.concat(EXPENSE_ACCOUNTS.map(function (a) { return a.name; }), BS_ACCOUNTS);
+var METHOD_IN = { cash: "現金", bank: "普通預金", credit: "売掛金" };
+var METHOD_OUT = { cash: "現金", bank: "普通預金", credit: "未払金", kake: "買掛金" };
+var METHOD_LABEL = { cash: "現金", bank: "銀行", credit: "クレジット／掛け", kake: "掛け" };
+var GUESS_RULES = [
+  ["電気", "水道光熱費"], ["ガス", "水道光熱費"], ["水道", "水道光熱費"],
+  ["NTT", "通信費"], ["ドコモ", "通信費"], ["ソフトバンク", "通信費"], ["KDDI", "通信費"], ["インターネット", "通信費"], ["携帯", "通信費"],
+  ["家賃", "地代家賃"], ["賃料", "地代家賃"],
+  ["Suica", "旅費交通費"], ["PASMO", "旅費交通費"], ["ETC", "旅費交通費"], ["ガソリン", "旅費交通費"], ["鉄道", "旅費交通費"], ["タクシー", "旅費交通費"],
+  ["広告", "広告宣伝費"],
+  ["保険", "損害保険料"], ["社会保険", "法定福利費"],
+  ["給料", "給料賃金"], ["給与", "給料賃金"],
+  ["振込手数料", "支払手数料"], ["手数料", "支払手数料"],
+  ["税金", "租税公課"], ["税務", "租税公課"],
+  ["配当", "受取配当金"], ["利息", "受取利息"]
+];
+
+function freshTax() {
+  return { months: 12, interimCorp: 0, interimLocal: 0, interimInhab: 0, interimBiz: 0,
+    officer: 0, food: 0, foreignTax: 0, foreignIncome: 0,
+    divFull: 0, divRelated: 0, divOther: 0, divNonctrl: 0, divDebt: 0,
+    rdCurrent: 0, rdBase: 0, wagePrev: 0, wageCurr: 0, eduPrev: 0, eduCurr: 0, wageCert: false };
+}
+function freshYear() {
+  return { opening: { cash: 0, bank: 0, capitalStock: 0, capitalSurplus: 0, retained: 0, unpaidTax: 0 },
+    entries: [], fixed: [], tax: freshTax(), lastExport: null, dirty: false, seq: 0 };
+}
+function freshCorp() {
+  return { name: "", closingMonth: 12, capital: 0, employees: 0, douzoku: false, blue: "blue", vat: "taxin" };
+}
+function loadStore() {
+  try {
+    var raw = localStorage.getItem(LS_KEY);
+    if (raw) { var s = JSON.parse(raw); if (s && s.years) {
+      if (!s.assets) s.assets = [];
+      if (!s.losses) s.losses = [];
+      var fc = freshCorp();
+      Object.keys(fc).forEach(function (k) { if (s.corp == null || s.corp[k] == null) { if (!s.corp) s.corp = {}; s.corp[k] = fc[k]; } });
+      s.assets.forEach(function (a) {
+        if (!a.treat) a.treat = "normal";
+        if (!a.method) a.method = "teiritsu";
+        if (a.ratio == null) a.ratio = 100;
+        if (a.vatTax == null) a.vatTax = 0;
+      });
+      Object.keys(s.years).forEach(function (y) {
+        var yd = s.years[y];
+        if (!yd.tax) yd.tax = freshTax();
+        var ft = freshTax();
+        Object.keys(ft).forEach(function (k) { if (yd.tax[k] == null) yd.tax[k] = ft[k]; });
+        var fo = freshYear().opening;
+        Object.keys(fo).forEach(function (k) { if (yd.opening[k] == null) yd.opening[k] = fo[k]; });
+      });
+      return s;
+    } }
+  } catch (e) {}
+  return { currentYear: "2026", years: {}, assets: [], losses: [], corp: freshCorp() };
+}
+var store = loadStore();
+function Y() {
+  var y = store.currentYear;
+  if (!store.years[y]) store.years[y] = freshYear();
+  return store.years[y];
+}
+function save() { localStorage.setItem(LS_KEY, JSON.stringify(store)); }
+function touch() { Y().dirty = true; save(); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function fmt(n) { return "¥" + Math.round(n).toLocaleString("ja-JP"); }
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+function todayStr() {
+  var d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+function $(id) { return document.getElementById(id); }
+function isSME() { return (store.corp.capital || 0) <= 100000000; }
+function floor100(n) { return Math.floor(n / 100) * 100; }
+function floor1000(n) { return Math.floor(n / 1000) * 1000; }
+
+// 事業年度（決算月で終わる年度。キーは決算年の年）
+function closingMonth() { return store.corp.closingMonth || 12; }
+function fyOf(dateStr) {
+  var y = parseInt(dateStr.slice(0, 4), 10), m = parseInt(dateStr.slice(5, 7), 10);
+  var cm = closingMonth();
+  if (cm === 12) return y;
+  return m > cm ? y + 1 : y;
+}
+function periodStart(fyKey) {
+  var cm = closingMonth();
+  if (cm === 12) return fyKey + "-01-01";
+  var sy = fyKey - 1, sm = cm + 1;
+  return sy + "-" + String(sm).padStart(2, "0") + "-01";
+}
+function periodEnd(fyKey) {
+  var cm = closingMonth();
+  var last = new Date(fyKey, cm, 0).getDate();
+  return fyKey + "-" + String(cm).padStart(2, "0") + "-" + String(last).padStart(2, "0");
+}
+function firstPeriodMonths(acqDate) {
+  var am = parseInt(acqDate.slice(5, 7), 10), cm = closingMonth();
+  return ((cm - am + 12) % 12) + 1;
+}
+
+// 消費税（税抜経理のときの分割）
+function vatRateOf(e) {
+  if (store.corp.vat !== "taxex") return 0;
+  var v = parseInt(e.vat, 10);
+  return (v === 10 || v === 8) ? v : 0;
+}
+function splitVat(amount, ratePct) {
+  // 浮動小数点の誤差を避けるため整数演算で割り戻す（110,000円÷1.1 が 99,999 になるのを防ぐ）
+  var base = Math.floor(amount * 100 / (100 + ratePct));
+  return { base: base, tax: amount - base };
+}
+// 借方リストと貸方リストを釣り合わせながら (借方,貸方,金額) の行に分解する
+function pairSplit(debits, credits, date, memo, seq) {
+  var rows = [];
+  var di = 0, ci = 0, dLeft = debits.length ? debits[0].amount : 0, cLeft = credits.length ? credits[0].amount : 0;
+  while (di < debits.length && ci < credits.length) {
+    var amt = Math.min(dLeft, cLeft);
+    if (amt > 0) rows.push({ date: date, debit: debits[di].account, credit: credits[ci].account, amount: amt, memo: memo, seq: seq });
+    dLeft -= amt; cLeft -= amt;
+    if (dLeft === 0) { di++; if (di < debits.length) dLeft = debits[di].amount; }
+    if (cLeft === 0) { ci++; if (ci < credits.length) cLeft = credits[ci].amount; }
+  }
+  return rows;
+}
+function entryJournals(e) {
+  if (e.kind === "manual") return [{ date: e.date, debit: e.debit, credit: e.credit, amount: e.amount, memo: e.memo, seq: e.seq }];
+  var rate = vatRateOf(e);
+  if (e.kind === "income") {
+    var wh = e.wh || 0;
+    var memoW = (e.memo ? e.memo + " " : "") + "（源泉徴収分）";
+    if (rate > 0) {
+      var sv = splitVat(e.amount, rate);
+      var debits = [{ account: METHOD_IN[e.method], amount: e.amount - wh }];
+      if (wh > 0) debits.push({ account: "仮払所得税", amount: wh });
+      var credits = [{ account: e.account, amount: sv.base }, { account: "仮受消費税", amount: sv.tax }];
+      var rows = pairSplit(debits, credits, e.date, e.memo, e.seq);
+      rows.forEach(function (r) { if (r.debit === "仮払所得税") r.memo = memoW; });
+      return rows;
+    }
+    if (wh > 0 && wh < e.amount) {
+      return [
+        { date: e.date, debit: METHOD_IN[e.method], credit: e.account, amount: e.amount - wh, memo: e.memo, seq: e.seq },
+        { date: e.date, debit: "仮払所得税", credit: e.account, amount: wh, memo: memoW, seq: e.seq }
+      ];
+    }
+    return [{ date: e.date, debit: METHOD_IN[e.method], credit: e.account, amount: e.amount, memo: e.memo, seq: e.seq }];
+  }
+  // 支出
+  var memo = e.memo || "";
+  if (e.method === "credit" && e.source !== "fixed") memo = (memo ? memo + " " : "") + "（クレジット払い・引落は別途）";
+  if (rate > 0) {
+    var sv2 = splitVat(e.amount, rate);
+    return pairSplit(
+      [{ account: e.account, amount: sv2.base }, { account: "仮払消費税", amount: sv2.tax }],
+      [{ account: METHOD_OUT[e.method], amount: e.amount }], e.date, memo, e.seq);
+  }
+  return [{ date: e.date, debit: e.account, credit: METHOD_OUT[e.method], amount: e.amount, memo: memo, seq: e.seq }];
+}
+function sortedEntries() {
+  return Y().entries.slice().sort(function (a, b) {
+    if (a.date < b.date) return -1;
+    if (a.date > b.date) return 1;
+    return a.seq - b.seq;
+  });
+}
+function journalRows() {
+  var out = [];
+  sortedEntries().forEach(function (e) {
+    entryJournals(e).forEach(function (r) { out.push(r); });
+  });
+  return out;
+}
+function plNameOf(account) {
+  var a = EXP_MAP[account];
+  if (a && a.pl) return a.pl;
+  return account;
+}
+function aggregate() {
+  var rows = journalRows();
+  var pl = {};
+  var revenue = 0, expenses = 0, corpTaxPaid = 0;
+  rows.forEach(function (r) {
+    if (INCOME_ACCOUNTS.indexOf(r.credit) >= 0) { pl[r.credit] = (pl[r.credit] || 0) + r.amount; revenue += r.amount; }
+    if (INCOME_ACCOUNTS.indexOf(r.debit) >= 0) { pl[r.debit] = (pl[r.debit] || 0) - r.amount; revenue -= r.amount; }
+    var da = EXP_MAP[r.debit];
+    if (da && da.attr === "expense") { var n1 = plNameOf(r.debit); pl[n1] = (pl[n1] || 0) + r.amount; expenses += r.amount; }
+    if (da && da.attr === "corpTax") { pl[plNameOf(r.debit)] = (pl[plNameOf(r.debit)] || 0) + r.amount; corpTaxPaid += r.amount; }
+    var ca = EXP_MAP[r.credit];
+    if (ca && ca.attr === "expense") { var n2 = plNameOf(r.credit); pl[n2] = (pl[n2] || 0) - r.amount; expenses -= r.amount; }
+    if (ca && ca.attr === "corpTax") { pl[plNameOf(r.credit)] = (pl[plNameOf(r.credit)] || 0) - r.amount; corpTaxPaid -= r.amount; }
+  });
+  var whTotal = 0, prepaidTax = 0, unpaidTaxPaid = 0;
+  Y().entries.forEach(function (e) { if (e.kind === "income") whTotal += (e.wh || 0); });
+  var bal = {};
+  rows.forEach(function (r) {
+    if (!bal[r.debit]) bal[r.debit] = { d: 0, c: 0 };
+    if (!bal[r.credit]) bal[r.credit] = { d: 0, c: 0 };
+    bal[r.debit].d += r.amount;
+    bal[r.credit].c += r.amount;
+    if (r.debit === "仮払所得税") prepaidTax += r.amount;
+    if (r.credit === "仮払所得税") prepaidTax -= r.amount;
+    if (r.debit === "未払法人税等") unpaidTaxPaid += r.amount;
+    if (r.credit === "未払法人税等") unpaidTaxPaid -= r.amount;
+  });
+  var preTaxProfit = revenue - expenses;
+  return { rows: rows, pl: pl, revenue: revenue, expenses: expenses, corpTaxPaid: corpTaxPaid,
+    preTaxProfit: preTaxProfit, profit: preTaxProfit - corpTaxPaid, bal: bal, whTotal: whTotal,
+    prepaidTax: prepaidTax, unpaidTaxPaid: unpaidTaxPaid };
+}
+function balOf(bal, name, side) {
+  var b = bal[name];
+  if (!b) return 0;
+  return side === "d" ? b.d - b.c : b.c - b.d;
+}
+
+function depRate(years) { return Math.round((1 / years) * 1000) / 1000;}
+var TEIRITSU_K = [
+  1.000, 1.000, 0.500, 0.334, 0.334, 0.334, 0.250, 0.250, 0.200, 0.200,
+  0.167, 0.167, 0.143, 0.143, 0.125, 0.112, 0.112, 0.112, 0.100, 0.100,
+  0.091, 0.084, 0.084, 0.084, 0.077, 0.072, 0.072, 0.072, 0.067, 0.067,
+  0.063, 0.063, 0.059, 0.059, 0.056, 0.056, 0.053, 0.053, 0.050, 0.050,
+  0.048, 0.046, 0.046, 0.044, 0.044, 0.044, 0.042, 0.042, 0.040, 0.039,
+  0.039, 0.038, 0.038, 0.038, 0.036, 0.035, 0.035, 0.034, 0.034, 0.033,
+  0.033, 0.032, 0.032, 0.031, 0.031, 0.030, 0.030, 0.030, 0.029, 0.029,
+  0.027, 0.027, 0.027, 0.027, 0.027, 0.027, 0.026, 0.026, 0.026, 0.024,
+  0.024, 0.024, 0.024, 0.023, 0.023, 0.023, 0.022, 0.022, 0.022, 0.022,
+  0.021, 0.021, 0.021, 0.021, 0.020, 0.020, 0.020, 0.020
+];
+var TEIRITSU_G = [
+  0.11089, 0.12499, 0.10800, 0.09911, 0.08680, 0.07909, 0.07126, 0.06552, 0.05992, 0.05566,
+  0.05180, 0.04854, 0.04565, 0.04294, 0.04038, 0.03884, 0.03693, 0.03486, 0.03335, 0.03182,
+  0.03052, 0.02969, 0.02841, 0.02716, 0.02624, 0.02568, 0.02463, 0.02366, 0.02286, 0.02216,
+  0.02161, 0.02097, 0.02051, 0.01974, 0.01950, 0.01882, 0.01860, 0.01791, 0.01741, 0.01694,
+  0.01664, 0.01664, 0.01634, 0.01601, 0.01532, 0.01499, 0.01475, 0.01440, 0.01422, 0.01422,
+  0.01370, 0.01370, 0.01337, 0.01288, 0.01281, 0.01281, 0.01240, 0.01240, 0.01201, 0.01201,
+  0.01165, 0.01165, 0.01130, 0.01130, 0.01097, 0.01097, 0.01065, 0.01034, 0.01034, 0.01006,
+  0.01063, 0.01035, 0.01007, 0.00980, 0.00954, 0.00929, 0.00929, 0.00907, 0.00884, 0.00929,
+  0.00907, 0.00885, 0.00864, 0.00885, 0.00864, 0.00844, 0.00863, 0.00844, 0.00825, 0.00807,
+  0.00790, 0.00807, 0.00790, 0.00773, 0.00757, 0.00773, 0.00757, 0.00742
+];
+function teiritsuRates(years) {
+  if (years === 2) return { r: 1.000, k: null, g: 0 };
+  var i = years - 3;
+  if (i < 0 || i >= TEIRITSU_K.length) return null;
+  return { r: Math.round(2000 / years) / 1000, k: TEIRITSU_K[i], g: TEIRITSU_G[i] };
+}
+
+function depScheduleTeiritsu(a, firstFY, firstMonths) {
+var t = teiritsuRates(a.years);
+if (!t) return depScheduleTeigaku(a, firstFY, firstMonths);
+var out = [];
+var guarantee = a.price * t.g;
+var bal = a.price;
+var y = firstFY;
+var revised = false, revisedAmt = 0;
+while (bal > 1 && y <= firstFY + a.years + 2) {
+var dep, rateUsed, adj = 0;
+if (!revised) {
+// 切替判定は月割前の年額（調整前償却額）と償却保証額で行う（国税庁 No.2106 の手順）
+adj = Math.floor(bal * t.r);
+if (t.k!= null && adj < guarantee) {
+revised = true;
+revisedAmt = Math.floor(bal * t.k);
+}
+}
+if (revised) {
+dep = Math.min(revisedAmt, bal - 1);
+rateUsed = t.k;
+} else {
+dep = y === firstFY? Math.floor(adj * firstMonths / 12): adj;
+dep = Math.min(dep, bal - 1);
+rateUsed = t.r;
+}
+if (dep <= 0) dep = bal - 1;
+bal -= dep;
+out.push({ year: y, dep: dep, balance: bal, rate: rateUsed, revised: revised});
+y++;
+}
+return out;
+}
+function depScheduleTeigaku(a, firstFY, firstMonths) {
+var out = [];
+var rate = depRate(a.years);
+var bal = a.price;
+var y = firstFY;
+while (bal > 1 && y <= firstFY + a.years + 2) {
+var months = y === firstFY? firstMonths: 12;
+var baseD = Math.floor(a.price * rate * months / 12);
+var d = Math.min(baseD, bal - 1);
+if (d <= 0) d = bal - 1;
+bal -= d;
+out.push({ year: y, dep: d, balance: bal, rate: rate, revised: false});
+y++;
+}
+return out;
+}
+function depSchedule(a) {
+var out = [];
+var firstFY = fyOf(a.acqDate);
+var firstMonths = firstPeriodMonths(a.acqDate);
+if (a.treat === "small") {
+out.push({ year: firstFY, dep: a.price, balance: 0});
+} else if (a.treat === "lump") {
+var base = Math.floor(a.price / 3);
+var bal2 = a.price;
+for (var i = 0; i < 3; i++) {
+var d2 = i === 2? bal2: base;
+bal2 -= d2;
+out.push({ year: firstFY + i, dep: d2, balance: bal2});
+}
+} else {
+var rows = a.method === "teiritsu"? depScheduleTeiritsu(a, firstFY, firstMonths): depScheduleTeigaku(a, firstFY, firstMonths);
+rows.forEach(function (s) { out.push(s);});
+}
+out.forEach(function (s) { s.biz = s.dep; s.priv = 0;});
+return out;
+}
+function assetJudge(price) {
+if (price < 100000) return "immediate";
+if (price < 200000) return "choice-lump";
+if (price < 300000) return (isSME() && store.corp.blue === "blue")? "choice-small": "normal-cond";
+return "normal";
+}
+function regenAssets() {
+var yd = Y();
+yd.entries = yd.entries.filter(function (e) { return e.source!== "asset";});
+var fy = parseInt(store.currentYear, 10);
+var endDate = periodEnd(store.currentYear);
+(store.assets || []).forEach(function (a) {
+var acqFY = fyOf(a.acqDate);
+if (acqFY === fy) {
+if (a.treat === "small") {
+yd.entries.push({ id: uid(), seq: yd.seq++, date: a.acqDate, kind: "expense", account: "減価償却費", amount: a.price, method: a.payment, vat: "0", memo: a.name + "（少額特例で即時償却）", source: "asset", assetId: a.id});
+} else {
+yd.entries.push({ id: uid(), seq: yd.seq++, date: a.acqDate, kind: "manual", debit: a.account, credit: METHOD_OUT[a.payment], amount: a.price, memo: a.name + "（取得）", source: "asset", assetId: a.id});
+}
+if (a.vatTax > 0) {
+yd.entries.push({ id: uid(), seq: yd.seq++, date: a.acqDate, kind: "manual", debit: "仮払消費税", credit: METHOD_OUT[a.payment], amount: a.vatTax, memo: a.name + "（取得時の消費税）", source: "asset", assetId: a.id});
+}
+}
+if (a.treat!== "small") {
+depSchedule(a).forEach(function (s) {
+if (s.year!== fy) return;
+if (s.dep > 0) yd.entries.push({ id: uid(), seq: yd.seq++, date: endDate, kind: "manual", debit: "減価償却費", credit: "減価償却累計額", amount: s.dep, memo: a.name + "の減価償却", source: "asset", assetId: a.id});
+});
+}
+});
+}
+function regenFixed() {
+var yd = Y();
+yd.entries = yd.entries.filter(function (e) { return e.source!== "fixed";});
+var fy = parseInt(store.currentYear, 10);
+var start = periodStart(store.currentYear);
+var sy = parseInt(start.slice(0, 4), 10), sm = parseInt(start.slice(5, 7), 10);
+yd.fixed.forEach(function (f) {
+if (!f.active) return;
+for (var i = 0; i < 12; i++) {
+var mm = sm + i, yy = sy + Math.floor((mm - 1) / 12), mo = ((mm - 1) % 12) + 1;
+var lastDay = new Date(yy, mo, 0).getDate();
+var day = Math.min(f.day, lastDay);
+var date = yy + "-" + String(mo).padStart(2, "0") + "-" + String(day).padStart(2, "0");
+if (fyOf(date)!== fy) continue;
+yd.entries.push({ id: uid(), seq: yd.seq++, date: date, kind: "expense", account: f.account, amount: f.amount, method: f.method, vat: f.vat || "0", memo: f.memo || "", source: "fixed", fixedId: f.id});
+}
+});
+}
+
+function renderSummary() {
+var inc = 0, exp = 0;
+Y().entries.forEach(function (e) {
+if (e.kind === "income") inc += e.amount;
+if (e.kind === "expense") exp += e.amount;
+});
+$("sumIncome").textContent = fmt(inc);
+$("sumExpense").textContent = fmt(exp);
+$("sumBalance").textContent = fmt(inc - exp);
+}
+function renderCorpHeader() {
+var c = store.corp;
+var fy = parseInt(store.currentYear, 10);
+var label = fy + "年" + closingMonth() + "月期（" + periodStart(store.currentYear) + " 〜 " + periodEnd(store.currentYear) + "）";
+$("corpSummary").textContent = (c.name? c.name + "　": "") + label;
+$("corpNote").textContent = (isSME()? "中小法人（資本金1億円以下）": "大法人（資本金1億円超）") +
+"／" + (c.blue === "blue"? "青色申告": "白色申告") +
+"／消費税は" + (c.vat === "taxex"? "税抜経理": "税込経理") +
+(c.douzoku? "／同族会社（留保金課税は対象外）": "") +
+"。法人情報は「設定」タブで変更できます。資本金は設定タブの「資本金」欄の金額で判定しています。";
+var ys = $("yearSel");
+Array.prototype.forEach.call(ys.options, function (o) {
+o.textContent = o.value + "年" + closingMonth() + "月期";
+});
+}
+function badgesFor(e) {
+var s = "";
+if (e.kind === "income" && (e.wh || 0) > 0) s += '<span class="badge bd-wh">源泉 ' + fmt(e.wh) + "</span>";
+if (e.source === "asset") s += '<span class="badge bd-asset">資産</span>';
+if (e.source === "fixed") s += '<span class="badge bd-fixed">固定費</span>';
+if (e.source === "import") s += '<span class="badge bd-import">取込</span>';
+if (e.kind === "manual") s += '<span class="badge bd-manual">詳細</span>';
+return s;
+}
+function renderList() {
+var list = sortedEntries();
+var html = "";
+list.forEach(function (e) {
+var kind, item;
+if (e.kind === "income") { kind = '<span class="kind-in">収入</span>'; item = esc(e.account);}
+else if (e.kind === "expense") { kind = '<span class="kind-out">支出</span>'; item = esc(e.account);}
+else { kind = "詳細"; item = esc(e.debit) + " ／ " + esc(e.credit);}
+var method = e.kind === "manual"? "―": esc(METHOD_LABEL[e.method] || "");
+html += "<tr><td>" + esc(e.date) + "</td><td>" + kind + "</td><td>" + item + badgesFor(e) + "</td>" +
+'<td class="num">' + fmt(e.amount) + "</td><td>" + method + "</td><td>" + esc(e.memo || "") + "</td>" +
+"<td>" + (e.source === "asset"? "": '<button class="btn btn-del btn-sm" data-del="' + e.id + '">削除</button>') + "</td></tr>";
+});
+if (!list.length) html = '<tr><td colspan="7" class="note">まだ入力がありません。</td></tr>';
+$("entryBody").innerHTML = html;
+$("entryCount").textContent = "全" + list.length + "件";
+Array.prototype.forEach.call(document.querySelectorAll("[data-del]"), function (b) {
+b.addEventListener("click", function () {
+var yd = Y();
+yd.entries = yd.entries.filter(function (e) { return e.id!== b.getAttribute("data-del");});
+touch(); renderAll();
+});
+});
+}
+var PL_REVENUE_ORDER = ["売上高", "受取配当金", "受取利息", "受取手数料", "雑収入", "固定資産売却益"];
+var PL_EXPENSE_ORDER = ["仕入高", "役員報酬", "役員賞与", "給料賃金", "法定福利費", "福利厚生費", "外注費", "地代家賃", "水道光熱費", "旅費交通費", "通信費", "広告宣伝費", "接待交際費", "会議費", "寄附金", "租税公課", "損害保険料", "修繕費", "消耗品費", "減価償却費", "支払手数料", "利子割引料", "新聞図書費", "諸会費", "貸倒金", "雑費"];
+function bsValues(ag) {
+var yd = Y();
+var v = {};
+BS_ASSETS.forEach(function (n) { v[n] = balOf(ag.bal, n, "d");});
+BS_LIABS.forEach(function (n) { v[n] = balOf(ag.bal, n, "c");});
+v["現金"] += yd.opening.cash;
+v["普通預金"] += yd.opening.bank;
+v["減価償却累計額"] = balOf(ag.bal, "減価償却累計額", "c");
+v["資本金"] = yd.opening.capitalStock + balOf(ag.bal, "資本金", "c");
+v["資本剰余金"] = yd.opening.capitalSurplus + balOf(ag.bal, "資本剰余金", "c");
+v["利益剰余金"] = yd.opening.retained + balOf(ag.bal, "利益剰余金", "c") + ag.profit;
+v["未払法人税等"] = yd.opening.unpaidTax + balOf(ag.bal, "未払法人税等", "c");
+return v;
+}
+function renderPL() {
+var ag = aggregate();
+var html = "";
+PL_REVENUE_ORDER.forEach(function (name) {
+if (ag.pl[name]) html += "<tr><td>" + esc(name) + '</td><td class="num">' + fmt(ag.pl[name]) + "</td></tr>";
+});
+PL_EXPENSE_ORDER.forEach(function (name) {
+if (ag.pl[name]) html += "<tr><td>" + esc(name) + '</td><td class="num">' + fmt(ag.pl[name]) + "</td></tr>";
+});
+html += '<tr class="tot"><td>収入の合計</td><td class="num">' + fmt(ag.revenue) + "</td></tr>";
+html += '<tr class="tot"><td>経費の合計</td><td class="num">' + fmt(ag.expenses) + "</td></tr>";
+html += '<tr class="tot"><td>税引前当期純利益</td><td class="num">' + fmt(ag.preTaxProfit) + "</td></tr>";
+if (ag.corpTaxPaid) html += "<tr><td>法人税、住民税及び事業税（支払った分）</td><td class=\"num\">" + fmt(ag.corpTaxPaid) + "</td></tr>";
+html += '<tr class="tot"><td>当期純利益</td><td class="num">' + fmt(ag.profit) + "</td></tr>";
+$("plBody").innerHTML = html;
+// 貸借対照表
+var v = bsValues(ag);
+var left = [];
+BS_ASSETS.forEach(function (n) { if (v[n]) left.push([n, v[n]]);});
+if (v["減価償却累計額"]) left.push(["減価償却累計額", -v["減価償却累計額"]]);
+var right = [];
+BS_LIABS.forEach(function (n) { if (v[n]) right.push([n, v[n]]);});
+["資本金", "資本剰余金", "利益剰余金"].forEach(function (n) { if (v[n]) right.push([n, v[n]]);});
+var aTotal = 0, lTotal = 0;
+left.forEach(function (it) { aTotal += it[1];});
+right.forEach(function (it) { lTotal += it[1];});
+function bsRow(l1, v1, l2, v2) {
+return "<tr><td>" + l1 + '</td><td class="num">' + (l1? fmt(v1): "") + "</td><td>" + l2 + '</td><td class="num">' + (l2? fmt(v2): "") + "</td></tr>";
+}
+var bh = "";
+var maxR = Math.max(left.length, right.length);
+for (var ri = 0; ri < maxR; ri++) {
+var L = left[ri] || ["", 0], R = right[ri] || ["", 0];
+bh += bsRow(L[0], L[1], R[0], R[1]);
+}
+bh += '<tr class="tot"><td>資産の合計</td><td class="num">' + fmt(aTotal) + '</td><td>負債・純資産の合計</td><td class="num">' + fmt(lTotal) + "</td></tr>";
+$("bsBody").innerHTML = bh;
+var diff = aTotal - lTotal;
+$("bsCheck").innerHTML = diff === 0
+? '<span class="ok">借方と貸方が一致しています。</span>'
+: '<span class="ng">借方と貸方が一致していません（差額 ' + fmt(diff) + "）。期首残高の設定や入力漏れを確認してください。</span>";
+}
+function renderFixed() {
+var yd = Y();
+var html = "";
+yd.fixed.forEach(function (f) {
+html += "<tr><td>" + esc(f.account) + "</td>" +
+'<td class="num">' + fmt(f.amount) + "</td>" +
+"<td>毎月" + f.day + "日</td>" +
+"<td>" + esc(METHOD_LABEL[f.method] || "") + "</td>" +
+"<td>" + esc(f.memo || "") + "</td>" +
+"<td>" + (f.active? "登録中": "停止中") + "</td>" +
+'<td><button class="btn btn-ghost btn-sm" data-fx-toggle="' + f.id + '">' + (f.active? "停止": "再開") + "</button> " +
+'<button class="btn btn-del btn-sm" data-fx-del="' + f.id + '">削除</button></td></tr>';
+});
+if (!yd.fixed.length) html = '<tr><td colspan="7" class="note">固定費はまだ登録されていません。</td></tr>';
+$("fixedBody").innerHTML = html;
+Array.prototype.forEach.call(document.querySelectorAll("[data-fx-toggle]"), function (b) {
+b.addEventListener("click", function () {
+var f = Y().fixed.filter(function (x) { return x.id === b.getAttribute("data-fx-toggle");})[0];
+if (f) { f.active =!f.active; regenFixed(); touch(); renderAll();}
+});
+});
+Array.prototype.forEach.call(document.querySelectorAll("[data-fx-del]"), function (b) {
+b.addEventListener("click", function () {
+var yd2 = Y();
+yd2.fixed = yd2.fixed.filter(function (x) { return x.id!== b.getAttribute("data-fx-del");});
+regenFixed(); touch(); renderAll();
+});
+});
+}
+function renderAssetJudge() {
+var price = parseInt($("asPrice").value, 10);
+var jEl = $("asJudge"), cEl = $("asChoice");
+var account = $("asAccount").value;
+var methodSel = $("asDepMethod");
+if (FA_TEIGAKU_ONLY.indexOf(account) >= 0) {
+methodSel.value = "teigaku";
+methodSel.disabled = true;
+$("asMethodNote").textContent = "建物・建物附属設備・構築物は、平成28年4月1日以後に買ったものは定額法しか使えないため、定額法に固定しています。";
+} else {
+methodSel.disabled = false;
+$("asMethodNote").textContent = "法人の原則は定率法です。一括償却・少額特例を選んだときは償却方法は使いません。";
+}
+if (!price || price <= 0) { jEl.textContent = ""; cEl.innerHTML = ""; return;}
+var judgePrice = price;
+if (store.corp.vat === "taxex") {
+var r = parseInt($("asVat").value, 10);
+if (r === 10 || r === 8) judgePrice = splitVat(price, r).base;
+}
+var j = assetJudge(judgePrice);
+if (j === "immediate") {
+jEl.textContent = "10万円未満なので、買った年に全額を経費にできます。登録すると「消耗品費」の支出として記録します（資産台帳には残りません）。";
+cEl.innerHTML = "";
+} else if (j === "choice-lump") {
+jEl.textContent = "10万円以上20万円未満の資産です。経費への分け方を選んでください。";
+cEl.innerHTML = '<label style="display:block;margin:4px 0"><input type="radio" name="asMethod" value="lump"> 一括償却（3年間で均等に分ける。月割りなし）</label>' +
+'<label style="display:block;margin:4px 0"><input type="radio" name="asMethod" value="normal" checked> 通常の償却（耐用年数で分ける）</label>';
+} else if (j === "choice-small") {
+jEl.textContent = "20万円以上30万円未満で、中小企業者等の少額特例が使えます。経費への分け方を選んでください。";
+cEl.innerHTML = '<label style="display:block;margin:4px 0"><input type="radio" name="asMethod" value="small"> 少額特例で、買った年に全額を経費にする（年間合計300万円まで）</label>' +
+'<label style="display:block;margin:4px 0"><input type="radio" name="asMethod" value="normal" checked> 通常の償却（耐用年数で分ける）</label>';
+} else if (j === "normal-cond") {
+jEl.textContent = "少額特例は中小企業者等かつ青色申告のときだけ使えるため、通常の償却（耐用年数で分割）になります。";
+cEl.innerHTML = "";
+} else {
+jEl.textContent = "30万円以上の資産は、通常の償却（耐用年数で分割）になります。";
+cEl.innerHTML = "";
+}
+}
+function renderAssets() {
+var fy = parseInt(store.currentYear, 10);
+var html = "";
+var smallTotal = 0;
+(store.assets || []).forEach(function (a) {
+var sch = depSchedule(a);
+var cur = null, bal = a.price;
+sch.forEach(function (s) {
+if (s.year === fy) cur = s;
+if (s.year <= fy) bal = s.balance;
+});
+var methodLabel = a.treat === "lump"? "一括償却": a.treat === "small"? "少額特例（即時）": "通常償却（" + (a.method === "teiritsu"? "定率法": "定額法") + "）";
+if (a.treat === "small" && fyOf(a.acqDate) === fy) smallTotal += a.price;
+html += "<tr><td>" + esc(a.name) + "</td><td>" + esc(a.acqDate) + '</td><td class="num">' + fmt(a.price) + "</td>" +
+"<td>" + (a.treat === "lump"? "―": a.years + "年") + "</td><td>" + methodLabel + '</td>' +
+'<td class="num">' + (cur? fmt(cur.dep): "―") + "</td>" +
+'<td class="num">' + fmt(bal) + "</td>" +
+'<td><button class="btn btn-del btn-sm" data-as-del="' + a.id + '">削除</button></td></tr>';
+});
+if (!(store.assets || []).length) html = '<tr><td colspan="8" class="note">固定資産はまだ登録されていません。</td></tr>';
+$("assetBody").innerHTML = html;
+var note = "一覧に「資産」の印で出てくる仕訳は、この台帳から自動で作られています。消したいときは資産そのものを削除してください。取得価額は" + (store.corp.vat === "taxex"? "税抜": "税込") + "で表示しています。";
+if (smallTotal > 0) {
+note += " 少額特例で即時経費にした資産（今年取得分）の合計は " + fmt(smallTotal) + " で、上限は年間300万円です。";
+if (smallTotal > 3000000) note += "上限の300万円を超えています。超えた分には特例を使えません。";
+}
+$("assetNote").textContent = note;
+Array.prototype.forEach.call(document.querySelectorAll("[data-as-del]"), function (b) {
+b.addEventListener("click", function () {
+var id = b.getAttribute("data-as-del");
+if (!confirm("この資産を削除します。帳簿に入っている取得・償却の仕訳も消えます。よろしいですか？")) return;
+store.assets = store.assets.filter(function (x) { return x.id!== id;});
+Object.keys(store.years).forEach(function (y) {
+store.years[y].entries = store.years[y].entries.filter(function (e) { return e.assetId!== id;});
+});
+regenAssets(); touch(); renderAll();
+});
+});
+}
+function renderExportInfo() {
+var yd = Y();
+if (yd.lastExport) {
+var d = new Date(yd.lastExport);
+$("exportInfo").textContent = "最終CSV書き出し日：" + d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+} else {
+$("exportInfo").textContent = "最終CSV書き出し日：まだ書き出していません";
+}
+$("unsavedInfo").innerHTML = yd.dirty? '<span class="unsaved">未保存のデータがあります。CSVを書き出して保管してください。</span>': '<span class="ok">書き出し済みの状態です。</span>';
+}
+
+// ===== 法人税申告の計算（別表エンジン） =====
+function computeTax(ag) {
+var yd = Y(), t = yd.tax, c = store.corp;
+var fy = parseInt(store.currentYear, 10);
+var months = t.months >= 1 && t.months <= 12? t.months: 12;
+var sme = isSME();
+var pl = ag.pl;
+function gPl(n) { return pl[n] || 0;}
+var bsv = bsValues(ag);
+var capitalEtcEnd = bsv["資本金"] + bsv["資本剰余金"]; // 資本金等の額（期末）
+var capitalBase = bsv["資本金"] + bsv["資本剰余金"]; // 寄附金の資本基準（資本金＋資本準備金の近似）
+
+// 別表八（一）受取配当等の益金不算入
+var divTotal = gPl("受取配当金");
+var divExclude = {
+full: t.divFull,
+related: Math.max(0, t.divRelated - t.divDebt),
+other: Math.floor(t.divOther * 0.5),
+nonctrl: Math.floor(t.divNonctrl * 0.2)
+};
+var V = divExclude.full + divExclude.related + divExclude.other + divExclude.nonctrl;
+
+// 別表十五 交際費等
+var entTotal = gPl("接待交際費");
+var food = Math.min(t.food || 0, entTotal);
+var entDeductible, entMethod;
+if ((c.capital || 0) > 10000000000) { entDeductible = 0; entMethod = "資本金100億円超のため全額損金不算入";}
+else if (sme) {
+var fixedLimit = Math.floor(8000000 * months / 12);
+var byFixed = Math.min(entTotal, fixedLimit);
+var byFood = Math.floor(food * 0.5);
+if (byFixed >= byFood) { entDeductible = byFixed; entMethod = "定額控除（年800万円×月数/12）";}
+else { entDeductible = byFood; entMethod = "接待飲食費の50%";}
+} else { entDeductible = Math.floor(food * 0.5); entMethod = "接待飲食費の50%";}
+var K = entTotal - entDeductible;
+
+// 別表十六 減価償却（台帳ベースの限度額）
+var b16 = [];
+var limitDepTotal = 0;
+(store.assets || []).forEach(function (a) {
+var sch = depSchedule(a);
+var cur = null, prevBal = a.price, endBal = a.price;
+sch.forEach(function (s) {
+if (s.year === fy - 1) prevBal = s.balance;
+if (s.year === fy) { cur = s; endBal = s.balance;}
+if (s.year < fy) { prevBal = s.balance; endBal = s.balance;}
+});
+if (fyOf(a.acqDate) > fy) return;
+var dep = cur? cur.dep: 0;
+limitDepTotal += dep;
+b16.push({ name: a.name, prevBal: fyOf(a.acqDate) === fy? 0: prevBal, dep: dep, limit: dep, endBal: endBal, rate: cur && cur.rate!= null? cur.rate: null, method: a.method, treat: a.treat, years: a.years, revised:!!(cur && cur.revised)});
+});
+var bookDep = gPl("減価償却費");
+var D = Math.max(0, bookDep - limitDepTotal);
+
+// 別表四
+var P = ag.profit; // 当期純利益（会計）
+var T = ag.corpTaxPaid; // 法人税・住民税・事業税（支払・計上分）
+var O = t.officer || 0; // 役員給与の損金不算入額
+var donations = gPl("寄附金");
+var preDonBase = P + T + D + K + O + donations - V;
+var donLimit = Math.floor((capitalBase * months / 12 * 0.0025 + Math.max(0, preDonBase) * 0.025) * 0.25);
+var H = Math.max(0, donations - donLimit);
+var S0 = P + T + D + K + O + H - V;
+
+// 別表七 欠損金の繰越控除
+var lossUse = [];
+var lossTotalUsed = 0;
+var lossLimit = 0;
+if (c.blue === "blue" && S0 > 0) lossLimit = sme? S0: Math.floor(S0 * 0.5);
+var eligible = (store.losses || []).filter(function (l) { return l.fy < fy && fy - l.fy <= 10;})
+.sort(function (a, b) { return a.fy - b.fy;});
+var remain = lossLimit;
+eligible.forEach(function (l) {
+var use = Math.max(0, Math.min(l.amount, remain));
+remain -= use; lossTotalUsed += use;
+lossUse.push({ fy: l.fy, amount: l.amount, used: use, carry: l.amount - use});
+});
+var C7 = lossTotalUsed;
+var S = Math.max(0, S0 - C7);
+var std = floor1000(S);
+
+// 別表一 法人税額
+var corpTax;
+if (sme) {
+var thr = Math.floor(8000000 * months / 12);
+var lowRate = S > 1000000000? 0.17: 0.15;
+corpTax = floor100(Math.min(std, thr) * lowRate + Math.max(0, std - thr) * 0.232);
+} else {
+corpTax = floor100(std * 0.232);
+}
+// 別表六（一）所得税額控除
+var incomeTaxCredit = ag.prepaidTax;
+// 別表六（二）外国税額控除
+var foreignLimit = S > 0? Math.floor(corpTax * (t.foreignIncome || 0) / S): 0;
+var foreignCredit = Math.min(t.foreignTax || 0, foreignLimit);
+// 試験研究費の税額控除
+var rdCredit = 0, rdRate = 0, rdCapPct = 0.25, rdChg = 0;
+if ((t.rdCurrent || 0) > 0) {
+rdChg = (t.rdBase || 0) > 0? (t.rdCurrent - t.rdBase) / t.rdBase: 0;
+if (sme) {
+rdRate = rdChg > 0.12? Math.min(0.17, 0.12 + (rdChg - 0.12) * 0.375): 0.12;
+rdCapPct = rdChg > 0.12? 0.35: 0.25;
+} else {
+rdRate = rdChg > 0.12? Math.min(0.14, 0.115 + (rdChg - 0.12) * 0.375): Math.max(0.01, 0.115 - (0.12 - rdChg) * 0.25);
+rdCapPct = 0.25;
+}
+rdCredit = Math.min(Math.floor(t.rdCurrent * rdRate), Math.floor(corpTax * rdCapPct));
+}
+// 賃上げ促進税制（中小企業向け・青色が要件）
+var wageCredit = 0, wageRate = 0, wageInc = 0;
+if (sme && c.blue === "blue" && (t.wagePrev || 0) > 0 && (t.wageCurr || 0) > t.wagePrev) {
+wageInc = (t.wageCurr - t.wagePrev) / t.wagePrev;
+if (wageInc >= 0.025) wageRate = 0.30;
+else if (wageInc >= 0.015) wageRate = 0.15;
+if (wageRate > 0) {
+var eduInc = (t.eduPrev || 0) > 0? (t.eduCurr - t.eduPrev) / t.eduPrev: 0;
+if ((wageInc < 0.025 && eduInc >= 0.05) || (wageInc >= 0.025 && eduInc >= 0.10)) wageRate += 0.10;
+if (t.wageCert) wageRate += 0.05;
+wageRate = Math.min(wageRate, 0.45);
+wageCredit = Math.min(Math.floor((t.wageCurr - t.wagePrev) * wageRate), Math.floor(corpTax * 0.20));
+}
+}
+var creditsTotal = incomeTaxCredit + foreignCredit + rdCredit + wageCredit;
+var corpTaxAfterCredits = Math.max(0, corpTax - creditsTotal);
+var finalCorpTax = corpTaxAfterCredits - (t.interimCorp || 0);
+var localCorpTax = floor100(corpTax * 0.103);
+var finalLocalCorpTax = localCorpTax - (t.interimLocal || 0);
+
+// 地方税：法人住民税
+var prefTax = floor100(corpTax * 0.01);
+var cityTax = floor100(corpTax * 0.06);
+var kintouTable = [
+[10000000, 20000, 50000, 120000],
+[100000000, 50000, 130000, 150000],
+[1000000000, 130000, 160000, 400000],
+[5000000000, 540000, 410000, 1750000],
+[Infinity, 800000, 410000, 3000000]
+];
+var kRow = kintouTable.filter(function (r) { return capitalEtcEnd <= r[0];})[0];
+var kintou = floor100((kRow[1] + ((c.employees || 0) > 50? kRow[3]: kRow[2])) * months / 12);
+var inhabGross = prefTax + cityTax + kintou;
+var finalInhab = inhabGross - (t.interimInhab || 0);
+// 地方税：法人事業税・特別法人事業税
+var bizRaw = 0;
+if (S > 0) {
+if (sme) {
+var th1 = 4000000 * months / 12, th2 = 8000000 * months / 12;
+bizRaw = Math.floor(Math.min(S, th1) * 0.035) +
+Math.floor(Math.min(Math.max(S - th1, 0), th2 - th1) * 0.053) +
+Math.floor(Math.max(S - th2, 0) * 0.07);
+} else {
+bizRaw = Math.floor(S * 0.07);
+}
+}
+var bizTax = floor100(bizRaw);
+var specialBizTax = floor100(bizRaw * 0.37);
+var bizGross = bizTax + specialBizTax;
+var finalBiz = bizGross - (t.interimBiz || 0);
+
+// 別表五（一）
+var capOpen = yd.opening.capitalStock + yd.opening.capitalSurplus;
+var capChange = balOf(ag.bal, "資本金", "c") + balOf(ag.bal, "資本剰余金", "c");
+var retOpen = yd.opening.retained;
+var retChange = P + D - V - C7; // 留保項目のみ（償却超過は加算・留保、配当不算入と欠損控除は減算・留保）
+// 別表五（二）
+var taxIncurred = corpTaxAfterCredits + localCorpTax + inhabGross + bizGross;
+var interimTotal = (t.interimCorp || 0) + (t.interimLocal || 0) + (t.interimInhab || 0) + (t.interimBiz || 0);
+var unpaidEnd = yd.opening.unpaidTax + taxIncurred - interimTotal - ag.unpaidTaxPaid;
+
+return { months: months, sme: sme, P: P, T: T, D: D, K: K, O: O, H: H, V: V, donations: donations,
+donLimit: donLimit, preDonBase: preDonBase, S0: S0, C7: C7, S: S, std: std,
+corpTax: corpTax, incomeTaxCredit: incomeTaxCredit, foreignLimit: foreignLimit, foreignCredit: foreignCredit,
+rdCredit: rdCredit, rdRate: rdRate, rdChg: rdChg, rdCapPct: rdCapPct,
+wageCredit: wageCredit, wageRate: wageRate, wageInc: wageInc,
+creditsTotal: creditsTotal, corpTaxAfterCredits: corpTaxAfterCredits, finalCorpTax: finalCorpTax,
+localCorpTax: localCorpTax, finalLocalCorpTax: finalLocalCorpTax,
+divTotal: divTotal, divExclude: divExclude, entTotal: entTotal, food: food, entDeductible: entDeductible, entMethod: entMethod,
+b16: b16, bookDep: bookDep, limitDepTotal: limitDepTotal,
+lossUse: lossUse, lossLimit: lossLimit,
+prefTax: prefTax, cityTax: cityTax, kintou: kintou, inhabGross: inhabGross, finalInhab: finalInhab,
+bizRaw: bizRaw, bizTax: bizTax, specialBizTax: specialBizTax, bizGross: bizGross, finalBiz: finalBiz,
+capOpen: capOpen, capChange: capChange, capitalEtcEnd: capitalEtcEnd,
+retOpen: retOpen, retChange: retChange, taxIncurred: taxIncurred, interimTotal: interimTotal, unpaidEnd: unpaidEnd};
+}
+function rowHtml(name, val, extra) {
+return "<tr><td>" + esc(name) + '</td><td class="num">' + fmt(val) + "</td>" + (extra || "") + "</tr>";
+}
+function renderTax() {
+var ag = aggregate();
+var x = computeTax(ag);
+var t = Y().tax;
+// 申告入力の反映
+$("txMonths").value = t.months || 12;
+$("txInterimCorp").value = t.interimCorp || "";
+$("txInterimLocal").value = t.interimLocal || "";
+$("txInterimInhab").value = t.interimInhab || "";
+$("txInterimBiz").value = t.interimBiz || "";
+$("txOfficer").value = t.officer || "";
+$("txFood").value = t.food || "";
+$("txForeignTax").value = t.foreignTax || "";
+$("txForeignIncome").value = t.foreignIncome || "";
+$("txDivFull").value = t.divFull || "";
+$("txDivRelated").value = t.divRelated || "";
+$("txDivOther").value = t.divOther || "";
+$("txDivNonctrl").value = t.divNonctrl || "";
+$("txDivDebt").value = t.divDebt || "";
+$("txRdCurrent").value = t.rdCurrent || "";
+$("txRdBase").value = t.rdBase || "";
+$("txWagePrev").value = t.wagePrev || "";
+$("txWageCurr").value = t.wageCurr || (ag.pl["給料賃金"] || "");
+$("txEduPrev").value = t.eduPrev || "";
+$("txEduCurr").value = t.eduCurr || "";
+$("txWageCert").checked =!!t.wageCert;
+var divSum = (t.divFull || 0) + (t.divRelated || 0) + (t.divOther || 0) + (t.divNonctrl || 0);
+$("divCheck").innerHTML = x.divTotal > 0
+? (divSum === x.divTotal
+? '<span class="ok">区分の合計（' + fmt(divSum) + "）が帳簿の受取配当金と一致しています。</span>"
+: '<span class="ng">区分の合計（' + fmt(divSum) + "）が帳簿の受取配当金（" + fmt(x.divTotal) + "）と一致していません。</span>")
+: "";
+// 別表四
+var b4 = "";
+b4 += rowHtml("当期純利益（会計）", x.P, "<td>―</td>");
+b4 += rowHtml("加算：減価償却の償却超過額", x.D, "<td>留保</td>");
+b4 += rowHtml("加算：交際費等の損金不算入額", x.K, "<td>社外流出</td>");
+b4 += rowHtml("加算：寄附金の損金不算入額", x.H, "<td>社外流出</td>");
+b4 += rowHtml("加算：役員給与の損金不算入額", x.O, "<td>社外流出</td>");
+b4 += rowHtml("加算：法人税・住民税・事業税の損金不算入額", x.T, "<td>社外流出</td>");
+b4 += rowHtml("減算：受取配当等の益金不算入額", -x.V, "<td>留保</td>");
+b4 += rowHtml("減算：繰越欠損金の当期控除額", -x.C7, "<td>留保</td>");
+b4 += '<tr class="tot"><td>所得金額</td><td class="num">' + fmt(x.S) + "</td><td></td></tr>";
+$("b4Body").innerHTML = b4;
+// 別表一
+var b1 = "";
+b1 += rowHtml("所得金額", x.S);
+b1 += rowHtml("課税標準（千円未満切り捨て）", x.std);
+b1 += rowHtml("法人税額", x.corpTax);
+b1 += rowHtml("所得税額控除（別表六（一））", -x.incomeTaxCredit);
+b1 += rowHtml("外国税額控除（別表六（二））", -x.foreignCredit);
+b1 += rowHtml("試験研究費の税額控除", -x.rdCredit);
+b1 += rowHtml("賃上げ促進税制の税額控除", -x.wageCredit);
+b1 += rowHtml("差引法人税額", x.corpTaxAfterCredits);
+b1 += rowHtml("中間納付額", -(t.interimCorp || 0));
+b1 += '<tr class="tot"><td>確定法人税額' + (x.finalCorpTax < 0? "（還付）": "") + '</td><td class="num">' + fmt(x.finalCorpTax) + "</td></tr>";
+b1 += rowHtml("地方法人税額（法人税額×10.3%）", x.localCorpTax);
+b1 += rowHtml("中間納付額（地方法人税）", -(t.interimLocal || 0));
+b1 += '<tr class="tot"><td>確定地方法人税額' + (x.finalLocalCorpTax < 0? "（還付）": "") + '</td><td class="num">' + fmt(x.finalLocalCorpTax) + "</td></tr>";
+$("b1Body").innerHTML = b1;
+// 別表五（一）
+var b5a = "";
+b5a += "<tr><td>資本金等の額</td><td class=\"num\">" + fmt(x.capOpen) + '</td><td class="num">' + fmt(x.capChange) + '</td><td class="num">' + fmt(x.capitalEtcEnd) + "</td></tr>";
+b5a += "<tr><td>利益積立金額</td><td class=\"num\">" + fmt(x.retOpen) + '</td><td class="num">' + fmt(x.retChange) + '</td><td class="num">' + fmt(x.retOpen + x.retChange) + "</td></tr>";
+$("b5aBody").innerHTML = b5a;
+// 別表五（二）
+var b5b = "";
+b5b += rowHtml("期首未払額", Y().opening.unpaidTax);
+b5b += rowHtml("当期発生額（法人税・地方法人税・住民税・事業税の確定額）", x.taxIncurred);
+b5b += rowHtml("中間納付額の合計", -x.interimTotal);
+b5b += rowHtml("期中の支払額（帳簿の未払法人税等の動き）", -ag.unpaidTaxPaid);
+b5b += '<tr class="tot"><td>期末未払見込額</td><td class="num">' + fmt(x.unpaidEnd) + "</td></tr>";
+$("b5bBody").innerHTML = b5b;
+// 別表六
+var b6 = "";
+b6 += rowHtml("所得税額控除額（仮払所得税の当期発生額）", x.incomeTaxCredit);
+b6 += rowHtml("外国所得税額", t.foreignTax || 0);
+b6 += rowHtml("外国税額控除の限度額（法人税額×国外所得÷所得金額）", x.foreignLimit);
+b6 += rowHtml("外国税額控除額", x.foreignCredit);
+$("b6Body").innerHTML = b6;
+// 別表七
+var b7 = "";
+if (store.corp.blue!== "blue") b7 += '<tr><td colspan="2" class="note">白色申告のため、欠損金の繰越控除は使えません。</td></tr>';
+b7 += rowHtml("控除限度額（" + (x.sme? "中小法人：所得の100%": "大法人：所得の50%") + "）", x.lossLimit);
+b7 += rowHtml("当期控除額の合計", x.C7);
+b7 += rowHtml("翌期への繰越額の合計", x.lossUse.reduce(function (s, l) { return s + l.carry;}, 0));
+$("b7Body").innerHTML = b7;
+// 欠損金リスト
+var lb = "";
+var usedMap = {};
+x.lossUse.forEach(function (l) { usedMap[l.fy] = l;});
+(store.losses || []).slice().sort(function (a, b) { return a.fy - b.fy;}).forEach(function (l) {
+var u = usedMap[l.fy];
+var expired = parseInt(store.currentYear, 10) - l.fy > 10;
+lb += "<tr><td>" + l.fy + "年" + closingMonth() + "月期</td><td class=\"num\">" + fmt(l.amount) + '</td><td class="num">' +
+(u? fmt(u.used): "―") + '</td><td class="num">' + (u? fmt(u.carry): (expired? "期限切れ": fmt(l.amount))) + "</td>" +
+'<td><button class="btn btn-del btn-sm" data-loss-del="' + l.fy + '">削除</button></td></tr>';
+});
+if (!(store.losses || []).length) lb = '<tr><td colspan="5" class="note">繰越欠損金は登録されていません。</td></tr>';
+$("lossBody").innerHTML = lb;
+Array.prototype.forEach.call(document.querySelectorAll("[data-loss-del]"), function (b) {
+b.addEventListener("click", function () {
+var fy = parseInt(b.getAttribute("data-loss-del"), 10);
+store.losses = store.losses.filter(function (l) { return l.fy!== fy;});
+save(); renderAll();
+});
+});
+// 別表八
+var b8 = "";
+b8 += "<tr><td>完全子法人株式等（100%）</td><td class=\"num\">" + fmt(t.divFull || 0) + '</td><td class="num">' + fmt(x.divExclude.full) + "</td></tr>";
+b8 += "<tr><td>関連法人株式等（1/3超）</td><td class=\"num\">" + fmt(t.divRelated || 0) + '</td><td class="num">' + fmt(x.divExclude.related) + "</td></tr>";
+b8 += "<tr><td>その他株式等（5%超〜1/3）</td><td class=\"num\">" + fmt(t.divOther || 0) + '</td><td class="num">' + fmt(x.divExclude.other) + "</td></tr>";
+b8 += "<tr><td>非支配目的株式等（5%以下）</td><td class=\"num\">" + fmt(t.divNonctrl || 0) + '</td><td class="num">' + fmt(x.divExclude.nonctrl) + "</td></tr>";
+b8 += '<tr class="tot"><td>益金不算入額の合計</td><td class="num"></td><td class="num">' + fmt(x.V) + "</td></tr>";
+$("b8Body").innerHTML = b8;
+// 別表十五
+var b15 = "";
+b15 += rowHtml("交際費等の額（帳簿）", x.entTotal);
+b15 += rowHtml("うち接待飲食費の額", x.food);
+b15 += rowHtml("損金算入額（" + x.entMethod + "）", x.entDeductible);
+b15 += '<tr class="tot"><td>損金不算入額</td><td class="num">' + fmt(x.K) + "</td></tr>";
+$("b15Body").innerHTML = b15;
+// 別表十六
+var b16h = "";
+x.b16.forEach(function (r) {
+b16h += "<tr><td>" + esc(r.name) + '</td><td class="num">' + fmt(r.prevBal) + '</td><td class="num">' + fmt(r.dep) + '</td><td class="num">' + fmt(r.limit) + '</td><td class="num">' + fmt(r.endBal) + "</td></tr>";
+});
+b16h += '<tr class="tot"><td>合計（帳簿の減価償却費 ' + fmt(x.bookDep) + "／限度額 " + fmt(x.limitDepTotal) + "／超過額 " + fmt(x.D) + '）</td><td class="num"></td><td class="num">' + fmt(x.limitDepTotal) + '</td><td class="num">' + fmt(x.limitDepTotal) + '</td><td class="num"></td></tr>';
+if (!x.b16.length) b16h = '<tr><td colspan="5" class="note">固定資産は登録されていません。</td></tr>' + b16h;
+$("b16Body").innerHTML = b16h;
+// 特別控除
+var sp = "";
+sp += rowHtml("試験研究費の税額控除（増減割合 " + (x.rdChg * 100).toFixed(1) + "%／控除率 " + (x.rdRate * 100).toFixed(1) + "%／限度 法人税額の" + Math.round(x.rdCapPct * 100) + "%）", x.rdCredit);
+sp += rowHtml("賃上げ促進税制の税額控除（増加率 " + (x.wageInc * 100).toFixed(1) + "%／控除率 " + (x.wageRate * 100).toFixed(0) + "%／限度 法人税額の20%）", x.wageCredit);
+$("spBody").innerHTML = sp;
+// 地方税
+var lb2 = "";
+lb2 += rowHtml("法人住民税 法人税割（都道府県民税 1.0%）", x.prefTax, "<td>第六号様式</td>");
+lb2 += rowHtml("法人住民税 法人税割（市町村民税 6.0%）", x.cityTax, "<td>第二十号様式</td>");
+lb2 += rowHtml("法人住民税 均等割", x.kintou, "<td>第六号様式・第二十号様式</td>");
+lb2 += rowHtml("法人住民税 合計", x.inhabGross, "<td></td>");
+lb2 += rowHtml("中間納付額（住民税）", -(t.interimInhab || 0), "<td></td>");
+lb2 += '<tr class="tot"><td>確定法人住民税額' + (x.finalInhab < 0? "（還付）": "") + '</td><td class="num">' + fmt(x.finalInhab) + "</td><td></td></tr>";
+lb2 += rowHtml("法人事業税 所得割", x.bizTax, "<td>第六号様式</td>");
+lb2 += rowHtml("特別法人事業税（所得割額×37%）", x.specialBizTax, "<td>第六号様式</td>");
+lb2 += rowHtml("中間納付額（事業税）", -(t.interimBiz || 0), "<td></td>");
+lb2 += '<tr class="tot"><td>確定法人事業税額等' + (x.finalBiz < 0? "（還付）": "") + '</td><td class="num">' + fmt(x.finalBiz) + "</td><td></td></tr>";
+$("localBody").innerHTML = lb2;
+}
+function renderAll() {
+renderCorpHeader(); renderSummary(); renderList(); renderPL(); renderFixed(); renderAssets(); renderTax(); renderExportInfo();
+var yd = Y();
+$("opCash").value = yd.opening.cash || "";
+$("opBank").value = yd.opening.bank || "";
+$("opCapitalStock").value = yd.opening.capitalStock || "";
+$("opCapitalSurplus").value = yd.opening.capitalSurplus || "";
+$("opRetained").value = yd.opening.retained || "";
+$("opUnpaidTax").value = yd.opening.unpaidTax || "";
+var c = store.corp;
+$("corpName").value = c.name || "";
+$("corpClosing").value = String(c.closingMonth || 12);
+$("corpCapital").value = c.capital || "";
+$("corpEmployees").value = c.employees || "";
+$("corpBlue").value = c.blue || "blue";
+$("corpVat").value = c.vat || "taxin";
+$("corpDouzoku").checked =!!c.douzoku;
+$("corpJudge").textContent = "判定：" + (isSME()? "中小法人（資本金1億円以下）": "大法人（資本金1億円超）") +
+"。中小法人は法人税の軽減税率・交際費の定額控除・欠損金の全額控除・少額特例などが使えます。";
+}
+
+function parseCSV(text) {
+var rows = [], row = [], cur = "", inQ = false, i, c;
+text = text.replace(/^\ufeff/, "");
+for (i = 0; i < text.length; i++) {
+c = text[i];
+if (inQ) {
+if (c === '"') {
+if (text[i + 1] === '"') { cur += '"'; i++;} else inQ = false;
+} else cur += c;
+} else if (c === '"') inQ = true;
+else if (c === ",") { row.push(cur); cur = "";}
+else if (c === "\n") { row.push(cur); cur = ""; rows.push(row); row = [];}
+else if (c === "\r") { /* skip */}
+else cur += c;
+}
+if (cur!== "" || row.length) { row.push(cur); rows.push(row);}
+return rows.filter(function (r) { return r.length > 1 || (r.length === 1 && r[0]!== "");});
+}
+function csvCell(v) {
+var s = String(v == null? "": v);
+if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+return s;
+}
+function downloadCSV(filename, text) {
+var blob = new Blob(["\ufeff" + text], { type: "text/csv;charset=utf-8"});
+var url = URL.createObjectURL(blob);
+var a = document.createElement("a");
+a.href = url; a.download = filename;
+document.body.appendChild(a); a.click();
+document.body.removeChild(a);
+setTimeout(function () { URL.revokeObjectURL(url);}, 2000);
+}
+function markExported() {
+var yd = Y();
+yd.lastExport = new Date().toISOString();
+yd.dirty = false;
+save(); renderExportInfo();
+}
+function exportJournalCSV() {
+var yd = Y(), y = store.currentYear;
+var start = periodStart(y);
+var lines = ["日付,借方科目,貸方科目,金額,摘要"];
+var op = yd.opening;
+if (op.cash > 0) lines.push([start, "現金", "期首残高", op.cash, "期首残高"].map(csvCell).join(","));
+if (op.bank > 0) lines.push([start, "普通預金", "期首残高", op.bank, "期首残高"].map(csvCell).join(","));
+if (op.capitalStock > 0) lines.push([start, "期首残高", "資本金", op.capitalStock, "期首残高"].map(csvCell).join(","));
+if (op.capitalSurplus > 0) lines.push([start, "期首残高", "資本剰余金", op.capitalSurplus, "期首残高"].map(csvCell).join(","));
+if (op.retained!== 0) lines.push([start, "期首残高", "利益剰余金", op.retained, "期首残高"].map(csvCell).join(","));
+if (op.unpaidTax > 0) lines.push([start, "期首残高", "未払法人税等", op.unpaidTax, "期首残高"].map(csvCell).join(","));
+journalRows().forEach(function (r) {
+lines.push([r.date, r.debit, r.credit, r.amount, r.memo || ""].map(csvCell).join(","));
+});
+downloadCSV("帳簿（法人）_" + y + "年度.csv", lines.join("\r\n") + "\r\n");
+markExported();
+}
+function guideRows() {
+var ag = aggregate();
+var x = computeTax(ag);
+var t = Y().tax;
+var rows = [];
+function sec(name) { rows.push(["", "", ""]);}
+function add(name, val, dest) { rows.push([name, val, dest]);}
+sec("決算書（損益計算書）");
+PL_REVENUE_ORDER.concat(PL_EXPENSE_ORDER).forEach(function (n) { if (ag.pl[n]) add(n, ag.pl[n], "決算書 損益計算書『" + n + "』欄へ");});
+add("税引前当期純利益", ag.preTaxProfit, "決算書 損益計算書『税引前当期純利益』欄へ");
+if (ag.corpTaxPaid) add("法人税、住民税及び事業税", ag.corpTaxPaid, "決算書 損益計算書『法人税、住民税及び事業税』欄へ");
+add("当期純利益", ag.profit, "決算書 損益計算書『当期純利益』欄へ");
+sec("決算書（貸借対照表）");
+var v = bsValues(ag);
+BS_ASSETS.forEach(function (n) { if (v[n]) add(n, v[n], "決算書 貸借対照表『" + n + "』欄へ");});
+if (v["減価償却累計額"]) add("減価償却累計額", v["減価償却累計額"], "決算書 貸借対照表で、固定資産の金額から差し引く額です");
+BS_LIABS.forEach(function (n) { if (v[n]) add(n, v[n], "決算書 貸借対照表『" + n + "』欄へ");});
+["資本金", "資本剰余金", "利益剰余金"].forEach(function (n) { if (v[n]) add(n, v[n], "決算書 貸借対照表『" + n + "』欄へ");});
+sec("別表四（所得の金額の計算）");
+add("当期純利益", x.P, "別表四『当期純利益』欄へ");
+add("減価償却の償却超過額", x.D, "別表四 加算欄『減価償却の償却超過額』（留保）へ");
+add("交際費等の損金不算入額", x.K, "別表四 加算欄『交際費等の損金不算入額』（社外流出）へ");
+add("寄附金の損金不算入額", x.H, "別表四 加算欄『寄附金の損金不算入額』（社外流出）へ");
+add("役員給与の損金不算入額", x.O, "別表四 加算欄『役員給与の損金不算入額』（社外流出）へ");
+add("法人税・住民税・事業税の損金不算入額", x.T, "別表四 加算欄『損金の額に算入した法人税・住民税・事業税』（社外流出）へ");
+add("受取配当等の益金不算入額", x.V, "別表四 減算欄『受取配当等の益金不算入額』（留保）へ");
+add("繰越欠損金の当期控除額", x.C7, "別表四 減算欄『欠損金等の当期控除額』（留保）へ");
+add("所得金額", x.S, "別表四『所得金額』欄へ");
+sec("別表五（一）（利益積立金額及び資本金等の額の計算）");
+add("資本金等の額（期首）", x.capOpen, "別表五（一）『資本金等の額』期首欄へ");
+add("資本金等の額（当期増減）", x.capChange, "別表五（一）『資本金等の額』増減欄へ");
+add("資本金等の額（期末）", x.capitalEtcEnd, "別表五（一）『資本金等の額』期末欄へ");
+add("利益積立金額（期首）", x.retOpen, "別表五（一）『利益積立金額』期首欄へ");
+add("利益積立金額（当期増減）", x.retChange, "別表五（一）『利益積立金額』増減欄へ（留保項目ベースの近似）");
+add("利益積立金額（期末）", x.retOpen + x.retChange, "別表五（一）『利益積立金額』期末欄へ");
+sec("別表五（二）（租税公課の納付状況等）");
+add("期首未払額", Y().opening.unpaidTax, "別表五（二） 期首未払欄へ");
+add("当期発生額", x.taxIncurred, "別表五（二） 当期発生欄へ");
+add("中間納付額", x.interimTotal, "別表五（二） 中間納付欄へ");
+add("期末未払見込額", x.unpaidEnd, "別表五（二） 期末未払欄へ");
+sec("別表六（一）（所得税額控除）");
+add("所得税額控除額", x.incomeTaxCredit, "別表六（一）『所得税額控除額』欄へ");
+sec("別表六（二）（外国税額控除）");
+add("外国所得税額", t.foreignTax || 0, "別表六（二）『外国所得税額』欄へ");
+add("控除限度額", x.foreignLimit, "別表六（二）『控除限度額』欄へ");
+add("外国税額控除額", x.foreignCredit, "別表六（二）『外国税額控除額』欄へ");
+sec("別表七（欠損金の繰越控除）");
+x.lossUse.forEach(function (l) {
+add(l.fy + "年度発生欠損金", l.amount, "別表七 発生年度 " + l.fy + "年度の行へ");
+add("　同 当期控除額", l.used, "別表七 同行の『当期控除額』欄へ");
+add("　同 翌期繰越額", l.carry, "別表七 同行の『翌期繰越額』欄へ");
+});
+add("欠損金の当期控除額 合計", x.C7, "別表七『当期控除額の合計』欄へ");
+sec("別表八（一）（受取配当等の益金不算入）");
+add("完全子法人株式等に係る配当等の額", t.divFull || 0, "別表八（一）『完全子法人株式等』欄へ");
+add("完全子法人株式等の益金不算入額", x.divExclude.full, "別表八（一） 同欄へ");
+add("関連法人株式等に係る配当等の額", t.divRelated || 0, "別表八（一）『関連法人株式等』欄へ");
+add("関連法人株式等の益金不算入額（負債利子控除後）", x.divExclude.related, "別表八（一） 同欄へ");
+add("その他株式等に係る配当等の額", t.divOther || 0, "別表八（一）『その他株式等』欄へ");
+add("その他株式等の益金不算入額", x.divExclude.other, "別表八（一） 同欄へ");
+add("非支配目的株式等に係る配当等の額", t.divNonctrl || 0, "別表八（一）『非支配目的株式等』欄へ");
+add("非支配目的株式等の益金不算入額", x.divExclude.nonctrl, "別表八（一） 同欄へ");
+add("益金不算入額の合計", x.V, "別表八（一）『合計』欄へ");
+sec("別表十五（交際費等の損金不算入）");
+add("交際費等の額", x.entTotal, "別表十五『支出交際費等の額』欄へ");
+add("うち接待飲食費の額", x.food, "別表十五『接待飲食費の額』欄へ");
+add("損金算入額（" + x.entMethod + "）", x.entDeductible, "別表十五『損金算入額』欄へ");
+add("損金不算入額", x.K, "別表十五『損金不算入額』欄へ");
+sec("別表十六（減価償却）");
+x.b16.forEach(function (r) {
+add(r.name + "（減価償却）", r.dep, "別表十六へ：期首残高 " + r.prevBal.toLocaleString("ja-JP") + "円／当期償却費 " + r.dep.toLocaleString("ja-JP") + "円／償却限度額 " + r.limit.toLocaleString("ja-JP") + "円／期末残高 " + r.endBal.toLocaleString("ja-JP") + "円");
+});
+add("償却超過額（別表四へ）", x.D, "別表十六 合計欄から別表四へ");
+sec("特別控除");
+add("試験研究費の税額控除額", x.rdCredit, "別表六（三）等の明細を確認のうえ別表一『試験研究費の額等の控除額』欄へ");
+add("賃上げ促進税制の税額控除額", x.wageCredit, "別表六（八）等の明細を確認のうえ別表一『一般試験研究費に係る税額控除等』の特別控除欄へ");
+sec("別表一（法人税額の計算）");
+add("所得金額", x.S, "別表一『所得金額』欄へ");
+add("法人税額", x.corpTax, "別表一『法人税額』欄へ");
+add("所得税額控除額", x.incomeTaxCredit, "別表一『所得税額控除額』欄へ");
+add("外国税額控除額", x.foreignCredit, "別表一『外国税額控除額』欄へ");
+add("差引法人税額", x.corpTaxAfterCredits, "別表一『差引法人税額』欄へ");
+add("中間納付額（法人税）", t.interimCorp || 0, "別表一『中間納付額』欄へ");
+add("確定法人税額", x.finalCorpTax, "別表一『確定法人税額』欄へ" + (x.finalCorpTax < 0? "（還付）": ""));
+add("地方法人税額", x.localCorpTax, "別表一（地方法人税）『地方法人税額』欄へ");
+add("中間納付額（地方法人税）", t.interimLocal || 0, "別表一（地方法人税）『中間納付額』欄へ");
+add("確定地方法人税額", x.finalLocalCorpTax, "別表一（地方法人税）『確定税額』欄へ" + (x.finalLocalCorpTax < 0? "（還付）": ""));
+sec("地方税");
+add("法人住民税 法人税割（都道府県民税）", x.prefTax, "第六号様式『法人税割額』欄へ");
+add("法人住民税 法人税割（市町村民税）", x.cityTax, "第二十号様式『法人税割額』欄へ");
+add("法人住民税 均等割", x.kintou, "第六号様式・第二十号様式『均等割額』欄へ");
+add("法人住民税 確定額", x.finalInhab, "第六号様式・第二十号様式『確定額』欄へ" + (x.finalInhab < 0? "（還付）": ""));
+add("法人事業税 所得割", x.bizTax, "第六号様式『所得割額』欄へ");
+add("特別法人事業税", x.specialBizTax, "第六号様式『特別法人事業税額』欄へ");
+add("法人事業税等 確定額", x.finalBiz, "第六号様式『確定額』欄へ" + (x.finalBiz < 0? "（還付）": ""));
+var fy2 = parseInt(store.currentYear, 10);
+(store.assets || []).forEach(function (a) {
+var cur = null;
+depSchedule(a).forEach(function (s) { if (s.year === fy2) cur = s;});
+if (!cur) return;
+add(a.name + "（減価償却費の計算）", cur.dep, "別表十六へ：取得年月 " + a.acqDate.slice(0, 4) + "年" + parseInt(a.acqDate.slice(5, 7), 10) + "月／取得価額 " + a.price.toLocaleString("ja-JP") + "円／" +
+(a.treat === "lump"? "一括償却（3年均等）": a.treat === "small"? "少額減価償却資産の特例（即時償却）": "耐用年数 " + a.years + "年・" + (a.method === "teiritsu"? "定率法": "定額法") + "・" + (cur.revised? "改定償却率 ": "償却率 ") + (cur.rate!= null? cur.rate: depRate(a.years)).toFixed(3)) +
+"／本年分の償却費 " + cur.dep.toLocaleString("ja-JP") + "円／未償却残高 " + cur.balance.toLocaleString("ja-JP") + "円");
+});
+return rows;
+}
+function exportGuideCSV() {
+var y = store.currentYear;
+var lines = ["数値ルール確認日：" + WORDING_DATE + "（令和7年度・2025年度のルール。防衛特別法人税は対象外）"];
+lines.push(["項目", "金額", "転記先"].map(csvCell).join(","));
+guideRows().forEach(function (r) { lines.push(r.map(csvCell).join(","));});
+downloadCSV("転記ガイド（法人）_" + y + "年度.csv", lines.join("\r\n") + "\r\n");
+markExported();
+}
+
+function normalizeDate(s) {
+if (!s) return "";
+s = String(s).trim().replace(/\//g, "-").replace(/\./g, "-");
+var m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+if (m) return m[1] + "-" + String(+m[2]).padStart(2, "0") + "-" + String(+m[3]).padStart(2, "0");
+m = s.match(/^(\d{1,2})-(\d{1,2})$/);
+if (m) return store.currentYear + "-" + String(+m[1]).padStart(2, "0") + "-" + String(+m[2]).padStart(2, "0");
+return "";
+}
+function parseAmount(s) {
+if (s == null) return NaN;
+var v = parseFloat(String(s).replace(/[¥,，\s]/g, ""));
+return isNaN(v)? NaN: Math.round(v);
+}
+function guessAccount(memo, kind) {
+for (var i = 0; i < GUESS_RULES.length; i++) {
+if (memo && memo.indexOf(GUESS_RULES[i][0]) >= 0) return GUESS_RULES[i][1];
+}
+return kind === "income"? "売上高": "雑費";
+}
+
+var importState = { headers: [], rows: [], drafts: []};
+function setupImport(text) {
+var rows = parseCSV(text);
+if (rows.length < 2) { alert("CSVの行が読み取れませんでした。"); return;}
+importState.headers = rows[0];
+importState.rows = rows.slice(1);
+["mapDate", "mapAmount", "mapMemo", "mapIo"].forEach(function (id) {
+var sel = $(id);
+sel.innerHTML = "";
+if (id === "mapIo") {
+var o0 = document.createElement("option"); o0.value = "-1"; o0.textContent = "（なし）"; sel.appendChild(o0);
+}
+importState.headers.forEach(function (h, i) {
+var o = document.createElement("option"); o.value = String(i); o.textContent = (i + 1) + "列目：" + h; sel.appendChild(o);
+});
+});
+importState.headers.forEach(function (h, i) {
+if (/日付|年月日|日/.test(h)) $("mapDate").value = String(i);
+if (/金額|出金|入金|円/.test(h) && $("mapAmount").value === "0") $("mapAmount").value = String(i);
+if (/摘要|内容|店名|メモ|取引/.test(h)) $("mapMemo").value = String(i);
+if (/入出金|区分|種別/.test(h)) $("mapIo").value = String(i);
+});
+$("importMap").classList.remove("hidden");
+$("importPreview").classList.add("hidden");
+}
+function buildDrafts() {
+var di = parseInt($("mapDate").value, 10);
+var ai = parseInt($("mapAmount").value, 10);
+var mi = parseInt($("mapMemo").value, 10);
+var ii = parseInt($("mapIo").value, 10);
+var outWord = $("mapIoOut").value || "出金";
+var existing = {};
+Y().entries.forEach(function (e) {
+if (e.kind === "income" || e.kind === "expense") existing[e.date + "|" + e.amount + "|" + (e.memo || "")] = true;
+});
+importState.drafts = [];
+importState.rows.forEach(function (r) {
+var date = normalizeDate(r[di]);
+var amt = parseAmount(r[ai]);
+var memo = (r[mi] || "").trim();
+if (!date || isNaN(amt) || amt === 0) return;
+var kind;
+if (ii >= 0 && r[ii]!= null && String(r[ii]).trim()!== "") {
+kind = String(r[ii]).indexOf(outWord) >= 0? "expense": "income";
+} else {
+kind = amt < 0? "expense": "income";
+}
+var amount = Math.abs(amt);
+var dup =!!existing[date + "|" + amount + "|" + memo];
+importState.drafts.push({ date: date, kind: kind, amount: amount, memo: memo, account: guessAccount(memo, kind), dup: dup, checked:!dup});
+});
+renderDrafts();
+}
+function renderDrafts() {
+var html = "";
+importState.drafts.forEach(function (d, i) {
+var opts = (d.kind === "income"? INCOME_ACCOUNTS: EXPENSE_ACCOUNTS.map(function (a) { return a.name;}))
+.map(function (n) { return '<option value="' + esc(n) + '"' + (n === d.account? " selected": "") + ">" + esc(n) + "</option>";}).join("");
+html += "<tr><td><input type='checkbox' data-draft-check='" + i + "'" + (d.checked? " checked": "") + "></td>" +
+"<td>" + esc(d.date) + "</td><td>" + (d.kind === "income"? "収入": "支出") + "</td>" +
+"<td><select data-draft-account='" + i + "'>" + opts + "</select></td>" +
+'<td class="num">' + fmt(d.amount) + "</td><td>" + esc(d.memo) + "</td>" +
+"<td>" + (d.dup? '<span class="ng">二重取り込みの可能性（同じ日付・金額・摘要が登録済み）</span>': "") + "</td></tr>";
+});
+if (!importState.drafts.length) html = '<tr><td colspan="7" class="note">取り込める行がありませんでした。列の対応づけを確認してください。</td></tr>';
+$("draftBody").innerHTML = html;
+$("importPreview").classList.remove("hidden");
+Array.prototype.forEach.call(document.querySelectorAll("[data-draft-check]"), function (c) {
+c.addEventListener("change", function () { importState.drafts[+c.getAttribute("data-draft-check")].checked = c.checked;});
+});
+Array.prototype.forEach.call(document.querySelectorAll("[data-draft-account]"), function (s) {
+s.addEventListener("change", function () { importState.drafts[+s.getAttribute("data-draft-account")].account = s.value;});
+});
+}
+function execImport() {
+var yd = Y();
+var n = 0;
+importState.drafts.forEach(function (d) {
+if (!d.checked) return;
+yd.entries.push({ id: uid(), seq: yd.seq++, date: d.date, kind: d.kind, account: d.account, amount: d.amount, method: "bank", vat: "0", memo: d.memo, source: "import"});
+n++;
+});
+if (n > 0) { touch(); renderAll();}
+alert(n + "件を取り込みました。");
+}
+function restoreJournal(text) {
+var rows = parseCSV(text);
+if (!rows.length) { alert("CSVが読み取れませんでした。"); return;}
+var start = 0;
+if (rows[0][0] && rows[0][0].indexOf("日付") >= 0) start = 1;
+var yd = Y();
+var added = 0, openingAdded = 0;
+for (var i = start; i < rows.length; i++) {
+var r = rows[i];
+if (r.length < 4) continue;
+var date = normalizeDate(r[0]);
+var amount = parseAmount(r[3]);
+if (!date || isNaN(amount)) continue;
+var debit = (r[1] || "").trim(), credit = (r[2] || "").trim(), memo = (r[4] || "").trim();
+if (memo === "期首残高" && (debit === "期首残高" || credit === "期首残高")) {
+if (debit === "現金") yd.opening.cash += amount;
+else if (debit === "普通預金") yd.opening.bank += amount;
+else if (credit === "資本金") yd.opening.capitalStock += amount;
+else if (credit === "資本剰余金") yd.opening.capitalSurplus += amount;
+else if (credit === "利益剰余金") yd.opening.retained += amount;
+else if (credit === "未払法人税等") yd.opening.unpaidTax += amount;
+openingAdded++;
+continue;
+}
+yd.entries.push({ id: uid(), seq: yd.seq++, date: date, kind: "manual", debit: debit, credit: credit, amount: amount, memo: memo, source: "restore"});
+added++;
+}
+if (added + openingAdded > 0) { touch(); renderAll();}
+alert("復元しました（" + added + "件を追加" + (openingAdded? "、期首残高" + openingAdded + "件": "") + "）。");
+}
+
+function fillSelect(sel, names) {
+sel.innerHTML = "";
+names.forEach(function (n) {
+var o = document.createElement("option");
+o.value = n; o.textContent = n;
+sel.appendChild(o);
+});
+}
+function readTaxForm() {
+var t = Y().tax;
+function num(id) { return parseInt($(id).value, 10) || 0;}
+t.months = Math.min(12, Math.max(1, num("txMonths") || 12));
+t.interimCorp = num("txInterimCorp"); t.interimLocal = num("txInterimLocal");
+t.interimInhab = num("txInterimInhab"); t.interimBiz = num("txInterimBiz");
+t.officer = num("txOfficer"); t.food = num("txFood");
+t.foreignTax = num("txForeignTax"); t.foreignIncome = num("txForeignIncome");
+t.divFull = num("txDivFull"); t.divRelated = num("txDivRelated"); t.divOther = num("txDivOther");
+t.divNonctrl = num("txDivNonctrl"); t.divDebt = num("txDivDebt");
+t.rdCurrent = num("txRdCurrent"); t.rdBase = num("txRdBase");
+t.wagePrev = num("txWagePrev"); t.wageCurr = num("txWageCurr");
+t.eduPrev = num("txEduPrev"); t.eduCurr = num("txEduCurr");
+t.wageCert = $("txWageCert").checked;
+}
+function init() {
+var yearSel = $("yearSel");
+for (var y = 2024; y <= 2028; y++) {
+var o = document.createElement("option");
+o.value = String(y); o.textContent = y + "年";
+yearSel.appendChild(o);
+}
+yearSel.value = store.currentYear;
+fillSelect($("inAccount"), INCOME_ACCOUNTS);
+fillSelect($("exAccount"), EXPENSE_ACCOUNTS.map(function (a) { return a.name;}));
+fillSelect($("fxAccount"), EXPENSE_ACCOUNTS.map(function (a) { return a.name;}));
+fillSelect($("mnDebit"), ALL_ACCOUNTS);
+fillSelect($("mnCredit"), ALL_ACCOUNTS);
+fillSelect($("asAccount"), FA_ACCOUNTS);
+var asPreset = $("asPreset");
+asPreset.innerHTML = "";
+ASSET_PRESETS.forEach(function (p) {
+var o = document.createElement("option");
+o.value = p.key; o.textContent = p.label;
+asPreset.appendChild(o);
+});
+asPreset.addEventListener("change", function () {
+var p = ASSET_PRESETS.filter(function (x) { return x.key === asPreset.value;})[0];
+if (p) { if (p.years) $("asYears").value = p.years; $("asAccount").value = p.account;}
+renderAssetJudge();
+});
+var t = todayStr();
+$("inDate").value = t; $("exDate").value = t; $("mnDate").value = t; $("asDate").value = t;
+$("asYears").value = ASSET_PRESETS[0].years;
+renderAssetJudge();
+$("asPrice").addEventListener("input", renderAssetJudge);
+$("asAccount").addEventListener("change", renderAssetJudge);
+$("asVat").addEventListener("change", renderAssetJudge);
+
+yearSel.addEventListener("change", function () {
+store.currentYear = yearSel.value;
+Y(); regenFixed(); regenAssets(); save(); renderAll();
+});
+Array.prototype.forEach.call(document.querySelectorAll("#tabBar button"), function (b) {
+b.addEventListener("click", function () {
+Array.prototype.forEach.call(document.querySelectorAll("#tabBar button"), function (x) { x.classList.remove("on");});
+Array.prototype.forEach.call(document.querySelectorAll(".tabpage"), function (x) { x.classList.remove("on");});
+b.classList.add("on");
+$("tab-" + b.getAttribute("data-tab")).classList.add("on");
+});
+});
+$("inAdd").addEventListener("click", function () {
+var amount = parseInt($("inAmount").value, 10);
+if (!$("inDate").value) { alert("日付を入れてください。"); return;}
+if (!amount || amount <= 0) { alert("金額を入れてください。"); return;}
+var wh = 0;
+if ($("inWh").value!== "") {
+wh = parseInt($("inWh").value, 10);
+if (isNaN(wh) || wh < 0) { alert("源泉徴収額は0以上の金額で入れてください。"); return;}
+if (wh >= amount) { alert("源泉徴収額は金額より小さくしてください。"); return;}
+}
+var yd = Y();
+yd.entries.push({ id: uid(), seq: yd.seq++, date: $("inDate").value, kind: "income", account: $("inAccount").value, amount: amount, method: $("inMethod").value, vat: $("inVat").value, memo: $("inMemo").value.trim(), wh: wh, source: "simple"});
+touch(); renderAll();
+$("inAmount").value = ""; $("inMemo").value = ""; $("inWh").value = "";
+});
+$("exAdd").addEventListener("click", function () {
+var amount = parseInt($("exAmount").value, 10);
+if (!$("exDate").value) { alert("日付を入れてください。"); return;}
+if (!amount || amount <= 0) { alert("金額を入れてください。"); return;}
+var yd = Y();
+yd.entries.push({ id: uid(), seq: yd.seq++, date: $("exDate").value, kind: "expense", account: $("exAccount").value, amount: amount, method: $("exMethod").value, vat: $("exVat").value, memo: $("exMemo").value.trim(), source: "simple"});
+touch(); renderAll();
+$("exAmount").value = ""; $("exMemo").value = "";
+});
+$("fxAdd").addEventListener("click", function () {
+var amount = parseInt($("fxAmount").value, 10);
+var day = parseInt($("fxDay").value, 10);
+if (!amount || amount <= 0) { alert("金額を入れてください。"); return;}
+if (!day || day < 1 || day > 31) { alert("引き落とし日は1〜31で入れてください。"); return;}
+var yd = Y();
+yd.fixed.push({ id: uid(), account: $("fxAccount").value, amount: amount, day: day, method: $("fxMethod").value, vat: $("fxVat").value, memo: $("fxMemo").value.trim(), active: true});
+regenFixed(); touch(); renderAll();
+$("fxAmount").value = ""; $("fxMemo").value = "";
+});
+$("mnAdd").addEventListener("click", function () {
+var amount = parseInt($("mnAmount").value, 10);
+if (!$("mnDate").value) { alert("日付を入れてください。"); return;}
+if (!amount || amount <= 0) { alert("金額を入れてください。"); return;}
+if ($("mnDebit").value === $("mnCredit").value) { alert("借方と貸方に同じ項目は選べません。"); return;}
+var yd = Y();
+yd.entries.push({ id: uid(), seq: yd.seq++, date: $("mnDate").value, kind: "manual", debit: $("mnDebit").value, credit: $("mnCredit").value, amount: amount, memo: $("mnMemo").value.trim(), source: "manual"});
+touch(); renderAll();
+$("mnAmount").value = ""; $("mnMemo").value = "";
+});
+$("corpSave").addEventListener("click", function () {
+var c = store.corp;
+c.name = $("corpName").value.trim();
+c.closingMonth = parseInt($("corpClosing").value, 10) || 12;
+c.capital = parseInt($("corpCapital").value, 10) || 0;
+c.employees = parseInt($("corpEmployees").value, 10) || 0;
+c.blue = $("corpBlue").value;
+c.vat = $("corpVat").value;
+c.douzoku = $("corpDouzoku").checked;
+Object.keys(store.years).forEach(function (y) {
+var yd = store.years[y];
+yd.entries = yd.entries.filter(function (e) { return e.source!== "fixed" && e.source!== "asset";});
+});
+regenFixed(); regenAssets(); save(); renderAll();
+alert("法人情報を保存しました。");
+});
+$("opSave").addEventListener("click", function () {
+var yd = Y();
+yd.opening.cash = parseInt($("opCash").value, 10) || 0;
+yd.opening.bank = parseInt($("opBank").value, 10) || 0;
+yd.opening.capitalStock = parseInt($("opCapitalStock").value, 10) || 0;
+yd.opening.capitalSurplus = parseInt($("opCapitalSurplus").value, 10) || 0;
+yd.opening.retained = parseInt($("opRetained").value, 10) || 0;
+yd.opening.unpaidTax = parseInt($("opUnpaidTax").value, 10) || 0;
+touch(); renderAll();
+alert("期首残高を保存しました。");
+});
+$("txSave").addEventListener("click", function () {
+readTaxForm(); touch(); renderAll();
+alert("申告の入力を保存しました。");
+});
+["txMonths", "txInterimCorp", "txInterimLocal", "txInterimInhab", "txInterimBiz", "txOfficer", "txFood", "txForeignTax", "txForeignIncome", "txDivFull", "txDivRelated", "txDivOther", "txDivNonctrl", "txDivDebt", "txRdCurrent", "txRdBase", "txWagePrev", "txWageCurr", "txEduPrev", "txEduCurr", "txWageCert"].forEach(function (id) {
+$(id).addEventListener("change", function () { readTaxForm(); save(); renderTax();});
+});
+$("lossAdd").addEventListener("click", function () {
+var fy = parseInt($("lossYear").value, 10);
+var amount = parseInt($("lossAmount").value, 10);
+if (!fy || fy < 2000 || fy > 2100) { alert("発生事業年度（決算年）を入れてください。"); return;}
+if (!amount || amount <= 0) { alert("欠損金額を入れてください。"); return;}
+if (!store.losses) store.losses = [];
+store.losses = store.losses.filter(function (l) { return l.fy!== fy;});
+store.losses.push({ fy: fy, amount: amount});
+save(); renderAll();
+$("lossYear").value = ""; $("lossAmount").value = "";
+});
+$("asAdd").addEventListener("click", function () {
+var name = $("asName").value.trim();
+var date = $("asDate").value;
+var priceInput = parseInt($("asPrice").value, 10);
+var years = parseInt($("asYears").value, 10);
+var payment = $("asPayment").value;
+if (!name) { alert("資産の名前を入れてください。"); return;}
+if (!date) { alert("取得日を入れてください。"); return;}
+if (!priceInput || priceInput <= 0) { alert("取得価額を入れてください。"); return;}
+var price = priceInput, vatTax = 0;
+if (store.corp.vat === "taxex") {
+var r = parseInt($("asVat").value, 10);
+if (r === 10 || r === 8) { var sv = splitVat(priceInput, r); price = sv.base; vatTax = sv.tax;}
+}
+var judge = assetJudge(price);
+var account = $("asAccount").value;
+var yd = Y();
+if (judge === "immediate") {
+var targetYd = store.years[String(fyOf(date))] || yd;
+if (!store.years[String(fyOf(date))]) { store.years[String(fyOf(date))] = freshYear(); targetYd = store.years[String(fyOf(date))];}
+targetYd.entries.push({ id: uid(), seq: targetYd.seq++, date: date, kind: "expense", account: "消耗品費", amount: price, method: payment, vat: "0", memo: name + "（10万円未満のため即時経費）", source: "simple"});
+if (vatTax > 0) targetYd.entries.push({ id: uid(), seq: targetYd.seq++, date: date, kind: "manual", debit: "仮払消費税", credit: METHOD_OUT[payment], amount: vatTax, memo: name + "（取得時の消費税）", source: "simple"});
+touch(); renderAll();
+alert("10万円未満のため、資産ではなく「消耗品費」の支出として記録しました。");
+$("asName").value = ""; $("asPrice").value = ""; renderAssetJudge();
+return;
+}
+if (!years || years < 1 || years > 100) { alert("耐用年数を入れてください。"); return;}
+var treat = "normal";
+if (judge === "choice-lump" || judge === "choice-small") {
+var sel = document.querySelector('input[name="asMethod"]:checked');
+if (sel) treat = sel.value;
+}
+var method = $("asDepMethod").value === "teigaku"? "teigaku": "teiritsu";
+if (FA_TEIGAKU_ONLY.indexOf(account) >= 0) method = "teigaku";
+if (!store.assets) store.assets = [];
+store.assets.push({ id: uid(), name: name, acqDate: date, price: price, years: years, account: account, ratio: 100, payment: payment, treat: treat, method: method, vatTax: vatTax});
+regenAssets(); touch(); renderAll();
+$("asName").value = ""; $("asPrice").value = ""; renderAssetJudge();
+});
+$("clearYear").addEventListener("click", function () {
+if (!confirm(store.currentYear + "年度のデータを全部消します。よろしいですか？")) return;
+store.years[store.currentYear] = freshYear();
+regenFixed(); regenAssets();
+save(); renderAll();
+});
+$("exportJournal").addEventListener("click", exportJournalCSV);
+$("exportGuide").addEventListener("click", exportGuideCSV);
+$("restoreFile").addEventListener("change", function () {
+var f = $("restoreFile").files[0];
+if (!f) return;
+var reader = new FileReader();
+reader.onload = function () { restoreJournal(String(reader.result));};
+reader.readAsText(f, "UTF-8");
+$("restoreFile").value = "";
+});
+$("importFile").addEventListener("change", function () {
+var f = $("importFile").files[0];
+if (!f) return;
+var reader = new FileReader();
+reader.onload = function () { setupImport(String(reader.result));};
+reader.readAsText(f, "UTF-8");
+});
+$("importDraft").addEventListener("click", buildDrafts);
+$("importExec").addEventListener("click", execImport);
+regenFixed();
+regenAssets();
+save();
+renderAll();
+}
+document.addEventListener("DOMContentLoaded", init);
+
+</script>
+<script>
+(function(){
+  var btns=document.querySelectorAll("[data-ido-theme]");
+  function sync(){var cur=document.documentElement.dataset.theme||"kuma";btns.forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.idoTheme===cur));});}
+  btns.forEach(function(b){b.addEventListener("click",function(){document.documentElement.dataset.theme=b.dataset.idoTheme;try{localStorage.setItem("ido_theme_v1",b.dataset.idoTheme);}catch(e){}sync();});});
+  sync();
+})();
+</script>
+<script>
+(function(){
+  var btns=document.querySelectorAll("[data-ido-theme]");
+  function sync(){var cur=document.documentElement.dataset.theme||"kuma";btns.forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.idoTheme===cur));});}
+  btns.forEach(function(b){b.addEventListener("click",function(){document.documentElement.dataset.theme=b.dataset.idoTheme;try{localStorage.setItem("ido_theme_v1",b.dataset.idoTheme);}catch(e){}sync();});});
+  sync();
+})();
+</script>
+<script>
+(function(){
+  var btns=document.querySelectorAll("[data-ido-theme]");
+  function sync(){var cur=document.documentElement.dataset.theme||"kuma";btns.forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.idoTheme===cur));});}
+  btns.forEach(function(b){b.addEventListener("click",function(){document.documentElement.dataset.theme=b.dataset.idoTheme;try{localStorage.setItem("ido_theme_v1",b.dataset.idoTheme);}catch(e){}sync();});});
+  sync();
+})();
+</script>
+<script>
+(function(){
+  var btns=document.querySelectorAll("[data-ido-theme]");
+  function sync(){var cur=document.documentElement.dataset.theme||"kuma";btns.forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.idoTheme===cur));});}
+  btns.forEach(function(b){b.addEventListener("click",function(){document.documentElement.dataset.theme=b.dataset.idoTheme;try{localStorage.setItem("ido_theme_v1",b.dataset.idoTheme);}catch(e){}sync();});});
+  sync();
+})();
+</script>
+<script src="mogura.js"></script>
+</body>
+</html>
