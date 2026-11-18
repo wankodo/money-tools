@@ -30,6 +30,17 @@ label.flabel{display:block;font-size:12.5px;color:var(--mut);margin:10px 0 3px}
 .seg button.on{background:var(--navy);color:#fff;font-weight:700;border-color:var(--navy)}
 input[type="number"]{width:100%;padding:10px 12px;font-size:16px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
 input[type="number"]:focus{outline:2px solid var(--amber);border-color:var(--amber)}
+input[type="text"]{width:100%;padding:10px 12px;font-size:16px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+input[type="text"]:focus{outline:2px solid var(--amber);border-color:var(--amber)}
+select{width:100%;padding:10px 12px;font-size:16px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+select:focus{outline:2px solid var(--amber);border-color:var(--amber)}
+select:disabled{background:#e9e4d8;color:var(--mut)}
+.addr-grid{display:flex;gap:10px;flex-wrap:wrap}
+.addr-grid .ag-zip{flex:1 1 150px}
+.addr-grid .ag-pref{flex:1 1 150px}
+.addr-grid .ag-city{flex:1 1 170px}
+.btn-clear{margin-top:12px;background:#e9e4d8;border:1px solid var(--line);border-radius:8px;padding:8px 14px;font-size:13.5px;cursor:pointer;color:var(--ink)}
+.area-status{font-size:13.5px;background:var(--soft);border-radius:6px;padding:7px 10px;margin:8px 0}
 .plan{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:10px 0;background:#fff}
 .plan .phead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
 .plan .brand{font-size:12px;color:var(--mut);font-weight:700;letter-spacing:.05em}
@@ -74,6 +85,8 @@ html[data-theme="andy"] :is(.card h2,.card h3,.tool-card h2,.today .word,.today.
 /* 白・淡色の面は背景と文字色をセットでダークパネル化 */
 html[data-theme="andy"] :is(.suggest,.chip,.plan,.rank li,.dir-cell,.hexbox.sub,.result .action,.checks label,.badges span,.rank-num,.prod .cond,.prod .nodatabox,.chips button,.tabs button,.cal-nav button,.btn-ghost,.btn.ghost,.presets button,.lp-line .lp,button.dbtn,.plan.dim){background:#0a1e30;color:#d8f1f6;border-color:rgba(110,205,230,.32)}
 html[data-theme="andy"] .btn-del{background:#0a1e30;border-color:rgba(110,205,230,.32)}
+html[data-theme="andy"] .btn-clear{background:#0a1e30;color:#d8f1f6;border-color:rgba(110,205,230,.32)}
+html[data-theme="andy"] select:disabled{background:#0a1e30;color:#a9c9d9}
 html[data-theme="andy"] .sumcard.white{background:#0a1e30;color:#d8f1f6}
 html[data-theme="andy"] .seg button{background:#0a1e30;color:#d8f1f6;border-color:rgba(110,205,230,.32)}
 html[data-theme="andy"] .seg button.active{background:#1d4568;color:#fff}
@@ -105,7 +118,7 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
 <header>
   <div class="wrap">
     <h1>電気代 <span class="accent">比較・試算ツール</span></h1>
-    <p>契約アンペアと月の使用量から、大手電力会社の従量電灯プランの月額を比べます。料金は各社の公式料金表で確認した単価（税込）だけを使っています。燃料費調整額は毎月変わるため含んでいません（下記の注記参照）。</p>
+    <p>契約アンペアと月の使用量から、大手電力会社の従量電灯プランの月額を比べます。料金は各社の公式料金表で確認した単価（税込）だけを使っています。燃料費調整額は毎月変わるため含んでいません（下記の注記参照）。お住まいの地域を入れると、その地域を担当する電力会社だけに絞り込めます。</p>
   </div>
 </header>
 
@@ -129,6 +142,29 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
   </div>
 
   <div class="card">
+    <h2>お住まいの地域（任意）</h2>
+    <p class="note">郵便番号を入れるか、都道府県・市区町村を選ぶと、その地域を担当する電力会社だけを表示します。指定しなければ全社を表示します。エリアの区分は、各一般送配電事業者が公表している供給区域に基づきます。</p>
+    <div class="addr-grid">
+      <div class="ag-zip">
+        <label class="flabel" for="zipInput">郵便番号</label>
+        <input type="text" id="zipInput" placeholder="例：1000001" inputmode="numeric" autocomplete="postal-code">
+        <p class="note" id="zipMsg"></p>
+      </div>
+      <div class="ag-pref">
+        <label class="flabel" for="prefSel">都道府県</label>
+        <select id="prefSel"><option value="">選択しない（全社表示）</option></select>
+      </div>
+      <div class="ag-city">
+        <label class="flabel" for="citySel">市区町村</label>
+        <select id="citySel" disabled><option value="">都道府県を先に選択</option></select>
+      </div>
+    </div>
+    <div class="area-status hidden" id="areaStatus"></div>
+    <button type="button" class="btn-clear hidden" id="areaClear">地域の指定を解除して全社表示に戻す</button>
+    <p class="note">静岡県（富士川の東側は東京電力、西側は中部電力）など、県の中で担当が分かれる地域は市区町村まで見て判定します。市の中でも分かれる地域（静岡県富士宮市、愛媛県今治市など）は、両方の会社を表示します。番地単位の境界までは判定できないため、境界付近では各社にご確認ください。離島など一部地域では供給区域が異なる場合があります。</p>
+  </div>
+
+  <div class="card">
     <h2>比較結果（安い順）</h2>
     <p class="count" id="resultHead"></p>
     <div id="results"></div>
@@ -144,7 +180,8 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
       <li>関西電力・中国電力・四国電力の従量電灯Aと沖縄電力の従量電灯は最低料金制です。最低料金には最初の一定量（関西・中国は15kWhまで、四国は11kWhまで、沖縄は10kWhまで）の電力量料金が含まれています。</li>
       <li>アンペア制の会社には最低月額料金があり、基本料金＋電力量料金がそれを下回る場合は最低月額料金が適用されます（内訳に「最低月額料金を適用」と表示します）。</li>
       <li>北陸電力以外の9社は2026年11月1日に料金単価の見直しがあり、このツールは見直し後の単価を使っています。北陸電力は見直しの対象外で、2024年4月1日以降の単価です。</li>
-      <li>エリアをまたいで契約先を選べるわけではありません。在住エリアの会社の行が、自分の電気代の目安です。他エリアの行は「地域でどれくらい違うか」の参考として見てください。</li>
+      <li>エリアをまたいで契約先を選べるわけではありません。在住エリアの会社の行が、自分の電気代の目安です。他エリアの行は「地域でどれくらい違うか」の参考として見てください。「お住まいの地域」を指定すると、担当の会社だけに絞り込めます。</li>
+      <li>担当エリアは、電気を届ける一般送配電事業者の供給区域で決まります。おおむね都道府県単位ですが、静岡県は富士川を境に東側が東京電力パワーグリッド、西側が中部電力パワーグリッドの区域です。ほかにも福井県（若狭地域は関西電力送配電）、三重県（熊野市・南牟婁郡は関西電力送配電）、香川県（小豆島と直島町は中国電力ネットワーク）、愛媛県（上島町は中国電力ネットワーク）など、県の中で分かれる地域があります。</li>
     </ul>
   </div>
 
@@ -152,7 +189,8 @@ html[data-theme="andy"] .badges span.best-b{background:var(--amber);color:#03222
     <div class="card">
       このツールは非公式の個人ツールです。料金は各社の公式料金表で確認した単価（税込）に基づく目安で、実際の請求額は燃料費調整額・契約内容・使用量の端数処理等により異なります。最新の料金は各社の公式ページでご確認ください。<br>
       出典：<a href="https://www.hepco.co.jp/home/price/ratemenu/pdf/jyuuryou_b_c_dream8.pdf" target="_blank" rel="noopener">北海道電力 従量電灯B単価表</a>／<a href="https://www.tohoku-epco.co.jp/dprivate/plan/home/lightb/" target="_blank" rel="noopener">東北電力 従量電灯B</a>／<a href="https://www4.tepco.co.jp/ep/private/plan/pdf/20261101_teiatsu_minaoshi_kisei.pdf" target="_blank" rel="noopener">東京電力エナジーパートナー 料金単価表</a>／<a href="https://miraiz.chuden.co.jp/common/relocation/resource/catalog_hba.pdf" target="_blank" rel="noopener">中部電力ミライズ 電気料金単価表</a>／<a href="https://www.rikuden.co.jp/202404rate/ryokin.html" target="_blank" rel="noopener">北陸電力 電気料金単価表</a>／<a href="https://www.kepco.co.jp/ir/brief/disclosure/pdf/kaiji20260929_1.pdf" target="_blank" rel="noopener">関西電力 料金見直し資料</a>／<a href="https://www.energia.co.jp/assets/press/2026/p20260928-1b.pdf" target="_blank" rel="noopener">中国電力 電気料金単価表</a>／<a href="https://www.yonden.co.jp/business/price/200v/plan/juryo_a.html" target="_blank" rel="noopener">四国電力 従量電灯A</a>／<a href="https://www.kyuden.co.jp/td/application/general/user/menu/outline/juryo.html" target="_blank" rel="noopener">九州電力 従量電灯B</a>／<a href="https://www.okiden.co.jp/common/price/" target="_blank" rel="noopener">沖縄電力 電気料金単価表</a>／<a href="https://www.meti.go.jp/press/2025/03/20260319004/20260319004.html" target="_blank" rel="noopener">経済産業省 2026年度の賦課金単価</a><br>
-      料金確認日：2026-11-18
+      エリアの出典：各一般送配電事業者が公表する供給区域（<a href="https://www.enecho.meti.go.jp/category/electricity_and_gas/electric/summary/electric_transmission_list/" target="_blank" rel="noopener">資源エネルギー庁 送配電事業者一覧</a>ほか）<br>
+      料金確認日：2026-11-18／エリア確認日：2026-11-19
     </div>
     <p class="credit">制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
   </footer>
@@ -205,7 +243,83 @@ var PLANS = [
  src:"https://www.okiden.co.jp/common/price/"}
 ];
 
-var state = { amp: 30 };
+var state = { amp: 30, pref: "", city: "" };
+
+// ===== 供給エリア（一般送配電事業者の供給区域に基づく。エリア確認日：2026-11-19） =====
+// 会社名は PLANS の company と一致させる
+var PREFS = ["北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県","茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県","新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県","徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"];
+// 県全域が1社の都道府県
+var PREF_COMPANY = {
+ "北海道":"北海道電力",
+ "青森県":"東北電力","岩手県":"東北電力","宮城県":"東北電力","秋田県":"東北電力","山形県":"東北電力","福島県":"東北電力","新潟県":"東北電力",
+ "茨城県":"東京電力エナジーパートナー","栃木県":"東京電力エナジーパートナー","群馬県":"東京電力エナジーパートナー","埼玉県":"東京電力エナジーパートナー","千葉県":"東京電力エナジーパートナー","東京都":"東京電力エナジーパートナー","神奈川県":"東京電力エナジーパートナー","山梨県":"東京電力エナジーパートナー",
+ "長野県":"中部電力ミライズ","愛知県":"中部電力ミライズ",
+ "富山県":"北陸電力","石川県":"北陸電力",
+ "滋賀県":"関西電力","京都府":"関西電力","大阪府":"関西電力","奈良県":"関西電力","和歌山県":"関西電力",
+ "鳥取県":"中国電力","島根県":"中国電力","岡山県":"中国電力","広島県":"中国電力","山口県":"中国電力",
+ "徳島県":"四国電力","高知県":"四国電力",
+ "福岡県":"九州電力","佐賀県":"九州電力","長崎県":"九州電力","熊本県":"九州電力","大分県":"九州電力","宮崎県":"九州電力","鹿児島県":"九州電力",
+ "沖縄県":"沖縄電力"
+};
+// 県の中で担当が分かれる7県。def=原則の会社、only=その会社だけの市区町村、both=市の中で分かれるため両社表示する市区町村、cities=市区町村プルダウン用の一覧
+var SPLIT_PREF = {
+ "静岡県":{ def:"中部電力ミライズ",
+   only:{ "東京電力エナジーパートナー":["熱海市","沼津市","三島市","富士市","伊東市","御殿場市","裾野市","下田市","伊豆市","伊豆の国市","函南町","清水町","長泉町","小山町","東伊豆町","河津町","南伊豆町","松崎町","西伊豆町"] },
+   both:{ "富士宮市":["東京電力エナジーパートナー","中部電力ミライズ"] },
+   cities:["静岡市","浜松市","沼津市","熱海市","三島市","富士宮市","伊東市","島田市","富士市","磐田市","焼津市","掛川市","藤枝市","御殿場市","袋井市","下田市","裾野市","湖西市","伊豆市","御前崎市","菊川市","伊豆の国市","牧之原市","東伊豆町","河津町","南伊豆町","松崎町","西伊豆町","函南町","清水町","長泉町","小山町","吉田町","川根本町","森町"] },
+ "福井県":{ def:"北陸電力",
+   only:{ "関西電力":["小浜市","美浜町","高浜町","おおい町","若狭町"] },
+   both:{},
+   cities:["福井市","敦賀市","小浜市","大野市","勝山市","鯖江市","あわら市","越前市","坂井市","永平寺町","池田町","南越前町","越前町","美浜町","高浜町","おおい町","若狭町"] },
+ "岐阜県":{ def:"中部電力ミライズ",
+   only:{},
+   both:{ "飛驒市":["中部電力ミライズ","北陸電力"], "郡上市":["中部電力ミライズ","北陸電力"], "関ケ原町":["中部電力ミライズ","関西電力"] },
+   cities:["岐阜市","大垣市","高山市","多治見市","関市","中津川市","美濃市","瑞浪市","羽島市","恵那市","美濃加茂市","土岐市","各務原市","可児市","山県市","瑞穂市","飛驒市","本巣市","郡上市","下呂市","海津市","岐南町","笠松町","養老町","垂井町","関ケ原町","神戸町","輪之内町","安八町","揖斐川町","大野町","池田町","北方町","坂祝町","富加町","川辺町","七宗町","八百津町","白川町","東白川村","御嵩町","白川村"] },
+ "三重県":{ def:"中部電力ミライズ",
+   only:{ "関西電力":["御浜町","紀宝町"] },
+   both:{ "熊野市":["関西電力","中部電力ミライズ"] },
+   cities:["津市","四日市市","伊勢市","松阪市","桑名市","鈴鹿市","名張市","尾鷲市","亀山市","鳥羽市","熊野市","いなべ市","志摩市","伊賀市","木曽岬町","東員町","菰野町","朝日町","川越町","多気町","明和町","大台町","玉城町","度会町","大紀町","南伊勢町","紀北町","御浜町","紀宝町"] },
+ "兵庫県":{ def:"関西電力",
+   only:{},
+   both:{ "赤穂市":["関西電力","中国電力"] },
+   cities:["神戸市","姫路市","尼崎市","明石市","西宮市","洲本市","芦屋市","伊丹市","相生市","豊岡市","加古川市","赤穂市","西脇市","宝塚市","三木市","高砂市","川西市","小野市","三田市","加西市","丹波篠山市","養父市","丹波市","南あわじ市","朝来市","淡路市","宍粟市","加東市","たつの市","猪名川町","多可町","稲美町","播磨町","市川町","福崎町","神河町","太子町","上郡町","佐用町","香美町","新温泉町"] },
+ "香川県":{ def:"四国電力",
+   only:{ "中国電力":["土庄町","小豆島町","直島町"] },
+   both:{},
+   cities:["高松市","丸亀市","坂出市","善通寺市","観音寺市","さぬき市","東かがわ市","三豊市","土庄町","小豆島町","三木町","直島町","宇多津町","綾川町","琴平町","多度津町","まんのう町"] },
+ "愛媛県":{ def:"四国電力",
+   only:{ "中国電力":["上島町"] },
+   both:{ "今治市":["四国電力","中国電力"] },
+   cities:["松山市","今治市","宇和島市","八幡浜市","新居浜市","西条市","大洲市","伊予市","四国中央市","西予市","東温市","上島町","久万高原町","松前町","砥部町","内子町","伊方町","松野町","鬼北町","愛南町"] }
+};
+
+// 現在の地域指定から、表示する会社の一覧と説明文を返す。未指定なら null
+function currentFilter(){
+  var pref = state.pref, city = state.city;
+  if(!pref) return null;
+  if(PREF_COMPANY[pref]){
+    return { companies: [PREF_COMPANY[pref]], msg: pref + "は全域が" + PREF_COMPANY[pref] + "のエリアです。" };
+  }
+  var sp = SPLIT_PREF[pref];
+  if(!sp) return null;
+  if(!city){
+    var all = {};
+    all[sp.def] = true;
+    Object.keys(sp.only).forEach(function(c){ all[c] = true; });
+    Object.keys(sp.both).forEach(function(k){ sp.both[k].forEach(function(c){ all[c] = true; }); });
+    return { companies: Object.keys(all), msg: pref + "は市区町村によって担当が分かれます。市区町村まで選ぶと絞り込めます（現在は県内の全担当会社を表示中）。" };
+  }
+  if(sp.both[city]){
+    return { companies: sp.both[city], msg: pref + city + "は、市の中でも地域によって担当が分かれるため、" + sp.both[city].join("と") + "の両方を表示しています。番地によって担当が異なります。" };
+  }
+  var onlyCompanies = Object.keys(sp.only);
+  for(var i = 0; i < onlyCompanies.length; i++){
+    if(sp.only[onlyCompanies[i]].indexOf(city) >= 0){
+      return { companies: [onlyCompanies[i]], msg: pref + city + "は" + onlyCompanies[i] + "のエリアです。" };
+    }
+  }
+  return { companies: [sp.def], msg: pref + city + "は" + sp.def + "のエリアです。" };
+}
 
 function tierLabel(prev, up){
   if(up === Infinity) return prev + "kWh超";
@@ -246,13 +360,25 @@ function render(){
   var kwhRaw = $("kwhInput").value;
   var kwh = parseFloat(kwhRaw);
   var box = $("results");
+  var filt = currentFilter();
+  var statusEl = $("areaStatus");
+  if(filt){
+    statusEl.textContent = filt.msg;
+    statusEl.classList.remove("hidden");
+    $("areaClear").classList.remove("hidden");
+  } else {
+    statusEl.textContent = "";
+    statusEl.classList.add("hidden");
+    $("areaClear").classList.add("hidden");
+  }
   if(kwhRaw === "" || isNaN(kwh) || kwh < 0){
     $("resultHead").textContent = "使用量を入力すると、ここに比較結果が出ます。";
     box.innerHTML = "";
     return;
   }
-  $("resultHead").textContent = state.amp + "A・月" + kwh.toLocaleString("ja-JP") + "kWh の場合の月額（燃料費調整額は含みません）";
-  var rows = PLANS.map(function(p){
+  $("resultHead").textContent = state.amp + "A・月" + kwh.toLocaleString("ja-JP") + "kWh の場合の月額（燃料費調整額は含みません）" + (filt ? "／地域で絞り込み中（" + filt.companies.length + "社）" : "");
+  var plans = filt ? PLANS.filter(function(p){ return filt.companies.indexOf(p.company) >= 0; }) : PLANS;
+  var rows = plans.map(function(p){
     return { p: p, r: calc(p, state.amp, kwh) };
   });
   rows.sort(function(a, b){ return a.r.total - b.r.total; });
@@ -286,6 +412,108 @@ $("ampSeg").addEventListener("click", function(e){
   render();
 });
 $("kwhInput").addEventListener("input", render);
+
+// ===== 地域指定の配線 =====
+var prefSel = $("prefSel"), citySel = $("citySel"), zipInput = $("zipInput"), zipMsg = $("zipMsg");
+PREFS.forEach(function(pf){
+  var o = document.createElement("option");
+  o.value = pf; o.textContent = pf;
+  prefSel.appendChild(o);
+});
+
+function refreshCityOptions(){
+  var pref = state.pref;
+  citySel.innerHTML = "";
+  var sp = SPLIT_PREF[pref];
+  if(!pref){
+    citySel.disabled = true;
+    citySel.innerHTML = "<option value=\"\">都道府県を先に選択</option>";
+    return;
+  }
+  if(!sp){
+    citySel.disabled = true;
+    citySel.innerHTML = "<option value=\"\">全域が同じエリアです</option>";
+    state.city = "";
+    return;
+  }
+  citySel.disabled = false;
+  var o0 = document.createElement("option");
+  o0.value = ""; o0.textContent = "市区町村を選択（任意）";
+  citySel.appendChild(o0);
+  sp.cities.forEach(function(c){
+    var o = document.createElement("option");
+    o.value = c; o.textContent = c;
+    citySel.appendChild(o);
+  });
+  if(state.city && sp.cities.indexOf(state.city) < 0) state.city = "";
+  citySel.value = state.city || "";
+}
+
+prefSel.addEventListener("change", function(){
+  state.pref = prefSel.value;
+  state.city = "";
+  refreshCityOptions();
+  render();
+});
+citySel.addEventListener("change", function(){
+  state.city = citySel.value;
+  render();
+});
+$("areaClear").addEventListener("click", function(){
+  state.pref = ""; state.city = "";
+  prefSel.value = "";
+  zipInput.value = ""; zipMsg.textContent = "";
+  refreshCityOptions();
+  render();
+});
+
+// 郵便番号→都道府県・市区町村（zipcloud。invoice.html と同じ方式）
+var lastZip = "";
+zipInput.addEventListener("input", function(){
+  var digits = zipInput.value.replace(/[０-９]/g, function(c){ return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); }).replace(/[^0-9]/g, "");
+  if(digits.length !== 7){
+    zipMsg.textContent = "";
+    if(digits.length < 7) lastZip = "";
+    return;
+  }
+  if(digits === lastZip) return;
+  lastZip = digits;
+  zipMsg.textContent = "";
+  fetch("https://zipcloud.ibsnet.co.jp/api/search?zipcode=" + digits)
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+      if(lastZip !== digits) return;
+      var r = data && data.results && data.results[0];
+      if(!r){
+        zipMsg.textContent = "住所が見つかりませんでした";
+        return;
+      }
+      var pref = r.address1 || "", cityRaw = r.address2 || "";
+      if(PREFS.indexOf(pref) < 0){
+        zipMsg.textContent = "都道府県を特定できませんでした";
+        return;
+      }
+      state.pref = pref;
+      prefSel.value = pref;
+      state.city = "";
+      var sp = SPLIT_PREF[pref];
+      if(sp && cityRaw){
+        // 政令指定都市は「静岡市葵区」のように区まで返るため、一覧の市区町村名で前方一致させる
+        for(var i = 0; i < sp.cities.length; i++){
+          if(cityRaw.indexOf(sp.cities[i]) === 0){ state.city = sp.cities[i]; break; }
+        }
+      }
+      refreshCityOptions();
+      zipMsg.textContent = pref + (state.city ? state.city : "") + "で絞り込みました";
+      render();
+    })
+    .catch(function(){
+      if(lastZip !== digits) return;
+      zipMsg.textContent = "住所を検索できませんでした";
+    });
+});
+
+refreshCityOptions();
 render();
 })();
 </script>
