@@ -4,8 +4,8 @@
 <script>try{var _t=localStorage.getItem("ido_theme_v1");if(_t==="andy"||_t==="kuma")document.documentElement.dataset.theme=_t;}catch(e){}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>見積書・請求書 作成ツール｜お金計算ツール集</title>
-<meta name="description" content="見積書と請求書を作ってそのままPDFで保存できるツール。源泉徴収（10.21%）は行ごとに、消費税（行ごと切り捨て）を自動計算し、目標の請求総額や税込の欲しい金額から逆算して単価を決めることもできます。入力内容はブラウザ内に保存され、外部に送られるのは住所検索の時の郵便番号だけです。">
+<title>見積書・請求書・領収書 作成ツール｜お金計算ツール集</title>
+<meta name="description" content="見積書と請求書と領収書を作ってそのままPDFで保存できるツール。源泉徴収（10.21%）は行ごとに、消費税（行ごと切り捨て）を自動計算し、目標の請求総額や税込の欲しい金額から逆算して単価を決めることもできます。入力内容はブラウザ内に保存され、外部に送られるのは住所検索の時の郵便番号だけです。">
 <style>
 :root{
   --navy:#12283f; --navy2:#0b1a2c; --amber:#f2a007; --amber-d:#c77f02;
@@ -197,8 +197,8 @@ html[data-theme="andy"] .doc table.d-tbl td{background:transparent;color:#26221c
 
 <header>
   <div class="wrap">
-    <h1>見積書・請求書 <span class="accent">作成ツール</span></h1>
-    <p>見積書と請求書を作って、そのままPDFで保存できます。源泉徴収と消費税は自動計算。目標の請求総額から逆算して単価を決めることもできます。入力した内容が外部に送信されることはありません（郵便番号から住所を検索する時だけ、郵便番号を住所検索サービスに送ります）。</p>
+    <h1>見積書・請求書・領収書 <span class="accent">作成ツール</span></h1>
+    <p>見積書と請求書と領収書を作って、そのままPDFで保存できます。源泉徴収と消費税は自動計算。目標の請求総額から逆算して単価を決めることもできます。入力した内容が外部に送信されることはありません（郵便番号から住所を検索する時だけ、郵便番号を住所検索サービスに送ります）。</p>
   </div>
 </header>
 
@@ -210,16 +210,17 @@ html[data-theme="andy"] .doc table.d-tbl td{background:transparent;color:#26221c
     <div class="seg" id="typeSeg">
       <button type="button" data-type="invoice" class="on">請求書</button>
       <button type="button" data-type="estimate">見積書</button>
+      <button type="button" data-type="receipt">領収書</button>
     </div>
     <div class="frow">
       <div class="fitem"><label class="flabel">発行日</label><input type="date" id="issueDate"></div>
-      <div class="fitem"><label class="flabel" id="dueLabel">お支払い期限</label><input type="date" id="dueDate"></div>
+      <div class="fitem" id="dueItem"><label class="flabel" id="dueLabel">お支払い期限</label><input type="date" id="dueDate"></div>
       <div class="fitem"><label class="flabel">伝票番号</label><input type="text" id="docNo"></div>
     </div>
     <div class="frow">
-      <div class="fitem wide"><label class="flabel">件名</label><input type="text" id="subject"></div>
+      <div class="fitem wide"><label class="flabel" id="subjectLabel">件名</label><input type="text" id="subject"></div>
     </div>
-    <p class="note">伝票番号は発行日から自動で入ります（YYYYMMDD-連番）。書き換えもできます。日付は書類に和暦（令和）で印字されます。源泉徴収（源泉所得税等 10.21%）は、明細の行ごとに「対象／対象外」を選んで計算します。</p>
+    <p class="note">伝票番号は発行日から自動で入ります（YYYYMMDD-連番）。書き換えもできます。日付は書類に和暦（令和）で印字されます。源泉徴収（源泉所得税等 10.21%）は、明細の行ごとに「対象／対象外」を選んで計算します。領収書では「件名」が但し書きとして印字され、お支払い期限と振込先は印字されません。領収金額は、源泉徴収を差し引いた実際に受け取る額です。</p>
   </div>
 
   <div class="card">
@@ -269,7 +270,7 @@ html[data-theme="andy"] .doc table.d-tbl td{background:transparent;color:#26221c
     <h2>目標の総額から逆算する</h2>
     <p class="note" style="margin-top:0">欲しい請求総額を入れると、「調整行」に選んだ報酬行の税抜単価を自動で解いて、その総額になるようにします。他の行はそのまま固定されます。</p>
     <div class="frow">
-      <div class="fitem"><label class="flabel">目標の総額（ご請求金額）</label><input type="number" id="targetTotal" min="0"></div>
+      <div class="fitem"><label class="flabel" id="targetLabel">目標の総額（ご請求金額）</label><input type="number" id="targetTotal" min="0"></div>
       <div class="fitem" style="display:flex;align-items:flex-end"><button type="button" class="btn" id="solveBtn">逆算して確定</button></div>
     </div>
     <p class="solve-msg" id="solveMsg"></p>
@@ -379,7 +380,7 @@ function autoDocNo(){
   return v.replace(/-/g, "") + "-1";
 }
 function hasWhTarget(rows){
-  return state.type === "invoice" && rows.some(function(r){ return r.kind === "fee" && r.wh !== "off"; });
+  return state.type !== "estimate" && rows.some(function(r){ return r.kind === "fee" && r.wh !== "off"; });
 }
 
 function lineAmt(r){
@@ -450,13 +451,14 @@ function refreshRowSpans(rowEl, r){
 /* ===== 書類プレビュー描画 ===== */
 function renderDoc(){
   var isInv = state.type === "invoice";
+  var isRec = state.type === "receipt";
   var c = calc();
   var h = "";
-  h += '<h1 class="d-title">' + (isInv ? "請求書" : "見積書") + "</h1>";
+  h += '<h1 class="d-title">' + (isInv ? "請求書" : isRec ? "領収書" : "見積書") + "</h1>";
   h += '<div class="d-meta">';
   if ($("docNo").value) h += "<div>伝票番号：" + esc($("docNo").value) + "</div>";
   if ($("issueDate").value) h += "<div>発行日：" + esc(wareki($("issueDate").value)) + "</div>";
-  if ($("dueDate").value) h += "<div>" + (isInv ? "お支払い期限" : "有効期限") + "：" + esc(wareki($("dueDate").value)) + "</div>";
+  if (!isRec && $("dueDate").value) h += "<div>" + (isInv ? "お支払い期限" : "有効期限") + "：" + esc(wareki($("dueDate").value)) + "</div>";
   h += "</div>";
   /* 宛先・発行者 */
   h += '<div class="d-parties"><div class="d-client">';
@@ -472,11 +474,11 @@ function renderDoc(){
   if ($("iShop").value || $("iName").value) h += '<div class="d-name">' + esc($("iShop").value) + ($("iShop").value && $("iName").value ? "　" : "") + esc($("iName").value) + "</div>";
   if ($("iReg").value) h += '<div class="d-reg">登録番号：' + esc($("iReg").value) + "</div>";
   h += "</div></div>";
-  /* 件名・挨拶 */
-  if ($("subject").value) h += '<p class="d-subject">件名：' + esc($("subject").value) + "</p>";
-  h += '<p class="d-greet">下記の通り' + (isInv ? "ご請求" : "お見積もり") + "申し上げます。</p>";
+  /* 件名（領収書では但し書き）・挨拶 */
+  if ($("subject").value) h += '<p class="d-subject">' + (isRec ? "但し書き：" : "件名：") + esc($("subject").value) + "</p>";
+  h += '<p class="d-greet">' + (isRec ? "下記の通り領収いたしました。" : "下記の通り" + (isInv ? "ご請求" : "お見積もり") + "申し上げます。") + "</p>";
   /* 合計金額 */
-  h += '<div class="d-total"><span>' + (isInv ? "ご請求金額" : "ご見積金額") + '</span><span class="d-amt">' + fmt(c.total) + "</span></div>";
+  h += '<div class="d-total"><span>' + (isInv ? "ご請求金額" : isRec ? "領収金額" : "ご見積金額") + '</span><span class="d-amt">' + fmt(c.total) + "</span></div>";
   /* 内訳 */
   h += '<p class="d-naiyaku">内訳</p>';
   h += '<table class="d-tbl"><tr class="hd"><td>品目</td><td class="num">税抜単価</td><td class="qty">数量</td><td class="num">価格</td></tr>';
@@ -642,12 +644,27 @@ function solve(){
 /* ===== イベント ===== */
 $("typeSeg").addEventListener("click", function(e){
   var b = e.target.closest("button"); if (!b) return;
+  var prev = state.type;
   state.type = b.getAttribute("data-type");
   $("typeSeg").querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+  var isRec = state.type === "receipt";
   $("dueLabel").textContent = state.type === "invoice" ? "お支払い期限" : "有効期限";
+  $("dueItem").classList.toggle("hidden", isRec);
+  $("subjectLabel").textContent = isRec ? "但し書き" : "件名";
+  $("targetLabel").textContent = isRec ? "目標の総額（領収金額）" : state.type === "invoice" ? "目標の総額（ご請求金額）" : "目標の総額（ご見積金額）";
   $("bankCard").classList.toggle("hidden", state.type !== "invoice");
+  if (isRec && prev !== "receipt"){
+    state.honorPrev = $("cHonor").value;
+    state.honorAuto = state.honorPrev !== "様";
+    if (state.honorAuto) $("cHonor").value = "様";
+  }
+  if (!isRec && prev === "receipt"){
+    if (state.honorAuto && $("cHonor").value === "様") $("cHonor").value = state.honorPrev || "御中";
+    state.honorAuto = false;
+  }
   renderDoc();
 });
+$("cHonor").addEventListener("change", function(){ state.honorAuto = false; });
 ["issueDate","dueDate","subject","cZip","cAddr1","cAddr2","cCompany","cHonor","iZip","iAddr1","iAddr2","iTel","iShop","iName","iReg","bBank","bBranch","bBranchNo","bType","bNum","bHolder","bHolderKana","noteText"].forEach(function(id){
   $(id).addEventListener("input", function(){
     if (SAVE_IDS.indexOf(id) >= 0) saveIssuer();
