@@ -178,10 +178,10 @@ html[data-theme="andy"] .doc table.d-tbl td{background:transparent;color:#26221c
     <div class="frow">
       <div class="fitem"><label class="flabel">発行日</label><input type="date" id="issueDate"></div>
       <div class="fitem"><label class="flabel" id="dueLabel">お支払い期限</label><input type="date" id="dueDate"></div>
-      <div class="fitem"><label class="flabel">伝票番号</label><input type="text" id="docNo" placeholder="20260808-1"></div>
+      <div class="fitem"><label class="flabel">伝票番号</label><input type="text" id="docNo"></div>
     </div>
     <div class="frow">
-      <div class="fitem wide"><label class="flabel">件名</label><input type="text" id="subject" placeholder="例：ワークショップイベントの記録撮影"></div>
+      <div class="fitem wide"><label class="flabel">件名</label><input type="text" id="subject"></div>
     </div>
     <label class="flabel">源泉徴収（源泉所得税等 10.21%）</label>
     <div class="seg" id="whSeg">
@@ -195,11 +195,11 @@ html[data-theme="andy"] .doc table.d-tbl td{background:transparent;color:#26221c
   <div class="card">
     <h2>宛先</h2>
     <div class="frow">
-      <div class="fitem"><label class="flabel">郵便番号</label><input type="text" id="cZip" placeholder="107-6320"></div>
-      <div class="fitem wide"><label class="flabel">住所</label><input type="text" id="cAddr1" placeholder="東京都港区赤坂5丁目3番1号"></div>
+      <div class="fitem"><label class="flabel">郵便番号</label><input type="text" id="cZip"></div>
+      <div class="fitem wide"><label class="flabel">住所</label><input type="text" id="cAddr1"></div>
     </div>
     <div class="frow">
-      <div class="fitem wide"><label class="flabel">建物名など</label><input type="text" id="cAddr2" placeholder="赤坂Bizタワー"></div>
+      <div class="fitem wide"><label class="flabel">建物名など</label><input type="text" id="cAddr2"></div>
     </div>
     <div class="frow">
       <div class="fitem wide"><label class="flabel">会社名・お名前</label><input type="text" id="cCompany" placeholder="株式会社○○"></div>
@@ -210,16 +210,16 @@ html[data-theme="andy"] .doc table.d-tbl td{background:transparent;color:#26221c
   <div class="card">
     <h2>発行者（あなたの情報）</h2>
     <div class="frow">
-      <div class="fitem"><label class="flabel">郵便番号</label><input type="text" id="iZip" placeholder="113-0033"></div>
-      <div class="fitem wide"><label class="flabel">住所</label><input type="text" id="iAddr1" placeholder="東京都文京区本郷三丁目4-7"></div>
+      <div class="fitem"><label class="flabel">郵便番号</label><input type="text" id="iZip"></div>
+      <div class="fitem wide"><label class="flabel">住所</label><input type="text" id="iAddr1"></div>
     </div>
     <div class="frow">
       <div class="fitem wide"><label class="flabel">建物名など</label><input type="text" id="iAddr2" placeholder=""></div>
       <div class="fitem"><label class="flabel">電話番号</label><input type="text" id="iTel" placeholder="080-0000-0000"></div>
     </div>
     <div class="frow">
-      <div class="fitem"><label class="flabel">屋号</label><input type="text" id="iShop" placeholder="わんこ堂"></div>
-      <div class="fitem"><label class="flabel">氏名</label><input type="text" id="iName" placeholder="林 大寿"></div>
+      <div class="fitem"><label class="flabel">屋号</label><input type="text" id="iShop"></div>
+      <div class="fitem"><label class="flabel">氏名</label><input type="text" id="iName"></div>
       <div class="fitem"><label class="flabel">インボイス登録番号（任意）</label><input type="text" id="iReg" placeholder="T1234567890123"></div>
     </div>
     <p class="note">発行者の情報はこのブラウザに保存され、次回から自動で入ります。</p>
@@ -239,7 +239,7 @@ html[data-theme="andy"] .doc table.d-tbl td{background:transparent;color:#26221c
     <h2>目標の総額から逆算する</h2>
     <p class="note" style="margin-top:0">欲しい請求総額を入れると、「調整行」に選んだ報酬行の税抜単価を自動で解いて、その総額になるようにします。他の行はそのまま固定されます。</p>
     <div class="frow">
-      <div class="fitem"><label class="flabel">目標の総額（ご請求金額）</label><input type="number" id="targetTotal" min="0" placeholder="例：68974"></div>
+      <div class="fitem"><label class="flabel">目標の総額（ご請求金額）</label><input type="number" id="targetTotal" min="0"></div>
       <div class="fitem" style="display:flex;align-items:flex-end"><button type="button" class="btn" id="solveBtn">逆算して確定</button></div>
     </div>
     <p class="solve-msg" id="solveMsg"></p>
@@ -248,24 +248,24 @@ html[data-theme="andy"] .doc table.d-tbl td{background:transparent;color:#26221c
   <div class="card" id="bankCard">
     <h2>振込先（請求書のみ）</h2>
     <div class="frow">
-      <div class="fitem"><label class="flabel">銀行名</label><input type="text" id="bBank" placeholder="三井住友銀行"></div>
-      <div class="fitem"><label class="flabel">支店名</label><input type="text" id="bBranch" placeholder="小石川支店"></div>
-      <div class="fitem"><label class="flabel">店番号</label><input type="text" id="bBranchNo" placeholder="813"></div>
+      <div class="fitem"><label class="flabel">銀行名</label><input type="text" id="bBank"></div>
+      <div class="fitem"><label class="flabel">支店名</label><input type="text" id="bBranch"></div>
+      <div class="fitem"><label class="flabel">店番号</label><input type="text" id="bBranchNo"></div>
     </div>
     <div class="frow">
       <div class="fitem"><label class="flabel">口座種別</label><select id="bType"><option value="普通預金">普通預金</option><option value="当座預金">当座預金</option></select></div>
-      <div class="fitem"><label class="flabel">口座番号</label><input type="text" id="bNum" placeholder="3887149"></div>
+      <div class="fitem"><label class="flabel">口座番号</label><input type="text" id="bNum"></div>
     </div>
     <div class="frow">
-      <div class="fitem"><label class="flabel">口座名義</label><input type="text" id="bHolder" placeholder="わんこ堂 林 大寿"></div>
-      <div class="fitem"><label class="flabel">口座名義（フリガナ）</label><input type="text" id="bHolderKana" placeholder="ワンコドウ ハヤシ ダイジュ"></div>
+      <div class="fitem"><label class="flabel">口座名義</label><input type="text" id="bHolder"></div>
+      <div class="fitem"><label class="flabel">口座名義（フリガナ）</label><input type="text" id="bHolderKana"></div>
     </div>
     <p class="note">振込先も発行者情報と一緒にこのブラウザに保存されます。</p>
   </div>
 
   <div class="card">
     <h2>備考</h2>
-    <textarea id="noteText" placeholder="例：恐れ入りますが、お客様の方で振込手数料をご負担くださいますようお願いいたします。"></textarea>
+    <textarea id="noteText" placeholder="備考があれば入力してください"></textarea>
   </div>
 
   <div class="card doc-card">
@@ -457,7 +457,7 @@ function renderEditor(){
     }
     h += '<span class="sp"></span><button type="button" class="btn-del" data-del="' + i + '">削除</button></div>';
     h += '<div class="igrid">';
-    h += '<label class="g-name">品目<input type="text" data-f="name" value="' + esc(r.name) + '" placeholder="' + (r.kind === "fee" ? "例：写真撮影" : "例：交通費（実費）") + '"></label>';
+    h += '<label class="g-name">品目<input type="text" data-f="name" value="' + esc(r.name) + '" placeholder="' + (r.kind === "fee" ? "品目名" : "例：交通費（実費）") + '"></label>';
     if (r.kind === "fee"){
       h += '<label class="g-price">税抜単価<input type="number" data-f="price" min="0" value="' + esc(r.price) + '"></label>';
       h += '<label class="g-qty">数量<input type="number" data-f="qty" min="0" step="any" value="' + esc(r.qty) + '"></label>';
